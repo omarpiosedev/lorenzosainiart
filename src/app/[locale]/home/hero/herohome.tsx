@@ -1,8 +1,42 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useRef } from 'react';
 
 export default function HeroHome() {
+  const textRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const resizeText = () => {
+      const textElement = textRef.current;
+      if (!textElement) return;
+      
+      const container = textElement.parentElement;
+      if (!container) return;
+      
+      const containerWidth = container.offsetWidth - 32; // padding
+      const isMobile = window.innerWidth < 768;
+      let fontSize = isMobile ? 300 : 500;
+      
+      textElement.style.fontSize = `${fontSize}px`;
+      
+      while (textElement.scrollWidth > containerWidth && fontSize > 20) {
+        fontSize -= 2;
+        textElement.style.fontSize = `${fontSize}px`;
+      }
+    };
+
+    // Delay to ensure font is loaded
+    setTimeout(() => {
+      resizeText();
+    }, 100);
+    
+    resizeText();
+    window.addEventListener('resize', resizeText);
+    
+    return () => window.removeEventListener('resize', resizeText);
+  }, []);
+
   return (
     <>
       <style>{`
@@ -55,6 +89,21 @@ export default function HeroHome() {
         }}
       />
 
+
+      {/* Testo "LORENZOSAINI'S ART" sopra al background */}
+      <div className="absolute inset-0 flex items-start justify-center pt-40 z-15 pointer-events-none px-4">
+        <h1 
+          ref={textRef}
+          className="text-white text-center leading-none whitespace-nowrap md:whitespace-nowrap"
+          style={{
+            fontFamily: 'Lavener, sans-serif',
+            letterSpacing: '0.05em'
+          }}
+        >
+          <span className="block md:inline">LORENZO</span>
+          <span className="block md:inline md:ml-4 whitespace-nowrap">SAINI'S ART</span>
+        </h1>
+      </div>
 
       {/* Dissolvenza finale verso bianco */}
       <div
