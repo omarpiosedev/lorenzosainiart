@@ -1,4 +1,4 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -7,8 +7,6 @@ type Props = {
 export default async function PortfolioPage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-
-  const t = await getTranslations('PortfolioPage');
 
   return (
     <div className="min-h-screen flex items-center justify-center">

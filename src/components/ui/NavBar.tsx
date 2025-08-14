@@ -5,6 +5,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 
+interface NavBarProps {
+  logo: string;
+  logoAlt?: string;
+  items: Array<{ label: string; href: string; ariaLabel?: string }>;
+  className?: string;
+  ease?: string;
+  baseColor?: string;
+  pillColor?: string;
+  hoveredPillTextColor?: string;
+  pillTextColor?: string;
+  onMobileMenuClick: () => void;
+  initialLoadAnimation?: boolean;
+}
+
 const NavBar = ({
   logo,
   logoAlt = "Logo",
@@ -17,19 +31,19 @@ const NavBar = ({
   pillTextColor,
   onMobileMenuClick,
   initialLoadAnimation = true,
-}) => {
+}: NavBarProps) => {
   const pathname = usePathname();
   const resolvedPillTextColor = pillTextColor ?? baseColor;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const circleRefs = useRef([]);
-  const tlRefs = useRef([]);
-  const activeTweenRefs = useRef([]);
-  const logoImgRef = useRef(null);
-  const logoTweenRef = useRef(null);
-  const hamburgerRef = useRef(null);
-  const mobileMenuRef = useRef(null);
-  const navItemsRef = useRef(null);
-  const logoRef = useRef(null);
+  const circleRefs = useRef<HTMLElement[]>([]);
+  const tlRefs = useRef<gsap.core.Timeline[]>([]);
+  const activeTweenRefs = useRef<gsap.core.Tween[]>([]);
+  const logoImgRef = useRef<HTMLImageElement>(null);
+  const logoTweenRef = useRef<gsap.core.Tween | null>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const navItemsRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLAnchorElement>(null);
 
   // Get current active href based on pathname
   const getActiveHref = () => {
@@ -111,8 +125,8 @@ const NavBar = ({
     const onResize = () => layout();
     window.addEventListener("resize", onResize);
 
-    if ((document).fonts?.ready) {
-      (document).fonts.ready.then(layout).catch(() => { });
+    if (document.fonts) {
+      document.fonts.ready.then(layout).catch(() => { });
     }
 
     const menu = mobileMenuRef.current;
@@ -146,7 +160,7 @@ const NavBar = ({
     return () => window.removeEventListener("resize", onResize);
   }, [items, ease, initialLoadAnimation]);
 
-  const handleEnter = (i) => {
+  const handleEnter = (i: number) => {
     const tl = tlRefs.current[i];
     if (!tl) return;
     activeTweenRefs.current[i]?.kill();
@@ -157,7 +171,7 @@ const NavBar = ({
     });
   };
 
-  const handleLeave = (i) => {
+  const handleLeave = (i: number) => {
     const tl = tlRefs.current[i];
     if (!tl) return;
     activeTweenRefs.current[i]?.kill();
@@ -190,12 +204,17 @@ const NavBar = ({
 
     if (hamburger) {
       const lines = hamburger.querySelectorAll(".hamburger-line");
-      if (newState) {
-        gsap.to(lines[0], { rotation: 45, y: 3, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: -45, y: -3, duration: 0.3, ease });
-      } else {
-        gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
+      const firstLine = lines[0];
+      const secondLine = lines[1];
+      
+      if (firstLine && secondLine) {
+        if (newState) {
+          gsap.to(firstLine, { rotation: 45, y: 3, duration: 0.3, ease });
+          gsap.to(secondLine, { rotation: -45, y: -3, duration: 0.3, ease });
+        } else {
+          gsap.to(firstLine, { rotation: 0, y: 0, duration: 0.3, ease });
+          gsap.to(secondLine, { rotation: 0, y: 0, duration: 0.3, ease });
+        }
       }
     }
 
@@ -232,7 +251,7 @@ const NavBar = ({
     onMobileMenuClick?.();
   };
 
-  const isExternalLink = (href) =>
+  const isExternalLink = (href: string) =>
     href.startsWith("http://") ||
     href.startsWith("https://") ||
     href.startsWith("//") ||
@@ -240,7 +259,7 @@ const NavBar = ({
     href.startsWith("tel:") ||
     href.startsWith("#");
 
-  const isRouterLink = (href) => href && !isExternalLink(href);
+  const isRouterLink = (href: string) => href && !isExternalLink(href);
 
   const cssVars = {
     ["--base"]: baseColor,
@@ -258,9 +277,9 @@ const NavBar = ({
       <nav
         className={`w-full md:w-max flex items-center justify-between md:justify-start box-border px-4 md:px-0 ${className}`}
         aria-label="Primary"
-        style={cssVars}
+        style={cssVars as React.CSSProperties}
       >
-        {isRouterLink(items?.[0]?.href) ? (
+        {items?.[0] && isRouterLink(items[0].href) ? (
           <Link
             href={items[0].href}
             aria-label="Home"
@@ -341,7 +360,7 @@ const NavBar = ({
                     }}
                     aria-hidden="true"
                     ref={(el) => {
-                      circleRefs.current[i] = el;
+                      if (el) circleRefs.current[i] = el;
                     }}
                   />
                   <span className="label-stack relative inline-block leading-[1] z-[2]">
@@ -447,11 +466,11 @@ const NavBar = ({
               background: "var(--pill-bg, #fff)",
               color: "var(--pill-text, #fff)",
             };
-            const hoverIn = (e) => {
+            const hoverIn = (e: React.MouseEvent<HTMLAnchorElement>) => {
               e.currentTarget.style.background = "var(--base)";
               e.currentTarget.style.color = "var(--hover-text, #fff)";
             };
-            const hoverOut = (e) => {
+            const hoverOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
               e.currentTarget.style.background = "var(--pill-bg, #fff)";
               e.currentTarget.style.color = "var(--pill-text, #fff)";
             };

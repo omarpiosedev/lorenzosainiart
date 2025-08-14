@@ -200,12 +200,17 @@ const PillNav: React.FC<PillNavProps> = ({
 
     if (hamburger) {
       const lines = hamburger.querySelectorAll(".hamburger-line");
-      if (newState) {
-        gsap.to(lines[0], { rotation: 45, y: 3, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: -45, y: -3, duration: 0.3, ease });
-      } else {
-        gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
+      const firstLine = lines[0];
+      const secondLine = lines[1];
+      
+      if (firstLine && secondLine) {
+        if (newState) {
+          gsap.to(firstLine, { rotation: 45, y: 3, duration: 0.3, ease });
+          gsap.to(secondLine, { rotation: -45, y: -3, duration: 0.3, ease });
+        } else {
+          gsap.to(firstLine, { rotation: 0, y: 0, duration: 0.3, ease });
+          gsap.to(secondLine, { rotation: 0, y: 0, duration: 0.3, ease });
+        }
       }
     }
 
@@ -270,9 +275,9 @@ const PillNav: React.FC<PillNavProps> = ({
         aria-label="Primary"
         style={cssVars}
       >
-        {isRouterLink(items?.[0]?.href) ? (
+        {items?.[0] && isRouterLink(items[0].href) ? (
           <Link
-            to={items[0].href}
+            to={items[0]?.href || "#"}
             aria-label="Home"
             onMouseEnter={handleLogoEnter}
             role="menuitem"
