@@ -5,7 +5,13 @@ const localePrefix: LocalePrefixMode = 'always';
 // Portfolio site configuration
 export const AppConfig = {
   name: 'Portfolio Site',
-  locales: ['en', 'fr'],
-  defaultLocale: 'en',
+  locales: ['it', 'en'],
+  defaultLocale: 'it',
   localePrefix,
+};
+
+export const getBaseUrl = () => {
+  return process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
 };

@@ -2,10 +2,8 @@ import type { Metadata } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { PostHogProvider } from '@/components/analytics/PostHogProvider';
-import { DemoBadge } from '@/components/DemoBadge';
 import { routing } from '@/libs/I18nRouting';
-import { getBaseUrl } from '@/utils/Helpers';
+import { getBaseUrl } from '@/utils/AppConfig';
 import '@/styles/global.css';
 
 export const metadata: Metadata = {
@@ -19,7 +17,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Portfolio Owner' }],
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'it_IT',
     url: getBaseUrl(),
     siteName: 'Portfolio',
     title: 'Portfolio',
@@ -33,8 +31,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: getBaseUrl(),
     languages: {
+      it: `${getBaseUrl()}/it`,
       en: `${getBaseUrl()}/en`,
-      fr: `${getBaseUrl()}/fr`,
     },
   },
   icons: [
@@ -81,10 +79,7 @@ export default async function RootLayout(props: {
     <html lang={locale}>
       <body>
         <NextIntlClientProvider>
-          <PostHogProvider>
-            {props.children}
-          </PostHogProvider>
-          <DemoBadge />
+          {props.children}
         </NextIntlClientProvider>
       </body>
     </html>
