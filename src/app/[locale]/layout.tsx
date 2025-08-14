@@ -4,6 +4,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/libs/I18nRouting';
 import { getBaseUrl } from '@/utils/AppConfig';
+import NavBar from '@/components/ui/NavBar';
 import '@/styles/global.css';
 
 export const metadata: Metadata = {
@@ -75,11 +76,28 @@ export default async function RootLayout(props: {
 
   setRequestLocale(locale);
 
+  const navItems = [
+    { label: 'HOME', href: `/${locale}` },
+    { label: 'PORTFOLIO', href: `/${locale}/portfolio` },
+    { label: 'BLOG', href: `/${locale}/blog` },
+    { label: 'ABOUT ME', href: `/${locale}/about` },
+    { label: 'CONTACT', href: `/${locale}/contact` },
+  ];
+
   return (
     <html lang={locale}>
       <body>
         <NextIntlClientProvider>
           {props.children}
+          <NavBar 
+            logo="/logo.svg"
+            logoAlt="Lorenzo Saini Art"
+            items={navItems}
+            baseColor="#060010"
+            pillColor="#fff"
+            hoveredPillTextColor="#fff"
+            pillTextColor="#060010"
+          />
         </NextIntlClientProvider>
       </body>
     </html>

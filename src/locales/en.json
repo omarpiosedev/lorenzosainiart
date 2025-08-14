@@ -2,5 +2,17 @@
   "HomePage": {
     "title": "Welcome",
     "description": "Your website is ready"
+  },
+  "PortfolioPage": {
+    "title": "Portfolio"
+  },
+  "BlogPage": {
+    "title": "Blog"
+  },
+  "AboutPage": {
+    "title": "About Me"
+  },
+  "ContactPage": {
+    "title": "Contact"
   }
 }
