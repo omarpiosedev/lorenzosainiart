@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 export default function HeroHome() {
   return (
     <div className="relative w-full h-screen overflow-hidden flex justify-center items-end">
@@ -9,13 +11,13 @@ export default function HeroHome() {
         style={{
           backgroundImage: 'url(/assets/images/new-background.jpg)',
         }}
-      >
-      </div>
+      />
 
       {/* Copia Sharp - parte alta nitida */}
-      <img
+      <Image
         src="/assets/images/center-image.png"
         alt="Centro nitido"
+        fill
         className="absolute bottom-40 sm:bottom-0 left-[54%] sm:left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
         style={{
           maskImage: `linear-gradient(
@@ -44,9 +46,10 @@ export default function HeroHome() {
       />
 
       {/* Copia Blur - parte bassa sfocata */}
-      <img
+      <Image
         src="/assets/images/center-image.png"
         alt="Centro sfocato"
+        fill
         className="absolute bottom-40 sm:bottom-0 left-[54%] sm:left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
         style={{
           filter: 'blur(20px)',
@@ -88,8 +91,7 @@ export default function HeroHome() {
             rgba(255,255,255,1) 100%
           )`,
         }}
-      >
-      </div>
+      />
     </div>
   );
 }
