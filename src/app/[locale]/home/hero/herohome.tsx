@@ -65,6 +65,15 @@ export default function HeroHome() {
           }}
         />
 
+        {/* Cloud layer - sopra il background ma dietro le persone */}
+        <div
+          className="absolute top-0 left-0 w-full h-full bg-contain bg-center bg-no-repeat z-12 opacity-100"
+          style={{
+            backgroundImage: 'url(/assets/images/cloud-layer.png)',
+            backgroundSize: 'clamp(400px, 55vw, 800px)',
+          }}
+        />
+
         {/* Copia Sharp - parte alta nitida */}
         <Image
           src="/assets/images/center-image.png"
