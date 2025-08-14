@@ -4,7 +4,16 @@ import Image from 'next/image';
 
 export default function HeroHome() {
   return (
-    <div className="relative w-full h-screen overflow-hidden flex justify-center items-end">
+    <>
+      <style>{`
+        @media (min-width: 2560px) {
+          .hero-image-2k {
+            scale: 1.2 !important;
+            max-width: 90rem !important;
+          }
+        }
+      `}</style>
+      <div className="relative w-full h-screen overflow-hidden flex justify-center items-end">
       {/* Sfondo background */}
       <div
         className="absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat z-10"
@@ -19,7 +28,7 @@ export default function HeroHome() {
         alt="Centro nitido"
         width={2000}
         height={1000}
-        className="absolute bottom-40 sm:bottom-0 left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
+        className="absolute bottom-40 sm:bottom-0 left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20 hero-image-2k"
         style={{
           maskImage: `linear-gradient(
             to bottom,
@@ -46,39 +55,6 @@ export default function HeroHome() {
         }}
       />
 
-      {/* Copia Blur - parte bassa sfocata */}
-      <Image
-        src="/assets/images/center-image.png"
-        alt="Centro sfocato"
-        width={2000}
-        height={1000}
-        className="absolute bottom-40 sm:bottom-0 left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
-        style={{
-          filter: 'blur(20px)',
-          maskImage: `linear-gradient(
-            to bottom,
-            rgba(0,0,0,0) 0%,
-            rgba(0,0,0,0.1) 20%,
-            rgba(0,0,0,0.4) 35%,
-            rgba(0,0,0,0.8) 50%,
-            rgba(0,0,0,1) 60%,
-            rgba(0,0,0,1) 100%
-          )`,
-          WebkitMaskImage: `linear-gradient(
-            to bottom,
-            rgba(0,0,0,0) 0%,
-            rgba(0,0,0,0.1) 20%,
-            rgba(0,0,0,0.4) 35%,
-            rgba(0,0,0,0.8) 50%,
-            rgba(0,0,0,1) 60%,
-            rgba(0,0,0,1) 100%
-          )`,
-          maskSize: '100% 100%',
-          WebkitMaskSize: '100% 100%',
-          maskRepeat: 'no-repeat',
-          WebkitMaskRepeat: 'no-repeat',
-        }}
-      />
 
       {/* Dissolvenza finale verso bianco */}
       <div
@@ -95,5 +71,6 @@ export default function HeroHome() {
         }}
       />
     </div>
+    </>
   );
 }
