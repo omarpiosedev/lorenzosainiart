@@ -97,7 +97,6 @@ export default async function RootLayout(props: {
             pillColor="#fff"
             hoveredPillTextColor="#fff"
             pillTextColor="#060010"
-            onMobileMenuClick={() => {}}
           />
         </NextIntlClientProvider>
       </body>

@@ -15,7 +15,7 @@ interface NavBarProps {
   pillColor?: string;
   hoveredPillTextColor?: string;
   pillTextColor?: string;
-  onMobileMenuClick: () => void;
+  onMobileMenuClick?: () => void;
   initialLoadAnimation?: boolean;
 }
 
