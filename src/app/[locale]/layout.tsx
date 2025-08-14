@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import NavBar from '@/components/ui/NavBar';
 import { routing } from '@/libs/I18nRouting';
 import { getBaseUrl } from '@/utils/AppConfig';
-import NavBar from '@/components/ui/NavBar';
 import '@/styles/global.css';
 
 export const metadata: Metadata = {
@@ -89,7 +89,7 @@ export default async function RootLayout(props: {
       <body>
         <NextIntlClientProvider>
           {props.children}
-          <NavBar 
+          <NavBar
             logo="/logo.svg"
             logoAlt="Lorenzo Saini Art"
             items={navItems}

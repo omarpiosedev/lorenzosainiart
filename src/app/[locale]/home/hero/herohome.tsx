@@ -4,17 +4,18 @@ export default function HeroHome() {
   return (
     <div className="relative w-full h-screen overflow-hidden flex justify-center items-end">
       {/* Sfondo background */}
-      <div 
+      <div
         className="absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat z-10"
         style={{
-          backgroundImage: 'url(/assets/images/new-background.jpg)'
+          backgroundImage: 'url(/assets/images/new-background.jpg)',
         }}
-      ></div>
-      
+      >
+      </div>
+
       {/* Copia Sharp - parte alta nitida */}
-      <img 
-        src="/assets/images/center-image.png" 
-        alt="Centro nitido" 
+      <img
+        src="/assets/images/center-image.png"
+        alt="Centro nitido"
         className="absolute bottom-40 sm:bottom-0 left-[54%] sm:left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
         style={{
           maskImage: `linear-gradient(
@@ -38,14 +39,14 @@ export default function HeroHome() {
           maskSize: '100% 100%',
           WebkitMaskSize: '100% 100%',
           maskRepeat: 'no-repeat',
-          WebkitMaskRepeat: 'no-repeat'
+          WebkitMaskRepeat: 'no-repeat',
         }}
       />
-      
+
       {/* Copia Blur - parte bassa sfocata */}
-      <img 
-        src="/assets/images/center-image.png" 
-        alt="Centro sfocato" 
+      <img
+        src="/assets/images/center-image.png"
+        alt="Centro sfocato"
         className="absolute bottom-40 sm:bottom-0 left-[54%] sm:left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
         style={{
           filter: 'blur(20px)',
@@ -70,12 +71,12 @@ export default function HeroHome() {
           maskSize: '100% 100%',
           WebkitMaskSize: '100% 100%',
           maskRepeat: 'no-repeat',
-          WebkitMaskRepeat: 'no-repeat'
+          WebkitMaskRepeat: 'no-repeat',
         }}
       />
-      
+
       {/* Dissolvenza finale verso bianco */}
-      <div 
+      <div
         className="absolute bottom-0 left-0 w-full h-2/5 z-30 pointer-events-none"
         style={{
           background: `linear-gradient(
@@ -85,9 +86,10 @@ export default function HeroHome() {
             rgba(255,255,255,0.6) 60%,
             rgba(255,255,255,0.9) 85%,
             rgba(255,255,255,1) 100%
-          )`
+          )`,
         }}
-      ></div>
+      >
+      </div>
     </div>
   );
 }

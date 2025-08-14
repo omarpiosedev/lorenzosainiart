@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
+import { redirect } from 'next/navigation';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -8,6 +8,6 @@ type Props = {
 export default async function RootPage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-  
+
   redirect(`/${locale}/home`);
 }
