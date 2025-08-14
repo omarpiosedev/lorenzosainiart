@@ -17,8 +17,9 @@ export default function HeroHome() {
       <Image
         src="/assets/images/center-image.png"
         alt="Centro nitido"
-        fill
-        className="absolute bottom-40 sm:bottom-0 left-[54%] sm:left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
+        width={2000}
+        height={1000}
+        className="absolute bottom-40 sm:bottom-0 left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
         style={{
           maskImage: `linear-gradient(
             to bottom,
@@ -49,8 +50,9 @@ export default function HeroHome() {
       <Image
         src="/assets/images/center-image.png"
         alt="Centro sfocato"
-        fill
-        className="absolute bottom-40 sm:bottom-0 left-[54%] sm:left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
+        width={2000}
+        height={1000}
+        className="absolute bottom-40 sm:bottom-0 left-1/2 transform -translate-x-1/2 w-screen scale-200 sm:scale-100 sm:w-full sm:max-w-6xl h-auto object-contain z-20"
         style={{
           filter: 'blur(20px)',
           maskImage: `linear-gradient(
