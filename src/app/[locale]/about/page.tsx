@@ -11,9 +11,7 @@ export default async function AboutPage(props: Props) {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">
-          ABOUT ME
-        </h1>
+        <h1 className="text-4xl font-bold mb-4">ABOUT ME</h1>
       </div>
     </div>
   );

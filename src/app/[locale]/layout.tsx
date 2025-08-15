@@ -13,7 +13,8 @@ export const metadata: Metadata = {
     template: '%s | Portfolio',
     default: 'Portfolio',
   },
-  description: 'A modern portfolio website showcasing creative work and projects',
+  description:
+    'A modern portfolio website showcasing creative work and projects',
   keywords: ['portfolio', 'photography', 'video', 'creative', 'showcase'],
   authors: [{ name: 'Portfolio Owner' }],
   openGraph: {
@@ -22,12 +23,14 @@ export const metadata: Metadata = {
     url: getBaseUrl(),
     siteName: 'Portfolio',
     title: 'Portfolio',
-    description: 'A modern portfolio website showcasing creative work and projects',
+    description:
+      'A modern portfolio website showcasing creative work and projects',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Portfolio',
-    description: 'A modern portfolio website showcasing creative work and projects',
+    description:
+      'A modern portfolio website showcasing creative work and projects',
   },
   alternates: {
     canonical: getBaseUrl(),

@@ -18,7 +18,9 @@ test.describe('Sanity', () => {
       await page.goto(`${baseURL}/`);
 
       await expect(
-        page.getByRole('heading', { name: 'Portfolio - Creative Work Showcase' }),
+        page.getByRole('heading', {
+          name: 'Portfolio - Creative Work Showcase',
+        }),
       ).toBeVisible();
     });
 
