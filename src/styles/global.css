@@ -10,80 +10,39 @@
   font-display: swap;
 }
 
-/* Fluid Design Tokens */
+/* CSS Variables */
 :root {
-  --vp-min: 360;
-  --vp-max: 1280;
-  --fluid: calc((100vw - var(--vp-min) * 1px) / (var(--vp-max) - var(--vp-min)));
-
   /* Typography Scale */
-  --step-0-min: 14;
-  --step-0-max: 16;
-  --step-1-min: 18;
-  --step-1-max: 22;
-  --step-2-min: 22;
-  --step-2-max: 28;
-  --step-3-min: 28;
-  --step-3-max: 36;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 40px;
 
   /* Spacing Scale */
-  --space-2-min: 8;
-  --space-2-max: 12;
-  --space-3-min: 12;
-  --space-3-max: 20;
-  --space-4-min: 20;
-  --space-4-max: 32;
-
-  /* Fluid Calculation */
-  --step-0: clamp(
-    var(--step-0-min) * 1px,
-    calc(var(--step-0-min) * 1px + (var(--step-0-max) - var(--step-0-min)) * var(--fluid)),
-    var(--step-0-max) * 1px
-  );
-  --step-1: clamp(
-    var(--step-1-min) * 1px,
-    calc(var(--step-1-min) * 1px + (var(--step-1-max) - var(--step-1-min)) * var(--fluid)),
-    var(--step-1-max) * 1px
-  );
-  --step-2: clamp(
-    var(--step-2-min) * 1px,
-    calc(var(--step-2-min) * 1px + (var(--step-2-max) - var(--step-2-min)) * var(--fluid)),
-    var(--step-2-max) * 1px
-  );
-  --step-3: clamp(
-    var(--step-3-min) * 1px,
-    calc(var(--step-3-min) * 1px + (var(--step-3-max) - var(--step-3-min)) * var(--fluid)),
-    var(--step-3-max) * 1px
-  );
-
-  --space-2: clamp(
-    var(--space-2-min) * 1px,
-    calc(var(--space-2-min) * 1px + (var(--space-2-max) - var(--space-2-min)) * var(--fluid)),
-    var(--space-2-max) * 1px
-  );
-  --space-3: clamp(
-    var(--space-3-min) * 1px,
-    calc(var(--space-3-min) * 1px + (var(--space-3-max) - var(--space-3-min)) * var(--fluid)),
-    var(--space-3-max) * 1px
-  );
-  --space-4: clamp(
-    var(--space-4-min) * 1px,
-    calc(var(--space-4-min) * 1px + (var(--space-4-max) - var(--space-4-min)) * var(--fluid)),
-    var(--space-4-max) * 1px
-  );
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
 }
 
 /* Typography Utilities */
 .h1 {
-  font-size: var(--step-3);
+  font-size: var(--text-4xl);
   line-height: 1.1;
 }
 .h2 {
-  font-size: var(--step-2);
+  font-size: var(--text-3xl);
   line-height: 1.15;
 }
 .h3 {
-  font-size: var(--step-1);
+  font-size: var(--text-2xl);
   line-height: 1.2;
 }
 
@@ -96,6 +55,19 @@
 .poster :where(h1, h2, h3, p, button, span, small) {
   font-size: inherit; /* userai px espliciti sugli elementi che ne hanno bisogno */
   letter-spacing: normal;
+}
+
+/* Mobile-First Breakpoints */
+/* Base styles = Mobile (up to 767px) */
+
+/* Tablet breakpoint */
+@media (min-width: 768px) {
+  /* Tablet styles here */
+}
+
+/* Desktop breakpoint */
+@media (min-width: 1024px) {
+  /* Desktop styles here */
 }
 
 /* Utility per vero full-bleed se il layout ha un container centrato */
