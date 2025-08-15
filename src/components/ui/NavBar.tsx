@@ -287,7 +287,7 @@ const NavBar = ({
   };
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[1000]">
+    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-[99999] pb-4" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
       <nav
         className={`w-full md:w-max flex items-center justify-between md:justify-start box-border px-4 md:px-0 ${className}`}
         aria-label="Primary"

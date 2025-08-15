@@ -2,13 +2,13 @@ export default function HeroHome() {
   return (
     <section className="min-h-screen">
       <div
-        className="relative w-full h-[80vh] md:min-h-screen bg-cover bg-center bg-no-repeat px-4"
+        className="relative w-full h-[80vh] md:min-h-screen bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: 'url(/assets/images/new-background.jpg)',
         }}
       >
         {/* Cloud layer */}
-        <div className="absolute inset-0 z-2 flex items-center justify-center">
+        <div className="absolute inset-0 z-2 flex items-center justify-center overflow-hidden">
           <img
             src="/assets/images/cloud-layer.png"
             alt="Clouds"
@@ -16,12 +16,12 @@ export default function HeroHome() {
           />
         </div>
 
-        <div className="absolute inset-0 flex items-center justify-end pr-4 z-10">
+        <div className="absolute inset-0 flex items-center justify-center z-10 overflow-hidden">
           <img
             src="/assets/images/sposi.png"
             alt="Couple"
             className="w-full md:w-3/4 lg:w-1/2 h-auto"
-            style={{ transform: 'translate(24px, 32px)' }}
+            style={{ transform: 'translate(20px, 40px)' }}
           />
         </div>
 
