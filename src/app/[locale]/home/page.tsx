@@ -1,6 +1,6 @@
 import { setRequestLocale } from 'next-intl/server';
-import HeroHome from './hero/herohome';
-import Sez2 from './sez2/sez2';
+import HeroHome from './sections/herohome';
+import Sez2 from './sections/sez2';
 
 type Props = {
   params: Promise<{ locale: string }>;
