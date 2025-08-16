@@ -109,23 +109,23 @@ export default function HeroHome() {
           marginTop: `-${baseHeight / 2}px`,
         }}
       >
-        {/* Cloud layer */}
-        <div className="absolute inset-0 z-2 flex items-center justify-center overflow-hidden">
-          <img
-            src="/assets/images/cloud-layer.png"
-            alt="Clouds"
-            className="w-full h-auto object-cover scale-125"
-          />
-        </div>
-
-        {/* Sposi - posizione diversa per breakpoint con clipping preciso */}
-        <div 
+        {/* Contenitore unico per nuvola e sposi */}
+        <div
           className="absolute inset-0 flex items-center justify-center z-10"
           style={{
             overflow: 'hidden',
             clipPath: 'inset(0)',
           }}
         >
+          {/* Cloud layer */}
+          <img
+            src="/assets/images/cloud-layer.png"
+            alt="Clouds"
+            className="absolute w-full h-auto object-cover scale-125"
+            style={{ zIndex: 1 }}
+          />
+
+          {/* Sposi - posizione diversa per breakpoint */}
           <img
             src="/assets/images/sposi.png"
             alt="Couple"
@@ -140,6 +140,8 @@ export default function HeroHome() {
               maxWidth: '100%',
               maxHeight: '100%',
               objectFit: 'contain',
+              zIndex: 2,
+              position: 'relative',
             }}
           />
         </div>
