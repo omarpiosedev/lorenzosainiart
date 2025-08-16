@@ -5,13 +5,32 @@ import { useEffect, useState } from 'react';
 export default function HeroHome() {
   const [scale, setScale] = useState(1);
   const [breakpoint, setBreakpoint] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+  const [initialViewport, setInitialViewport] = useState<{ width: number; height: number } | null>(null);
 
   useEffect(() => {
     const updateScale = () => {
-      // Usa visualViewport per ignorare lo zoom manuale, fallback a innerWidth/Height
+      // Ottieni dimensioni del viewport
       const viewport = window.visualViewport;
       const currentWidth = viewport ? viewport.width : window.innerWidth;
       const currentHeight = viewport ? viewport.height : window.innerHeight;
+
+      // Inizializza viewport di riferimento alla prima esecuzione
+      if (!initialViewport) {
+        setInitialViewport({ width: currentWidth, height: currentHeight });
+      }
+
+      // Se c'è una differenza significativa rispetto al viewport iniziale,
+      // probabilmente è zoom manuale - ignora il ricalcolo
+      if (initialViewport) {
+        const widthDiff = Math.abs(currentWidth - initialViewport.width) / initialViewport.width;
+        const heightDiff = Math.abs(currentHeight - initialViewport.height) / initialViewport.height;
+
+        // Se la differenza è > 10% ma il rapporto aspect è simile, è zoom - ignora
+        if ((widthDiff > 0.1 || heightDiff > 0.1)
+          && Math.abs((currentWidth / currentHeight) - (initialViewport.width / initialViewport.height)) < 0.1) {
+          return; // Non aggiornare lo scaling
+        }
+      }
 
       // Design diversi per breakpoint
       let baseWidth, baseHeight, currentBreakpoint;
@@ -41,21 +60,31 @@ export default function HeroHome() {
       setBreakpoint(currentBreakpoint as 'mobile' | 'tablet' | 'desktop');
     };
 
+    // Handler per reset del viewport di riferimento (rotazione device, etc.)
+    const handleOrientationChange = () => {
+      setTimeout(() => {
+        setInitialViewport(null); // Reset per permettere nuovo calcolo
+        updateScale();
+      }, 100); // Piccolo delay per stabilizzazione
+    };
+
     updateScale();
 
     // Ascolta i resize del window e del visualViewport
     window.addEventListener('resize', updateScale);
+    window.addEventListener('orientationchange', handleOrientationChange);
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', updateScale);
     }
 
     return () => {
       window.removeEventListener('resize', updateScale);
+      window.removeEventListener('orientationchange', handleOrientationChange);
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', updateScale);
       }
     };
-  }, []);
+  }, [initialViewport]);
 
   // Ottieni dimensioni base del breakpoint corrente
   const getBaseDimensions = () => {
