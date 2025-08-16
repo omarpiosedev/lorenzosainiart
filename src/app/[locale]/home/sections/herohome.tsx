@@ -102,11 +102,16 @@ export default function HeroHome() {
 
   return (
     <section className="w-screen h-screen overflow-hidden relative">
-      {/* Signature e Button - fuori dal contenitore scalato */}
-      <div className="absolute top-4 left-4 z-20">
-        <p
-          className="text-white leading-tight"
-        >
+      {/* Signature e Button - fuori dal contenitore scalato ma con posizionamento fisso */}
+      <div
+        className="absolute z-30"
+        style={{
+          top: '16px',
+          left: '16px',
+          position: 'fixed', // Fixed per essere immune al zoom
+        }}
+      >
+        <p className="text-white leading-tight">
           <span style={{
             fontSize: breakpoint === 'mobile' ? '13px' : breakpoint === 'tablet' ? '15px' : '16px',
             opacity: 1,
@@ -125,7 +130,14 @@ export default function HeroHome() {
         </p>
       </div>
 
-      <div className="absolute top-4 right-4 z-20">
+      <div
+        className="absolute z-30"
+        style={{
+          top: '16px',
+          right: '16px',
+          position: 'fixed', // Fixed per essere immune al zoom
+        }}
+      >
         <button
           className="bg-white/20 backdrop-blur-sm text-white rounded-full border border-white/30 hover:bg-white/30 transition-colors"
           style={{
