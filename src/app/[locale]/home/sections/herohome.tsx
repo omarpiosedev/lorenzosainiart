@@ -175,8 +175,11 @@ export default function HeroHome() {
           <img
             src="/assets/images/cloud-layer.png"
             alt="Clouds"
-            className="absolute w-full h-auto object-cover scale-125"
-            style={{ zIndex: 1 }}
+            className="absolute w-full h-auto object-cover"
+            style={{ 
+              zIndex: 1,
+              transform: breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.8)' : 'scale(1.25)'
+            }}
           />
 
           {/* Sposi - posizione diversa per breakpoint */}
@@ -202,30 +205,38 @@ export default function HeroHome() {
 
         {/* Titolo - dimensioni e posizione diverse */}
         <div
-          className={`absolute z-5 ${breakpoint === 'mobile' ? 'inset-x-0' : 'inset-0 flex items-start justify-center'}`}
+          className={`absolute z-1 ${breakpoint === 'mobile' ? 'inset-x-0' : 'inset-0 flex items-start justify-center'}`}
           style={{
-            paddingTop: breakpoint === 'mobile' ? '150px' : breakpoint === 'tablet' ? '150px' : '200px',
+            paddingTop: breakpoint === 'mobile' ? '150px' : breakpoint === 'tablet' ? '150px' : '140px',
           }}
         >
           <h1
             className="font-bold text-white leading-none text-center tracking-wider"
             style={{
               fontFamily: 'Lavener',
-              fontSize: breakpoint === 'mobile' ? '60px' : breakpoint === 'tablet' ? '72px' : '96px', // Mobile: ancora più grande
-              lineHeight: breakpoint === 'mobile' ? '0.9' : 'normal', // Mobile: più compatto
-              width: breakpoint === 'mobile' ? '100%' : 'auto', // Mobile: full width reale
+              fontSize: breakpoint === 'mobile' ? '60px' : breakpoint === 'tablet' ? '72px' : '10.5vw',
+              lineHeight: breakpoint === 'mobile' ? '0.9' : 'normal',
+              width: breakpoint === 'desktop' ? '100vw' : breakpoint === 'mobile' ? '100%' : 'auto',
+              whiteSpace: breakpoint === 'desktop' ? 'nowrap' : 'normal',
+              position: breakpoint === 'desktop' ? 'absolute' : 'relative',
+              left: breakpoint === 'desktop' ? '50%' : 'auto',
+              transform: breakpoint === 'desktop' ? 'translateX(-50%)' : 'none',
             }}
           >
-            LORENZO
-            <br />
-            SAINI'S ART
+            {breakpoint === 'desktop' ? 'LORENZO SAINI\'S ART' : (
+              <>
+                LORENZO
+                <br />
+                SAINI'S ART
+              </>
+            )}
           </h1>
         </div>
 
         {/* Overlay gradient at bottom with progressive blur */}
         <div
           className="absolute bottom-0 left-0 right-0 pointer-events-none z-20"
-          style={{ height: '384px' }}
+          style={{ height: breakpoint === 'desktop' ? '500px' : '384px' }}
         >
           {/* Base gradient - bianco molto più intenso all'inizio */}
           <div
@@ -241,9 +252,11 @@ export default function HeroHome() {
           <div
             className="absolute bottom-0 left-0 right-0"
             style={{
-              height: '60px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 60%, transparent 100%)',
-              backdropFilter: 'blur(20px)',
+              height: breakpoint === 'desktop' ? '80px' : '60px',
+              background: breakpoint === 'desktop' 
+                ? 'linear-gradient(to top, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.35) 60%, transparent 100%)'
+                : 'linear-gradient(to top, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 60%, transparent 100%)',
+              backdropFilter: breakpoint === 'desktop' ? 'blur(30px)' : 'blur(20px)',
             }}
           />
 
@@ -251,9 +264,11 @@ export default function HeroHome() {
           <div
             className="absolute bottom-0 left-0 right-0"
             style={{
-              height: '100px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 80%, transparent 100%)',
-              backdropFilter: 'blur(16px)',
+              height: breakpoint === 'desktop' ? '130px' : '100px',
+              background: breakpoint === 'desktop'
+                ? 'linear-gradient(to top, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.08) 80%, transparent 100%)'
+                : 'linear-gradient(to top, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 80%, transparent 100%)',
+              backdropFilter: breakpoint === 'desktop' ? 'blur(24px)' : 'blur(16px)',
             }}
           />
 
@@ -321,9 +336,11 @@ export default function HeroHome() {
           <div
             className="absolute bottom-0 left-0 right-0"
             style={{
-              height: '384px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.006) 10%, rgba(255,255,255,0.003) 40%, rgba(255,255,255,0.0015) 60%, rgba(255,255,255,0.0006) 75%, rgba(255,255,255,0.0002) 88%, rgba(255,255,255,0.0001) 96%, transparent 100%)',
-              backdropFilter: 'blur(0.8px)',
+              height: breakpoint === 'desktop' ? '500px' : '384px',
+              background: breakpoint === 'desktop'
+                ? 'linear-gradient(to top, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.015) 10%, rgba(255,255,255,0.008) 40%, rgba(255,255,255,0.004) 60%, rgba(255,255,255,0.0015) 75%, rgba(255,255,255,0.0005) 88%, rgba(255,255,255,0.0002) 96%, transparent 100%)'
+                : 'linear-gradient(to top, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.006) 10%, rgba(255,255,255,0.003) 40%, rgba(255,255,255,0.0015) 60%, rgba(255,255,255,0.0006) 75%, rgba(255,255,255,0.0002) 88%, rgba(255,255,255,0.0001) 96%, transparent 100%)',
+              backdropFilter: breakpoint === 'desktop' ? 'blur(1.5px)' : 'blur(0.8px)',
             }}
           />
         </div>
