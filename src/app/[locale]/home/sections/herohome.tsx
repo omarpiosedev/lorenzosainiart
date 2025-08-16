@@ -118,19 +118,28 @@ export default function HeroHome() {
           />
         </div>
 
-        {/* Sposi - posizione diversa per breakpoint */}
-        <div className="absolute inset-0 flex items-center justify-center z-10 overflow-hidden">
+        {/* Sposi - posizione diversa per breakpoint con clipping preciso */}
+        <div 
+          className="absolute inset-0 flex items-center justify-center z-10"
+          style={{
+            overflow: 'hidden',
+            clipPath: 'inset(0)',
+          }}
+        >
           <img
             src="/assets/images/sposi.png"
             alt="Couple"
             style={{
-              width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '600px', // Mobile: full width
+              width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '600px',
               height: 'auto',
               transform: breakpoint === 'mobile'
-                ? 'translate(15px, 20px)' // Mobile: poco a destra, più in alto
+                ? 'translate(15px, 20px)'
                 : breakpoint === 'tablet'
                   ? 'translate(10px, 30px)'
                   : 'translate(20px, 40px)',
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain',
             }}
           />
         </div>
