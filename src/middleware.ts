@@ -15,7 +15,7 @@ export default function middleware(request: NextRequest) {
 
   // Handle locale root redirects (e.g., /it -> /it/home, /en -> /en/home)
   const localeMatch = pathname.match(/^\/([^/]+)$/);
-  if (localeMatch && routing.locales.includes(localeMatch[1])) {
+  if (localeMatch && localeMatch[1] && routing.locales.includes(localeMatch[1])) {
     return NextResponse.redirect(new URL(`${pathname}/home`, request.url));
   }
 
