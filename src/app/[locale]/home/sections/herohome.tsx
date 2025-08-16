@@ -101,14 +101,14 @@ export default function HeroHome() {
   const { width: baseWidth, height: baseHeight } = getBaseDimensions();
 
   return (
-    <section 
-      className="w-screen h-screen overflow-hidden relative" 
-      style={{ 
+    <section
+      className="w-screen h-screen overflow-hidden relative"
+      style={{
         margin: 0,
         padding: 0,
         left: 0,
         right: 0,
-        position: 'relative'
+        position: 'relative',
       }}
     >
       {/* Signature e Button - fuori dal contenitore scalato ma con posizionamento fisso */}
