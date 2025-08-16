@@ -30,6 +30,12 @@
   --space-8: 32px;
   --space-12: 48px;
   --space-16: 64px;
+
+  /* iOS Safe Areas */
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-right: env(safe-area-inset-right);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  --safe-area-inset-left: env(safe-area-inset-left);
 }
 
 /* Typography Utilities */
@@ -78,4 +84,59 @@
   margin-left: -50vw;
   margin-right: -50vw;
   width: 100vw;
+}
+
+/* iOS Safari Optimizations */
+@supports (-webkit-touch-callout: none) {
+  /* Targeting iOS Safari specifically */
+
+  /* Fix per la barra degli indirizzi dinamica */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
+  /* Supporto per safe areas */
+  .safe-top {
+    padding-top: var(--safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: var(--safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: var(--safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: var(--safe-area-inset-right);
+  }
+
+  /* Miglioramenti font rendering iOS */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Fix per input zoom su iOS */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* Prevent horizontal scroll bounce */
+  body {
+    overscroll-behavior-x: none;
+  }
+}
+
+/* WebKit specific improvements */
+@media screen and (-webkit-min-device-pixel-ratio: 2) {
+  /* Retina display optimizations */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+  }
 }
