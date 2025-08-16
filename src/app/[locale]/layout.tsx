@@ -97,7 +97,7 @@ export default async function RootLayout(props: {
 
   return (
     <html lang={locale}>
-      <body>
+      <body style={{ margin: 0, padding: 0, left: 0, right: 0, position: 'relative' }}>
         <NextIntlClientProvider>
           {props.children}
           <NavBar
