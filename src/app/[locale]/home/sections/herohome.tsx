@@ -162,65 +162,105 @@ export default function HeroHome() {
           className="absolute bottom-0 left-0 right-0 pointer-events-none z-20"
           style={{ height: '384px' }}
         >
-          {/* Base gradient */}
+          {/* Base gradient - bianco molto più intenso all'inizio */}
           <div
             className="absolute inset-0"
             style={{
-              background: 'linear-gradient(to top, white 0%, white 18%, rgba(255,255,255,0.98) 25%, rgba(255,255,255,0.92) 32%, rgba(255,255,255,0.85) 40%, rgba(255,255,255,0.7) 48%, rgba(255,255,255,0.5) 58%, rgba(255,255,255,0.35) 68%, rgba(255,255,255,0.2) 78%, rgba(255,255,255,0.1) 88%, rgba(255,255,255,0.05) 95%, transparent 100%)',
+              background: 'linear-gradient(to top, white 0%, white 35%, rgba(255,255,255,0.995) 40%, rgba(255,255,255,0.98) 45%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0.88) 55%, rgba(255,255,255,0.75) 62%, rgba(255,255,255,0.58) 70%, rgba(255,255,255,0.38) 78%, rgba(255,255,255,0.22) 86%, rgba(255,255,255,0.1) 92%, rgba(255,255,255,0.04) 96%, transparent 100%)',
             }}
           >
           </div>
 
-          {/* Progressive blur layers */}
+          {/* Progressive blur layers - più graduali per effetto smooth */}
+          {/* Layer 1 - blur più intenso alla base */}
           <div
             className="absolute bottom-0 left-0 right-0"
             style={{
-              height: '80px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.3) 50%, transparent 100%)',
-              backdropFilter: 'blur(24px)',
+              height: '60px',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 60%, transparent 100%)',
+              backdropFilter: 'blur(20px)',
             }}
-          >
-          </div>
+          />
 
+          {/* Layer 2 */}
           <div
             className="absolute bottom-0 left-0 right-0"
             style={{
-              height: '160px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.2) 40%, rgba(255,255,255,0.1) 70%, transparent 100%)',
-              backdropFilter: 'blur(18px)',
+              height: '100px',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 80%, transparent 100%)',
+              backdropFilter: 'blur(16px)',
             }}
-          >
-          </div>
+          />
 
+          {/* Layer 3 */}
           <div
             className="absolute bottom-0 left-0 right-0"
             style={{
-              height: '288px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.15) 25%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.05) 65%, rgba(255,255,255,0.02) 80%, rgba(255,255,255,0.005) 92%, transparent 100%)',
-              backdropFilter: 'blur(8px)',
+              height: '140px',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.12) 40%, rgba(255,255,255,0.06) 70%, rgba(255,255,255,0.02) 90%, transparent 100%)',
+              backdropFilter: 'blur(12px)',
             }}
-          >
-          </div>
+          />
 
+          {/* Layer 4 */}
           <div
             className="absolute bottom-0 left-0 right-0"
             style={{
-              height: '320px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.07) 20%, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.02) 60%, rgba(255,255,255,0.01) 75%, rgba(255,255,255,0.003) 88%, rgba(255,255,255,0.001) 96%, transparent 100%)',
+              height: '180px',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.04) 65%, rgba(255,255,255,0.015) 85%, rgba(255,255,255,0.005) 95%, transparent 100%)',
+              backdropFilter: 'blur(9px)',
+            }}
+          />
+
+          {/* Layer 5 */}
+          <div
+            className="absolute bottom-0 left-0 right-0"
+            style={{
+              height: '220px',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.055) 30%, rgba(255,255,255,0.03) 60%, rgba(255,255,255,0.012) 80%, rgba(255,255,255,0.004) 92%, transparent 100%)',
+              backdropFilter: 'blur(6px)',
+            }}
+          />
+
+          {/* Layer 6 */}
+          <div
+            className="absolute bottom-0 left-0 right-0"
+            style={{
+              height: '260px',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.035) 25%, rgba(255,255,255,0.02) 55%, rgba(255,255,255,0.008) 75%, rgba(255,255,255,0.003) 88%, rgba(255,255,255,0.001) 96%, transparent 100%)',
               backdropFilter: 'blur(4px)',
             }}
-          >
-          </div>
+          />
 
+          {/* Layer 7 */}
+          <div
+            className="absolute bottom-0 left-0 right-0"
+            style={{
+              height: '300px',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.02) 20%, rgba(255,255,255,0.012) 50%, rgba(255,255,255,0.005) 70%, rgba(255,255,255,0.002) 85%, rgba(255,255,255,0.0008) 94%, transparent 100%)',
+              backdropFilter: 'blur(2.5px)',
+            }}
+          />
+
+          {/* Layer 8 */}
+          <div
+            className="absolute bottom-0 left-0 right-0"
+            style={{
+              height: '340px',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.012) 15%, rgba(255,255,255,0.007) 45%, rgba(255,255,255,0.003) 65%, rgba(255,255,255,0.001) 80%, rgba(255,255,255,0.0004) 92%, transparent 100%)',
+              backdropFilter: 'blur(1.5px)',
+            }}
+          />
+
+          {/* Layer 9 - finale molto sottile */}
           <div
             className="absolute bottom-0 left-0 right-0"
             style={{
               height: '384px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.018) 40%, rgba(255,255,255,0.01) 55%, rgba(255,255,255,0.005) 70%, rgba(255,255,255,0.002) 82%, rgba(255,255,255,0.0008) 90%, rgba(255,255,255,0.0003) 96%, transparent 100%)',
-              backdropFilter: 'blur(2px)',
+              background: 'linear-gradient(to top, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.006) 10%, rgba(255,255,255,0.003) 40%, rgba(255,255,255,0.0015) 60%, rgba(255,255,255,0.0006) 75%, rgba(255,255,255,0.0002) 88%, rgba(255,255,255,0.0001) 96%, transparent 100%)',
+              backdropFilter: 'blur(0.8px)',
             }}
-          >
-          </div>
+          />
         </div>
       </div>
     </section>
