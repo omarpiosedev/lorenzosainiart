@@ -8,8 +8,10 @@ export default function HeroHome() {
 
   useEffect(() => {
     const updateScale = () => {
-      const currentWidth = window.innerWidth;
-      const currentHeight = window.innerHeight;
+      // Usa visualViewport per ignorare lo zoom manuale, fallback a innerWidth/Height
+      const viewport = window.visualViewport;
+      const currentWidth = viewport ? viewport.width : window.innerWidth;
+      const currentHeight = viewport ? viewport.height : window.innerHeight;
 
       // Design diversi per breakpoint
       let baseWidth, baseHeight, currentBreakpoint;
@@ -40,8 +42,19 @@ export default function HeroHome() {
     };
 
     updateScale();
+
+    // Ascolta i resize del window e del visualViewport
     window.addEventListener('resize', updateScale);
-    return () => window.removeEventListener('resize', updateScale);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateScale);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateScale);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateScale);
+      }
+    };
   }, []);
 
   // Ottieni dimensioni base del breakpoint corrente
