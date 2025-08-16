@@ -13,7 +13,16 @@ export default async function HomePage({ params }: HomePageProps) {
   setRequestLocale(locale);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen" style={{ 
+      margin: 0, 
+      padding: 0, 
+      paddingLeft: 0,
+      paddingRight: 0,
+      width: '100vw', 
+      position: 'relative',
+      left: 0,
+      right: 0
+    }}>
       <HeroHome />
       <Sez2 />
     </main>
