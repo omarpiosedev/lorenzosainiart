@@ -41,7 +41,7 @@ export default function Sez2() {
                           lg:w-[19.17vw] lg:h-[34.07vh] lg:top-[10.83vh] lg:left-[17.29vw]"
             >
               <Image
-                src="/assets/image1.webp"
+                src="/assets/images/image1.webp"
                 alt="Lorenzo Saini Photography"
                 fill
                 sizes="(max-width: 768px) 45vw, 19.17vw"
@@ -60,7 +60,7 @@ export default function Sez2() {
                           lg:w-[10.31vw] lg:h-[27.5vh] lg:top-[17.41vh] lg:right-[23.23vw]"
             >
               <Image
-                src="/assets/image2.webp"
+                src="/assets/images/image2.webp"
                 alt="Lorenzo Saini Photography"
                 fill
                 sizes="(max-width: 768px) 43.75vw, 10.31vw"
@@ -79,7 +79,7 @@ export default function Sez2() {
                           lg:w-[30vw] lg:h-[35.56vh] lg:left-[29.58vw] lg:top-[673px]"
             >
               <Image
-                src="/assets/image3.webp"
+                src="/assets/images/image3.webp"
                 alt="Lorenzo Saini Photography"
                 fill
                 sizes="(max-width: 768px) 93.75vw, 30vw"
