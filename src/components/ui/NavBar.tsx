@@ -186,47 +186,6 @@ const NavBar = ({
   // Riferimento al pathname precedente per rilevare i cambi di pagina
   const prevPathnameRef = useRef(pathname);
 
-  // Chiudi il menu mobile quando cambia la pagina
-  useEffect(() => {
-    if (prevPathnameRef.current !== pathname && isMobileMenuOpen) {
-      // Aggiorna il riferimento
-      prevPathnameRef.current = pathname;
-
-      // Chiudi il menu con animazione
-      setIsMobileMenuOpen(false);
-      // Anima l'hamburger per tornare allo stato chiuso
-      const hamburger = hamburgerRef.current;
-      if (hamburger) {
-        const lines = hamburger.querySelectorAll('.hamburger-line');
-        const firstLine = lines[0];
-        const secondLine = lines[1];
-
-        if (firstLine && secondLine) {
-          gsap.to(firstLine, { rotation: 0, y: 0, duration: 0.3, ease });
-          gsap.to(secondLine, { rotation: 0, y: 0, duration: 0.3, ease });
-        }
-      }
-
-      // Anima la chiusura del menu
-      const menu = mobileMenuRef.current;
-      if (menu) {
-        gsap.to(menu, {
-          opacity: 0,
-          y: 10,
-          scaleY: 1,
-          duration: 0.3,
-          ease,
-          onComplete: () => {
-            gsap.set(menu, { visibility: 'hidden' });
-          },
-        });
-      }
-    } else {
-      // Aggiorna il riferimento se non c'è cambio ma il pathname è diverso
-      prevPathnameRef.current = pathname;
-    }
-  }, [pathname, isMobileMenuOpen, ease]);
-
   const handleEnter = (i: number) => {
     const tl = tlRefs.current[i];
     if (!tl) {
@@ -323,6 +282,20 @@ const NavBar = ({
 
     onMobileMenuClick?.();
   };
+
+  // Chiudi il menu mobile quando cambia la pagina
+  useEffect(() => {
+    if (prevPathnameRef.current !== pathname && isMobileMenuOpen) {
+      // Aggiorna il riferimento
+      prevPathnameRef.current = pathname;
+
+      // Usa la funzione toggleMobileMenu esistente per chiudere correttamente
+      toggleMobileMenu();
+    } else {
+      // Aggiorna il riferimento se non c'è cambio ma il pathname è diverso
+      prevPathnameRef.current = pathname;
+    }
+  }, [pathname, isMobileMenuOpen]);
 
   const isExternalLink = (href: string) =>
     href.startsWith('http://')
