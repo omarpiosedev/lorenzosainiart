@@ -52,6 +52,14 @@ section.w-screen {
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Will';
+  src: url('/assets/fonts/WILLG___.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* CSS Variables */
 :root {
   /* Typography Scale */
