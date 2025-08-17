@@ -159,6 +159,7 @@ export default function HeroHome() {
         </button>
       </div>
 
+      {/* Container solo per background */}
       <div
         className="absolute bg-cover bg-center bg-no-repeat"
         style={{
@@ -172,11 +173,30 @@ export default function HeroHome() {
           marginLeft: `-${baseWidth / 2}px`,
           marginTop: `-${baseHeight / 2}px`,
           overflow: 'visible',
+          zIndex: 1,
         }}
       >
-        {/* Contenitore unico per nuvola e sposi */}
+      </div>
+
+      {/* Container separato per sposi e nuvola - scala insieme */}
+      <div
+        className="absolute"
+        style={{
+          width: `${baseWidth}px`,
+          height: `${baseHeight}px`,
+          transform: `scale(${scale * 1.02})`,
+          transformOrigin: 'center center',
+          left: '50%',
+          top: '50%',
+          marginLeft: `-${baseWidth / 2}px`,
+          marginTop: `-${baseHeight / 2}px`,
+          overflow: 'visible',
+          zIndex: 5,
+        }}
+      >
+        {/* Contenitore per nuvola e sposi */}
         <div
-          className="absolute inset-0 flex items-center justify-center z-10"
+          className="absolute inset-0 flex items-center justify-center"
           style={{
             overflow: 'hidden',
             clipPath: 'inset(0)',
@@ -189,7 +209,7 @@ export default function HeroHome() {
             className="absolute w-full h-auto object-cover"
             style={{
               zIndex: 1,
-              transform: breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.8)' : 'scale(1.25)',
+              transform: breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)',
             }}
           />
 
@@ -198,62 +218,54 @@ export default function HeroHome() {
             src="/assets/images/sposi.png"
             alt="Couple"
             style={{
-              width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '600px',
+              width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '650px',
               height: 'auto',
               transform: breakpoint === 'mobile'
                 ? 'translate(15px, 20px)'
                 : breakpoint === 'tablet'
                   ? 'translate(10px, 30px)'
-                  : 'translate(20px, 40px)',
+                  : 'translate(20px, 60px)',
               maxWidth: '100%',
               maxHeight: '100%',
               objectFit: 'contain',
-              zIndex: 2,
+              zIndex: 10,
               position: 'relative',
             }}
           />
         </div>
+      </div>
 
-        {/* Titolo desktop - scalato ma posizione fissa */}
-        {breakpoint === 'desktop' && (
+      {/* Container separato per titolo mobile */}
+      <div
+        className="absolute"
+        style={{
+          width: `${baseWidth}px`,
+          height: `${baseHeight}px`,
+          transform: `scale(${scale * 1.02})`,
+          transformOrigin: 'center center',
+          left: '50%',
+          top: '50%',
+          marginLeft: `-${baseWidth / 2}px`,
+          marginTop: `-${baseHeight / 2}px`,
+          overflow: 'visible',
+          zIndex: 3,
+        }}
+      >
+        {/* Titolo mobile - dentro il contenitore scalato */}
+        {breakpoint === 'mobile' && (
           <div
-            className="absolute"
+            className="absolute inset-x-0"
             style={{
-              top: 'clamp(70px, 14vh, 160px)',
-              left: '20px',
-              right: '20px',
-              textAlign: 'center',
-              zIndex: 1.5,
-            }}
-          >
-            <h1
-              className="font-bold text-white leading-none tracking-wider"
-              style={{
-                fontFamily: 'Lavener',
-                fontSize: 'clamp(15px, 9.5vw, 180px)',
-                lineHeight: 'normal',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              LORENZO SAINI'S ART
-            </h1>
-          </div>
-        )}
-
-        {/* Titolo mobile e tablet - dentro il contenitore scalato */}
-        {breakpoint !== 'desktop' && (
-          <div
-            className="absolute z-1 inset-x-0"
-            style={{
-              paddingTop: breakpoint === 'mobile' ? '150px' : '150px',
+              paddingTop: '150px',
+              zIndex: 5,
             }}
           >
             <h1
               className="font-bold text-white leading-none text-center tracking-wider"
               style={{
                 fontFamily: 'Lavener',
-                fontSize: breakpoint === 'mobile' ? '60px' : '72px',
-                lineHeight: breakpoint === 'mobile' ? '0.9' : 'normal',
+                fontSize: '60px',
+                lineHeight: '0.9',
                 width: '100%',
               }}
             >
@@ -263,10 +275,27 @@ export default function HeroHome() {
             </h1>
           </div>
         )}
+      </div>
 
+      {/* Container per overlay gradient - scala insieme */}
+      <div
+        className="absolute"
+        style={{
+          width: `${baseWidth}px`,
+          height: `${baseHeight}px`,
+          transform: `scale(${scale * 1.02})`,
+          transformOrigin: 'center center',
+          left: '50%',
+          top: '50%',
+          marginLeft: `-${baseWidth / 2}px`,
+          marginTop: `-${baseHeight / 2}px`,
+          overflow: 'visible',
+          zIndex: 100,
+        }}
+      >
         {/* Overlay gradient at bottom with progressive blur */}
         <div
-          className="absolute bottom-0 pointer-events-none z-20"
+          className="absolute bottom-0 pointer-events-none"
           style={{
             height: breakpoint === 'desktop' ? '500px' : '384px',
             width: `${baseWidth}px`,
@@ -381,6 +410,43 @@ export default function HeroHome() {
           />
         </div>
       </div>
+
+      {/* Titolo desktop e tablet - fisso nella sezione hero */}
+      {(breakpoint === 'desktop' || breakpoint === 'tablet') && (
+        <div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          style={{
+            left: '3px',
+            right: '3px',
+            top: '0',
+            bottom: '0',
+            zIndex: 3,
+            transform: breakpoint === 'desktop'
+              ? 'translateY(-27vh)'
+              : breakpoint === 'tablet'
+                ? 'translateY(-25vh)'
+                : 'translateY(-15vh)',
+          }}
+        >
+          <h1
+            className="font-bold text-white leading-none tracking-wider text-center"
+            style={{
+              fontFamily: 'Lavener',
+              fontSize: breakpoint === 'desktop'
+                ? 'min(calc((100vw - 32px) / 10), calc(100vh * 0.45))'
+                : 'min(calc((100vw - 6px) / (19 * 0.52)), calc(100vh * 0.15))',
+              whiteSpace: 'nowrap',
+              lineHeight: 1,
+              overflow: 'hidden',
+              maxWidth: '100vw',
+              padding: '0 16px',
+              boxSizing: 'border-box',
+            }}
+          >
+            LORENZO SAINI'S ART
+          </h1>
+        </div>
+      )}
     </section>
   );
 }
