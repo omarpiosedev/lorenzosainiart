@@ -363,7 +363,7 @@ export default function HeroHome() {
           {/* Sposi - posizione diversa per breakpoint */}
           <img
             ref={sposiRef}
-            src="/assets/images/sposi.png"
+            src="/assets/images/sposi.webp"
             alt="Couple"
             style={{
               width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '650px',
