@@ -189,6 +189,13 @@ section.w-screen {
   }
 }
 
+/* Fallback per viewport dinamiche moderne */
+@supports (height: 100dvh) {
+  .sticky[style*='100svh'] {
+    height: 100dvh !important;
+  }
+}
+
 /* WebKit specific improvements */
 @media screen and (-webkit-min-device-pixel-ratio: 2) {
   /* Retina display optimizations */
