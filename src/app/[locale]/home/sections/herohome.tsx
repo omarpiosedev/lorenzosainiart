@@ -1,6 +1,7 @@
 'use client';
 
 import { gsap } from 'gsap';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 
 export default function HeroHome() {
@@ -348,10 +349,13 @@ export default function HeroHome() {
           }}
         >
           {/* Cloud layer */}
-          <img
+          <Image
             ref={cloudRef}
             src="/assets/images/cloud-layer.png"
             alt="Clouds"
+            width={1920}
+            height={1080}
+            priority
             className="absolute w-full h-auto object-cover"
             style={{
               zIndex: 1,
@@ -361,10 +365,13 @@ export default function HeroHome() {
           />
 
           {/* Sposi - posizione diversa per breakpoint */}
-          <img
+          <Image
             ref={sposiRef}
             src="/assets/images/sposi.webp"
             alt="Couple"
+            width={650}
+            height={800}
+            priority
             style={{
               width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '650px',
               height: 'auto',

@@ -10,6 +10,20 @@ const baseConfig: NextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
+  // Performance optimizations - SWC minification is enabled by default in Next.js 15
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Image optimization for better performance
+  images: {
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+  // Optimize bundle splitting for better performance
+  experimental: {
+    optimizePackageImports: ['gsap'],
+  },
 };
 
 // Initialize the Next-Intl plugin

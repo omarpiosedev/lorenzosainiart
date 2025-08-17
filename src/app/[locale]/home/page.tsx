@@ -1,6 +1,11 @@
 import { setRequestLocale } from 'next-intl/server';
+import dynamic from 'next/dynamic';
 import HeroHome from './sections/herohome';
-import Sez2 from './sections/sez2';
+
+// Lazy load Sez2 since it's below the fold
+const Sez2 = dynamic(() => import('./sections/sez2'), {
+  loading: () => <div style={{ height: '100vh' }} />, // Preserve layout
+});
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;

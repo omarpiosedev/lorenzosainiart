@@ -1,11 +1,16 @@
 import type { Metadata, Viewport } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
+import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
-import NavBar from '@/components/ui/NavBar';
 import { routing } from '@/libs/I18nRouting';
 import { getBaseUrl } from '@/utils/AppConfig';
 import '@/styles/global.css';
+
+// Lazy load NavBar since it's not critical for first paint
+const NavBar = dynamic(() => import('@/components/ui/NavBar'), {
+  loading: () => null, // No loading spinner for smoother experience
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
@@ -66,8 +71,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover', // Per iPhone con notch
 };
 
@@ -98,8 +101,12 @@ export default async function RootLayout(props: {
   return (
     <html lang={locale}>
       <head>
+        {/* Critical images preload */}
         <link rel="preload" as="image" href="/assets/images/sposi.webp" />
         <link rel="preload" as="image" href="/assets/images/cloud-layer.png" />
+        <link rel="preload" as="image" href="/assets/images/new-background.jpg" />
+        {/* Font preload for performance */}
+        <link rel="preload" as="font" href="/assets/fonts/LAVENER.ttf" type="font/ttf" crossOrigin="anonymous" />
       </head>
       <body style={{ margin: 0, padding: 0, left: 0, right: 0, position: 'relative' }}>
         <NextIntlClientProvider>
