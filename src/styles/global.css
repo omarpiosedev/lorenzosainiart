@@ -60,6 +60,14 @@ section.w-screen {
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Effloresce It';
+  src: url('/assets/fonts/Effloresce It.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* CSS Variables */
 :root {
   /* Typography Scale */
