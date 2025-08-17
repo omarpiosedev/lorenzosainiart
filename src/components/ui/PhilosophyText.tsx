@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 
 export default function PhilosophyText() {
   const [isFixed, setIsFixed] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -14,12 +13,6 @@ export default function PhilosophyText() {
         if (section) {
           const rect = section.getBoundingClientRect();
           const shouldBeFixed = rect.top <= 0 && rect.bottom > window.innerHeight;
-
-          if (shouldBeFixed !== isFixed) {
-            setIsTransitioning(true);
-            setTimeout(() => setIsTransitioning(false), 300); // Durata della transizione
-          }
-
           setIsFixed(shouldBeFixed);
         }
       }
@@ -29,7 +22,7 @@ export default function PhilosophyText() {
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isFixed]);
+  }, []);
 
   return (
     <div
@@ -45,7 +38,6 @@ export default function PhilosophyText() {
         backfaceVisibility: 'hidden',
         WebkitBackfaceVisibility: 'hidden',
         willChange: 'transform',
-        transition: isTransitioning ? 'all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1)' : 'none',
       }}
     >
       {/* Philosophy badge */}
