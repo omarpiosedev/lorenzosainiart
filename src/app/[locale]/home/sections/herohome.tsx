@@ -1,11 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { gsap } from 'gsap';
+import { useEffect, useRef, useState } from 'react';
 
 export default function HeroHome() {
   const [scale, setScale] = useState(1);
   const [breakpoint, setBreakpoint] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [initialViewport, setInitialViewport] = useState<{ width: number; height: number } | null>(null);
+  const [isReady, setIsReady] = useState(false);
+
+  // Refs per le animazioni
+  const sposiRef = useRef<HTMLImageElement>(null);
+  const cloudRef = useRef<HTMLImageElement>(null);
+  const titleDesktopRef = useRef<HTMLHeadingElement>(null);
+  const titleMobileRef = useRef<HTMLHeadingElement>(null);
+  const signatureRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const updateScale = () => {
@@ -58,6 +68,11 @@ export default function HeroHome() {
 
       setScale(newScale);
       setBreakpoint(currentBreakpoint as 'mobile' | 'tablet' | 'desktop');
+
+      // Marca come pronto solo dopo il primo calcolo
+      if (!isReady) {
+        setIsReady(true);
+      }
     };
 
     // Handler per reset del viewport di riferimento (rotazione device, etc.)
@@ -86,6 +101,105 @@ export default function HeroHome() {
     };
   }, [initialViewport]);
 
+  // Animazioni quando la pagina è pronta
+  useEffect(() => {
+    if (isReady && sposiRef.current && cloudRef.current && (titleDesktopRef.current || titleMobileRef.current) && signatureRef.current && contactRef.current) {
+      // === NUVOLA ===
+      // Trasformazione originale della nuvola per breakpoint
+      const cloudOriginalTransform = breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)';
+
+      // Posizione iniziale nuvola (dall'alto)
+      const cloudStartTransform = breakpoint === 'desktop'
+        ? 'scale(0.5) translateY(-200px)'
+        : breakpoint === 'tablet'
+          ? 'scale(0.6) translateY(-200px)'
+          : 'scale(1.25) translateY(-200px)';
+
+      gsap.set(cloudRef.current, {
+        transform: cloudStartTransform,
+        filter: 'blur(8px)', // Blur iniziale
+      });
+
+      // === SPOSI ===
+      // Trasformazione originale degli sposi per breakpoint
+      const sposiOriginalTransform = breakpoint === 'mobile'
+        ? 'translate(15px, 20px)'
+        : breakpoint === 'tablet'
+          ? 'translate(10px, 30px)'
+          : 'translate(20px, 60px)';
+
+      // Posizione iniziale sposi (dal basso)
+      const sposiStartTransform = breakpoint === 'mobile'
+        ? 'translate(15px, 220px)' // 20px + 200px
+        : breakpoint === 'tablet'
+          ? 'translate(10px, 230px)' // 30px + 200px
+          : 'translate(20px, 260px)'; // 60px + 200px
+
+      gsap.set(sposiRef.current, {
+        transform: sposiStartTransform,
+        filter: 'blur(8px)', // Blur iniziale
+      });
+
+      // === SIGNATURE E CONTACT ===
+      // Impostano stati iniziali per signature e contact
+      gsap.set([signatureRef.current, contactRef.current], {
+        opacity: 0,
+        scale: 0.8,
+        filter: 'blur(6px)',
+      });
+
+      // === TITOLO ===
+      // Imposta stato iniziale del titolo
+      const activeTitle = titleDesktopRef.current || titleMobileRef.current;
+      if (activeTitle) {
+        gsap.set(activeTitle, {
+          opacity: 0,
+          scale: 0.6,
+          filter: 'blur(10px)',
+          y: 50, // Parte leggermente dal basso
+        });
+      }
+
+      // === TIMELINE CINEMATOGRAFICA ===
+      const tl = gsap.timeline({ delay: 0.2 });
+
+      // Nuvola, sposi, signature e contact appaiono insieme
+      tl.set([cloudRef.current, sposiRef.current, signatureRef.current, contactRef.current], {
+        opacity: 1, // Appaiono istantaneamente insieme
+      })
+        .to(cloudRef.current, {
+          transform: cloudOriginalTransform,
+          filter: 'blur(0px)', // Blur si dissolve
+          duration: 2.0,
+          ease: 'power4.out',
+        }, '+=0')
+        .to(sposiRef.current, {
+          transform: sposiOriginalTransform,
+          filter: 'blur(0px)', // Blur si dissolve
+          duration: 2.0, // Stessa durata per sincronizzazione perfetta
+          ease: 'power4.out',
+        }, '<') // "<" significa che inizia esattamente insieme al precedente
+
+        // Signature e contact si animano insieme alle immagini
+        .to([signatureRef.current, contactRef.current], {
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 2.0,
+          ease: 'power4.out',
+        }, '<') // Iniziano insieme alle immagini
+
+        // === TITOLO - Appare dopo con effetto cinematografico ===
+        .to(activeTitle, {
+          opacity: 1,
+          scale: 1,
+          filter: 'blur(0px)',
+          y: 0,
+          duration: 1.8, // Durata più lunga per effetto drammatico
+          ease: 'power3.out',
+        }, '-=1.2'); // Inizia 1.2s prima che finiscano nuvola e sposi (più presto)
+    }
+  }, [isReady, breakpoint]);
+
   // Ottieni dimensioni base del breakpoint corrente
   const getBaseDimensions = () => {
     switch (breakpoint) {
@@ -109,20 +223,25 @@ export default function HeroHome() {
         marginLeft: '0 !important',
         marginRight: '0 !important',
         position: 'relative',
+        opacity: isReady ? 1 : 0,
+        transition: isReady ? 'opacity 0.3s ease-out' : 'none',
       }}
     >
       {/* Signature - fisso nella hero section */}
       <div
+        ref={signatureRef}
         className="absolute z-30"
         style={{
           top: '16px',
-          left: '16px',
+          left: '24px', // Spostata leggermente verso il centro
+          opacity: 0, // Nascosta inizialmente
         }}
       >
-        <p className="text-white leading-tight">
+        <p className="text-white" style={{ lineHeight: '0.9' }}>
           <span style={{
             fontSize: breakpoint === 'mobile' ? '13px' : breakpoint === 'tablet' ? '15px' : '16px',
-            opacity: 1,
+            opacity: 1, // Massima opacità
+            fontWeight: 'bold',
           }}
           >
             Lorenzo Saini
@@ -131,19 +250,47 @@ export default function HeroHome() {
           <span style={{
             fontSize: breakpoint === 'mobile' ? '11px' : breakpoint === 'tablet' ? '13px' : '14px',
             opacity: 0.6,
+            fontStyle: 'italic', // Font in diagonale (corsivo)
+            transform: 'skew(-8deg)', // Leggera inclinazione diagonale
+            display: 'inline-block',
+            marginTop: '4px', // Spazio extra sopra Photographer
           }}
           >
             Photographer
+          </span>
+          <br />
+          <span style={{
+            fontSize: breakpoint === 'mobile' ? '11px' : breakpoint === 'tablet' ? '13px' : '14px',
+            opacity: 0.6,
+            fontStyle: 'italic',
+            transform: 'skew(-8deg)',
+            display: 'inline-block',
+          }}
+          >
+            Videomaker
+          </span>
+          <br />
+          <span style={{
+            fontSize: breakpoint === 'mobile' ? '11px' : breakpoint === 'tablet' ? '13px' : '14px',
+            opacity: 0.6,
+            fontStyle: 'italic',
+            transform: 'skew(-8deg)',
+            display: 'inline-block',
+          }}
+          >
+            Designer
           </span>
         </p>
       </div>
 
       {/* Contact button - fisso nella hero section */}
       <div
+        ref={contactRef}
         className="absolute z-30"
         style={{
           top: '16px',
-          right: '16px',
+          right: '24px', // Spostato leggermente verso il centro
+          opacity: 0, // Nascosto inizialmente
         }}
       >
         <button
@@ -202,17 +349,20 @@ export default function HeroHome() {
         >
           {/* Cloud layer */}
           <img
+            ref={cloudRef}
             src="/assets/images/cloud-layer.png"
             alt="Clouds"
             className="absolute w-full h-auto object-cover"
             style={{
               zIndex: 1,
               transform: breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)',
+              opacity: 0, // Nascosta inizialmente
             }}
           />
 
           {/* Sposi - posizione diversa per breakpoint */}
           <img
+            ref={sposiRef}
             src="/assets/images/sposi.png"
             alt="Couple"
             style={{
@@ -228,6 +378,7 @@ export default function HeroHome() {
               objectFit: 'contain',
               zIndex: 10,
               position: 'relative',
+              opacity: 0, // Nascosti inizialmente
             }}
           />
         </div>
@@ -259,12 +410,14 @@ export default function HeroHome() {
             }}
           >
             <h1
+              ref={titleMobileRef}
               className="font-bold text-white leading-none text-center tracking-wider"
               style={{
                 fontFamily: 'Lavener',
                 fontSize: '60px',
                 lineHeight: '0.9',
                 width: '100%',
+                opacity: 0, // Nascosto inizialmente
               }}
             >
               LORENZO
@@ -427,6 +580,7 @@ export default function HeroHome() {
           }}
         >
           <h1
+            ref={titleDesktopRef}
             className="font-bold text-white leading-none tracking-wider text-center"
             style={{
               fontFamily: 'Lavener',
@@ -439,6 +593,7 @@ export default function HeroHome() {
               maxWidth: '100vw',
               padding: '0 16px',
               boxSizing: 'border-box',
+              opacity: 0, // Nascosto inizialmente
             }}
           >
             LORENZO SAINI'S ART
