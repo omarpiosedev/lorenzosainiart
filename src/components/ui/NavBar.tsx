@@ -183,9 +183,16 @@ const NavBar = ({
     return () => window.removeEventListener('resize', onResize);
   }, [items, ease, initialLoadAnimation]);
 
+  // Riferimento al pathname precedente per rilevare i cambi di pagina
+  const prevPathnameRef = useRef(pathname);
+
   // Chiudi il menu mobile quando cambia la pagina
   useEffect(() => {
-    if (isMobileMenuOpen) {
+    if (prevPathnameRef.current !== pathname && isMobileMenuOpen) {
+      // Aggiorna il riferimento
+      prevPathnameRef.current = pathname;
+
+      // Chiudi il menu con animazione
       setIsMobileMenuOpen(false);
       // Anima l'hamburger per tornare allo stato chiuso
       const hamburger = hamburgerRef.current;
@@ -214,6 +221,9 @@ const NavBar = ({
           },
         });
       }
+    } else {
+      // Aggiorna il riferimento se non c'è cambio ma il pathname è diverso
+      prevPathnameRef.current = pathname;
     }
   }, [pathname, isMobileMenuOpen, ease]);
 
