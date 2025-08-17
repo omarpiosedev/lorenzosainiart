@@ -111,14 +111,12 @@ export default function HeroHome() {
         position: 'relative',
       }}
     >
-      {/* Signature e Button - fuori dal contenitore scalato ma con posizionamento fisso */}
+      {/* Signature - fisso nella hero section */}
       <div
         className="absolute z-30"
         style={{
           top: '16px',
-          left: '0px',
-          position: 'fixed', // Fixed per essere immune al zoom
-          paddingLeft: '16px',
+          left: '16px',
         }}
       >
         <p className="text-white leading-tight">
@@ -140,12 +138,12 @@ export default function HeroHome() {
         </p>
       </div>
 
+      {/* Contact button - fisso nella hero section */}
       <div
         className="absolute z-30"
         style={{
           top: '16px',
           right: '16px',
-          position: 'fixed', // Fixed per essere immune al zoom
         }}
       >
         <button

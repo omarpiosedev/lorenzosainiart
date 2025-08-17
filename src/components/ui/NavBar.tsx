@@ -137,12 +137,11 @@ const NavBar = ({
       document.fonts.ready.then(layout).catch(() => {});
     }
 
-    const menu = mobileMenuRef.current;
-    if (menu) {
-      gsap.set(menu, { visibility: 'hidden', opacity: 0, scaleY: 1, y: 0 });
-    }
-
     if (initialLoadAnimation) {
+      const menu = mobileMenuRef.current;
+      if (menu) {
+        gsap.set(menu, { visibility: 'hidden', opacity: 0, scaleY: 1, y: 0 });
+      }
       const logo = logoRef.current;
       const navItems = navItemsRef.current;
 
@@ -479,6 +478,8 @@ const NavBar = ({
         style={{
           ...cssVars,
           background: 'var(--base, #f0f0f0)',
+          visibility: initialLoadAnimation ? 'visible' : (isMobileMenuOpen ? 'visible' : 'hidden'),
+          opacity: initialLoadAnimation ? 1 : (isMobileMenuOpen ? 1 : 0),
         }}
       >
         <ul className="list-none m-0 p-[3px] flex flex-col gap-[3px]">
