@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import GSAPScrollReveal from '@/components/ui/GSAPScrollReveal';
 
 export default function PhilosophyText() {
   const [isFixed, setIsFixed] = useState(false);
@@ -45,17 +46,17 @@ export default function PhilosophyText() {
         <span className="text-base font-medium">Philosophy</span>
       </div>
 
-      {/* Main text */}
+      {/* Main text with GSAP ScrollReveal animation */}
       <div className="max-w-4xl mx-auto text-center">
-        <p
+        <GSAPScrollReveal
           className="text-2xl md:text-3xl lg:text-4xl leading-tight text-black tracking-wide font-semibold"
-          style={{
-            fontFamily: 'Effloresce It, sans-serif',
-            WebkitFontSmoothing: 'antialiased',
-          }}
+          staggerDelay={0.08}
+          duration={1.5}
+          ease="power1.out"
+          scrubDuration={3}
         >
           Every frame is a canvas, and every moment holds infinite stories waiting to be told. I seek the beauty hidden in the ordinary, weaving creativity, design, and emotion into visuals that breathe life and meaning. My work is about touching hearts, sparking imagination, and turning fleeting instants into timeless art.
-        </p>
+        </GSAPScrollReveal>
       </div>
     </div>
   );

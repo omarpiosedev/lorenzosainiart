@@ -163,7 +163,7 @@ export default function Sez2() {
                           /* Hidden on mobile */
                           hidden
                           /* Desktop (1920x1080 base) - proportional to viewport */
-                          lg:block lg:w-[60.63vw] lg:h-[50vh] lg:left-[21.67vw] lg:bottom-[200px]"
+                          lg:block lg:w-[70vw] lg:h-[50vh] lg:left-[15vw] lg:bottom-[200px]"
             >
               <Image
                 src="/assets/images/1d996cf4-ca34-428c-bf3b-b5b9a30bfa82_rw_1920e651.webp"
