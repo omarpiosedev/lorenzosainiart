@@ -34,7 +34,11 @@ export default function Sez2() {
           {/* Three image layout - Responsive design */}
           <div className="w-full h-full relative">
             {/* First image - Square, responsive breakpoints */}
-            <div className="absolute rounded-3xl overflow-hidden shadow-2xl
+            <div className="absolute rounded-3xl overflow-hidden
+                          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4),_0_10px_20px_-5px_rgba(0,0,0,0.2)]
+                          hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.5),_0_15px_25px_-5px_rgba(0,0,0,0.3)]
+                          transition-shadow duration-300 ease-out
+                          transform hover:-translate-y-1
                           /* Mobile (400x785 base) - proportional to viewport */
                           w-[45vw] h-[22.93vh] top-[13.375vh] left-[3.25vw]
                           /* Desktop (1920x1080 base) - proportional to viewport */
@@ -53,7 +57,11 @@ export default function Sez2() {
             </div>
 
             {/* Second image - Vertical rectangle, responsive breakpoints */}
-            <div className="absolute rounded-3xl overflow-hidden shadow-2xl
+            <div className="absolute rounded-3xl overflow-hidden
+                          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4),_0_10px_20px_-5px_rgba(0,0,0,0.2)]
+                          hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.5),_0_15px_25px_-5px_rgba(0,0,0,0.3)]
+                          transition-shadow duration-300 ease-out
+                          transform hover:-translate-y-1
                           /* Mobile (400x785 base) - proportional to viewport */
                           w-[43.75vw] h-[33.375vh] top-[2.93vh] right-[3.25vw]
                           /* Desktop (1920x1080 base) - proportional to viewport */
@@ -72,7 +80,11 @@ export default function Sez2() {
             </div>
 
             {/* Third image - Horizontal rectangle, responsive breakpoints */}
-            <div className="absolute rounded-3xl overflow-hidden shadow-2xl
+            <div className="absolute rounded-3xl overflow-hidden
+                          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4),_0_10px_20px_-5px_rgba(0,0,0,0.2)]
+                          hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.5),_0_15px_25px_-5px_rgba(0,0,0,0.3)]
+                          transition-shadow duration-300 ease-out
+                          transform hover:-translate-y-1
                           /* Mobile (400x785 base) - proportional to viewport */
                           w-[93.75vw] h-[31.85vh] left-[3.25vw] top-[523px]
                           /* Desktop (1920x1080 base) - proportional to viewport */
@@ -102,7 +114,11 @@ export default function Sez2() {
           {/* Third screen layout with three images */}
           <div className="w-full h-full relative">
             {/* First image - Rectangle, bottom-left positioning */}
-            <div className="absolute rounded-3xl overflow-hidden shadow-2xl
+            <div className="absolute rounded-3xl overflow-hidden
+                          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4),_0_10px_20px_-5px_rgba(0,0,0,0.2)]
+                          hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.5),_0_15px_25px_-5px_rgba(0,0,0,0.3)]
+                          transition-shadow duration-300 ease-out
+                          transform hover:-translate-y-1
                           /* Mobile (400x785 base) - proportional to viewport */
                           w-[45vw] h-[16.18vh] left-[2.75vw] bottom-[109.9vh]
                           /* Desktop (1920x1080 base) - proportional to viewport */
@@ -121,7 +137,11 @@ export default function Sez2() {
             </div>
 
             {/* Second image - Rectangle, bottom-right positioning */}
-            <div className="absolute rounded-3xl overflow-hidden shadow-2xl
+            <div className="absolute rounded-3xl overflow-hidden
+                          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4),_0_10px_20px_-5px_rgba(0,0,0,0.2)]
+                          hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.5),_0_15px_25px_-5px_rgba(0,0,0,0.3)]
+                          transition-shadow duration-300 ease-out
+                          transform hover:-translate-y-1
                           /* Mobile (400x785 base) - proportional to viewport */
                           w-[45vw] h-[16.18vh] right-[2.75vw] bottom-[109.9vh]
                           /* Desktop (1920x1080 base) - proportional to viewport */
@@ -140,7 +160,11 @@ export default function Sez2() {
             </div>
 
             {/* Third image - Mobile version */}
-            <div className="absolute rounded-3xl overflow-hidden shadow-2xl
+            <div className="absolute rounded-3xl overflow-hidden
+                          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4),_0_10px_20px_-5px_rgba(0,0,0,0.2)]
+                          hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.5),_0_15px_25px_-5px_rgba(0,0,0,0.3)]
+                          transition-shadow duration-300 ease-out
+                          transform hover:-translate-y-1
                           /* Mobile (400x785 base) - proportional to viewport */
                           w-[94.5vw] h-[72.1vh] left-[2.75vw] bottom-[1.4vh]
                           /* Hidden on desktop */
@@ -159,7 +183,11 @@ export default function Sez2() {
             </div>
 
             {/* Third image - Desktop version */}
-            <div className="absolute rounded-3xl overflow-hidden shadow-2xl
+            <div className="absolute rounded-3xl overflow-hidden
+                          shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4),_0_10px_20px_-5px_rgba(0,0,0,0.2)]
+                          hover:shadow-[0_35px_60px_-12px_rgba(0,0,0,0.5),_0_15px_25px_-5px_rgba(0,0,0,0.3)]
+                          transition-shadow duration-300 ease-out
+                          transform hover:-translate-y-1
                           /* Hidden on mobile */
                           hidden
                           /* Desktop (1920x1080 base) - proportional to viewport */
