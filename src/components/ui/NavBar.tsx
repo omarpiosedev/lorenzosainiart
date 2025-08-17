@@ -142,23 +142,39 @@ const NavBar = ({
       if (menu) {
         gsap.set(menu, { visibility: 'hidden', opacity: 0, scaleY: 1, y: 0 });
       }
+
+      const hamburger = hamburgerRef.current;
+      if (hamburger) {
+        gsap.set(hamburger, { scale: 0, transformOrigin: 'center center' });
+        gsap.to(hamburger, {
+          scale: 1,
+          duration: 0.4,
+          delay: 0.2,
+          ease,
+        });
+      }
       const logo = logoRef.current;
       const navItems = navItemsRef.current;
 
       if (logo) {
-        gsap.set(logo, { scale: 0 });
+        gsap.set(logo, { scale: 0, transformOrigin: 'center center' });
         gsap.to(logo, {
           scale: 1,
-          duration: 0.6,
+          duration: 0.4,
           ease,
         });
       }
 
       if (navItems) {
-        gsap.set(navItems, { width: 0, overflow: 'hidden' });
+        gsap.set(navItems, {
+          scaleX: 0,
+          transformOrigin: 'left center',
+          overflow: 'hidden',
+        });
         gsap.to(navItems, {
-          width: 'auto',
+          scaleX: 1,
           duration: 0.6,
+          delay: 0.2,
           ease,
         });
       }
@@ -166,6 +182,11 @@ const NavBar = ({
 
     return () => window.removeEventListener('resize', onResize);
   }, [items, ease, initialLoadAnimation]);
+
+  // Chiudi il menu mobile quando cambia la pagina
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   const handleEnter = (i: number) => {
     const tl = tlRefs.current[i];
@@ -478,8 +499,8 @@ const NavBar = ({
         style={{
           ...cssVars,
           background: 'var(--base, #f0f0f0)',
-          visibility: initialLoadAnimation ? 'visible' : (isMobileMenuOpen ? 'visible' : 'hidden'),
-          opacity: initialLoadAnimation ? 1 : (isMobileMenuOpen ? 1 : 0),
+          visibility: isMobileMenuOpen ? 'visible' : 'hidden',
+          opacity: isMobileMenuOpen ? 1 : 0,
         }}
       >
         <ul className="list-none m-0 p-[3px] flex flex-col gap-[3px]">

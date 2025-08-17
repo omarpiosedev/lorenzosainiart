@@ -108,7 +108,7 @@ export default async function RootLayout(props: {
             pillColor="#fff"
             hoveredPillTextColor="#fff"
             pillTextColor="#060010"
-            initialLoadAnimation={false}
+            initialLoadAnimation={true}
           />
         </NextIntlClientProvider>
       </body>
