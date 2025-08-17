@@ -185,8 +185,37 @@ const NavBar = ({
 
   // Chiudi il menu mobile quando cambia la pagina
   useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [pathname]);
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+      // Anima l'hamburger per tornare allo stato chiuso
+      const hamburger = hamburgerRef.current;
+      if (hamburger) {
+        const lines = hamburger.querySelectorAll('.hamburger-line');
+        const firstLine = lines[0];
+        const secondLine = lines[1];
+
+        if (firstLine && secondLine) {
+          gsap.to(firstLine, { rotation: 0, y: 0, duration: 0.3, ease });
+          gsap.to(secondLine, { rotation: 0, y: 0, duration: 0.3, ease });
+        }
+      }
+
+      // Anima la chiusura del menu
+      const menu = mobileMenuRef.current;
+      if (menu) {
+        gsap.to(menu, {
+          opacity: 0,
+          y: 10,
+          scaleY: 1,
+          duration: 0.3,
+          ease,
+          onComplete: () => {
+            gsap.set(menu, { visibility: 'hidden' });
+          },
+        });
+      }
+    }
+  }, [pathname, isMobileMenuOpen, ease]);
 
   const handleEnter = (i: number) => {
     const tl = tlRefs.current[i];
