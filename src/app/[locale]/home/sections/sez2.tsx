@@ -47,8 +47,7 @@ export default function Sez2() {
                 fill
                 sizes="(max-width: 768px) 45vw, 19.17vw"
                 className="object-cover"
-                quality={85}
-                priority={false}
+                quality={75}
                 loading="lazy"
               />
             </div>
@@ -67,8 +66,7 @@ export default function Sez2() {
                 fill
                 sizes="(max-width: 768px) 43.75vw, 10.31vw"
                 className="object-cover"
-                quality={85}
-                priority={false}
+                quality={75}
                 loading="lazy"
               />
             </div>
@@ -87,8 +85,7 @@ export default function Sez2() {
                 fill
                 sizes="(max-width: 768px) 93.75vw, 30vw"
                 className="object-cover"
-                quality={85}
-                priority={false}
+                quality={75}
                 loading="lazy"
               />
             </div>
@@ -119,7 +116,6 @@ export default function Sez2() {
                 sizes="(max-width: 768px) 180px, 180px"
                 className="object-cover"
                 quality={95}
-                priority={false}
                 loading="lazy"
               />
             </div>
@@ -139,7 +135,6 @@ export default function Sez2() {
                 sizes="(max-width: 768px) 180px, 180px"
                 className="object-cover"
                 quality={95}
-                priority={false}
                 loading="lazy"
               />
             </div>
@@ -159,7 +154,6 @@ export default function Sez2() {
                 sizes="(max-width: 768px) 378px, 0px"
                 className="object-cover"
                 quality={95}
-                priority={false}
                 loading="lazy"
               />
             </div>
@@ -179,7 +173,6 @@ export default function Sez2() {
                 sizes="(max-width: 768px) 0px, 1164px"
                 className="object-cover"
                 quality={95}
-                priority={false}
                 loading="lazy"
               />
             </div>

@@ -1,7 +1,32 @@
 {
   "HomePage": {
     "title": "Benvenuto",
-    "description": "Il tuo sito web è pronto"
+    "description": "Il tuo sito web è pronto",
+    "sez3": {
+      "title": "Come posso dare vita alla tua visione?",
+      "subtitle": "Dalle campagne fashion ai ritratti personali, trasformo le idee in immagini che comunicano. Ogni progetto è affrontato con creatività, precisione e occhio per il racconto, garantendo immagini che ispirano e durano nel tempo.",
+      "servicesTitle": "Tutti i servizi includono:",
+      "services": [
+        "Editing Professionale",
+        "Immagini Modificate e Non Modificate (RAW)",
+        "Licenze Personali e Commerciali"
+      ],
+      "viewPortfolio": "Visualizza portfolio",
+      "categories": {
+        "fashion": {
+          "title": "FASHION & EDITORIAL",
+          "description": "IMMAGINI DISTINTIVE PER BRAND E PUBBLICAZIONI, CATTURANDO STILE, ATMOSFERA E PERSONALITÀ."
+        },
+        "brand": {
+          "title": "BRAND & COMMERCIAL",
+          "description": "FOTOGRAFIA D'IMPATTO CHE ELEVA AZIENDE, CAMPAGNE E PRODOTTI CON UNA FORTE IDENTITÀ VISIVA."
+        },
+        "portrait": {
+          "title": "PORTRAIT & STUDIO",
+          "description": "RITRATTI PROFESSIONALI PROGETTATI PER RIFLETTERE LA TUA INDIVIDUALITÀ, VISIONE ED ESSENZA."
+        }
+      }
+    }
   },
   "PortfolioPage": {
     "title": "Portfolio"

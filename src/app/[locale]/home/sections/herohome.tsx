@@ -327,6 +327,7 @@ export default function HeroHome() {
           fill
           priority
           fetchPriority="high"
+          quality={65}
           className="object-cover"
           sizes="100vw"
         />
@@ -379,7 +380,9 @@ export default function HeroHome() {
             alt="Couple"
             width={650}
             height={800}
-            loading="lazy"
+            priority
+            fetchPriority="high"
+            quality={70}
             style={{
               width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '650px',
               height: 'auto',

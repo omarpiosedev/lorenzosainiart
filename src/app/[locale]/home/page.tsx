@@ -7,6 +7,11 @@ const Sez2 = dynamic(() => import('./sections/sez2'), {
   loading: () => <div style={{ height: '100vh' }} />, // Preserve layout
 });
 
+// Lazy load Sez3
+const Sez3 = dynamic(() => import('./sections/sez3'), {
+  loading: () => <div style={{ height: '100vh' }} />, // Preserve layout
+});
+
 type HomePageProps = {
   params: Promise<{ locale: string }>;
 };
@@ -33,6 +38,7 @@ export default async function HomePage({ params }: HomePageProps) {
     >
       <HeroHome />
       <Sez2 />
+      <Sez3 />
     </main>
   );
 }

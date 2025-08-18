@@ -112,7 +112,7 @@ export default async function RootLayout(props: {
         <NextIntlClientProvider>
           {props.children}
           <NavBar
-            logo="/logo.svg"
+            logo="/assets/images/LogoBianco.webp"
             logoAlt="Lorenzo Saini Art"
             items={navItems}
             baseColor="#060010"

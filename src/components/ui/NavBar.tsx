@@ -1,6 +1,7 @@
 'use client';
 
 import { gsap } from 'gsap';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -342,10 +343,13 @@ const NavBar = ({
                   background: 'var(--base, #000)',
                 }}
               >
-                <img
+                <Image
                   src={logo}
-                  alt={logoAlt}
+                  alt={logoAlt || 'Logo'}
                   ref={logoImgRef}
+                  width={48}
+                  height={48}
+                  priority
                   className="w-full h-full object-cover block"
                 />
               </Link>
@@ -365,10 +369,13 @@ const NavBar = ({
                   background: 'var(--base, #000)',
                 }}
               >
-                <img
+                <Image
                   src={logo}
-                  alt={logoAlt}
+                  alt={logoAlt || 'Logo'}
                   ref={logoImgRef}
+                  width={48}
+                  height={48}
+                  priority
                   className="w-full h-full object-cover block"
                 />
               </a>

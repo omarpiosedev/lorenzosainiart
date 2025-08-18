@@ -1,7 +1,32 @@
 {
   "HomePage": {
     "title": "Welcome",
-    "description": "Your website is ready"
+    "description": "Your website is ready",
+    "sez3": {
+      "title": "How can I bring your vision to life?",
+      "subtitle": "From fashion campaigns to personal portraits, I turn ideas into visuals that resonate. Every project is approached with creativity, precision, and an eye for storytelling, ensuring images that inspire and endure.",
+      "servicesTitle": "All services include:",
+      "services": [
+        "Professional Editing",
+        "Edited & Unedited (RAW) Images",
+        "Personal and Commercial Licensing"
+      ],
+      "viewPortfolio": "View portfolio",
+      "categories": {
+        "fashion": {
+          "title": "FASHION & EDITORIAL",
+          "description": "DISTINCTIVE IMAGERY FOR BRANDS AND PUBLICATIONS, CAPTURING STYLE, MOOD, AND PERSONALITY."
+        },
+        "brand": {
+          "title": "BRAND & COMMERCIAL",
+          "description": "IMPACTFUL PHOTOGRAPHY THAT ELEVATES BUSINESSES, CAMPAIGNS, AND PRODUCTS WITH A STRONG VISUAL IDENTITY."
+        },
+        "portrait": {
+          "title": "PORTRAIT & STUDIO",
+          "description": "PROFESSIONAL PORTRAITS DESIGNED TO REFLECT YOUR INDIVIDUALITY, VISION, AND ESSENCE."
+        }
+      }
+    }
   },
   "PortfolioPage": {
     "title": "Portfolio"

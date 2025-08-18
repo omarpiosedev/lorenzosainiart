@@ -3,6 +3,7 @@
 */
 
 import { gsap } from 'gsap';
+import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -306,10 +307,13 @@ const PillNav: React.FC<PillNavProps> = ({
                   background: 'var(--base, #000)',
                 }}
               >
-                <img
+                <Image
                   src={logo}
-                  alt={logoAlt}
+                  alt={logoAlt || 'Logo'}
                   ref={logoImgRef}
+                  width={48}
+                  height={48}
+                  priority
                   className="w-full h-full object-cover block"
                 />
               </Link>
@@ -329,10 +333,13 @@ const PillNav: React.FC<PillNavProps> = ({
                   background: 'var(--base, #000)',
                 }}
               >
-                <img
+                <Image
                   src={logo}
-                  alt={logoAlt}
+                  alt={logoAlt || 'Logo'}
                   ref={logoImgRef}
+                  width={48}
+                  height={48}
+                  priority
                   className="w-full h-full object-cover block"
                 />
               </a>
