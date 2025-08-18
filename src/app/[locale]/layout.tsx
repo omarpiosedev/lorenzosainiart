@@ -103,8 +103,8 @@ export default async function RootLayout(props: {
       <head>
         {/* Critical images preload */}
         <link rel="preload" as="image" href="/assets/images/sposi.webp" />
-        <link rel="preload" as="image" href="/assets/images/cloud-layer.png" />
-        <link rel="preload" as="image" href="/assets/images/new-background.jpg" />
+        <link rel="preload" as="image" href="/assets/images/cloud.webp" />
+        <link rel="preload" as="image" href="/assets/images/backgropund.webp" />
         {/* Font preload for performance */}
         <link rel="preload" as="font" href="/assets/fonts/LAVENER.ttf" type="font/ttf" crossOrigin="anonymous" />
       </head>

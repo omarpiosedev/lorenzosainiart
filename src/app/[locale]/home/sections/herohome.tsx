@@ -309,7 +309,7 @@ export default function HeroHome() {
       <div
         className="absolute bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'url(/assets/images/new-background.jpg)',
+          backgroundImage: 'url(/assets/images/backgropund.webp)',
           width: `${baseWidth}px`,
           height: `${baseHeight}px`,
           transform: `scale(${scale * 1.02})`,
@@ -351,11 +351,11 @@ export default function HeroHome() {
           {/* Cloud layer */}
           <Image
             ref={cloudRef}
-            src="/assets/images/cloud-layer.png"
+            src="/assets/images/cloud.webp"
             alt="Clouds"
             width={1920}
             height={1080}
-            priority
+            loading="lazy"
             className="absolute w-full h-auto object-cover"
             style={{
               zIndex: 1,
