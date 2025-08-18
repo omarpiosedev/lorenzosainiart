@@ -13,7 +13,7 @@ export default function Sez3() {
   const locale = params.locale as string;
 
   return (
-    <div ref={sectionRef} data-section="sez3" className="relative bg-white min-h-screen">
+    <div ref={sectionRef} data-section="sez3" className="relative bg-white min-h-screen mt-16 md:mt-24 lg:mt-0">
       {/* Top fade gradient for mobile */}
       <div className="absolute top-0 left-0 right-0 h-20 md:h-16 pointer-events-none z-30">
         <div
@@ -25,18 +25,18 @@ export default function Sez3() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-20 flex items-center justify-center px-4 md:px-8 lg:px-16 py-16 md:py-20 lg:py-24 min-h-screen">
+      <div className="relative z-20 flex items-center justify-center px-4 md:px-8 lg:px-16 pt-24 pb-16 md:py-20 lg:py-24 min-h-screen">
         <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-start lg:items-center">
 
           {/* Left Column */}
           <div className="space-y-8 lg:space-y-10">
             {/* Services Label */}
-            <div className="text-sm font-medium text-gray-500 tracking-wide">
-              Services
+            <div className="inline-flex items-center justify-center px-4 py-2 bg-gray-100 border border-gray-200 rounded-full text-sm font-medium text-gray-700 tracking-wide">
+              {t('servicesLabel')}
             </div>
 
             {/* Main Title */}
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-black leading-tight" style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight tracking-wide" style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}>
               {t('title')}
             </h2>
 
