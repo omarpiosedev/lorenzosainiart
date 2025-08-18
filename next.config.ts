@@ -23,13 +23,12 @@ const baseConfig: NextConfig = {
   // Optimize bundle splitting for better performance
   experimental: {
     optimizePackageImports: ['gsap'],
-  },
-  // Target modern browsers to reduce polyfills
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    // CSS optimization to reduce render blocking
+    // optimizeCss: true, // Requires 'critters' dependency
+    // cssChunking: 'strict',
   },
   // Modern browser support - reduces polyfills by 11.5KB
-  swcMinify: true,
+  // swcMinify: true, // Enabled by default in Next.js 15
 };
 
 // Initialize the Next-Intl plugin
