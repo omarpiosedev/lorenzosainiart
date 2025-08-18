@@ -4,6 +4,15 @@
   "engines": {
     "node": ">=20"
   },
+  "browserslist": [
+    "chrome >= 88",
+    "firefox >= 78", 
+    "safari >= 14",
+    "edge >= 88",
+    "not ie <= 11",
+    "ios >= 14",
+    "android >= 88"
+  ],
   "scripts": {
     "dev:spotlight": "npx @spotlightjs/spotlight",
     "dev:next": "next dev --turbopack",

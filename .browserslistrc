@@ -1,0 +1,27 @@
+# Modern browsers configuration
+# Targets browsers that support ES6+ natively
+# Reduces polyfills by ~11.5KB
+
+# Chrome 88+ (supports all ES6+ features)
+chrome >= 88
+
+# Firefox 78+ (ES6+ support)
+firefox >= 78
+
+# Safari 14+ (ES6+ support)
+safari >= 14
+
+# Edge 88+ (Chromium-based)
+edge >= 88
+
+# No IE support (modern browsers only)
+not ie <= 11
+
+# Mobile browsers
+ios >= 14
+android >= 88
+
+# Cover 95%+ of global usage with modern features
+> 0.5%
+last 2 versions
+not dead

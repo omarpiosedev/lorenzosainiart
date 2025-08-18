@@ -24,6 +24,12 @@ const baseConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['gsap'],
   },
+  // Target modern browsers to reduce polyfills
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Modern browser support - reduces polyfills by 11.5KB
+  swcMinify: true,
 };
 
 // Initialize the Next-Intl plugin
