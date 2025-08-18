@@ -27,6 +27,43 @@
           "description": "RITRATTI PROFESSIONALI PROGETTATI PER RIFLETTERE LA TUA INDIVIDUALITÀ, VISIONE ED ESSENZA."
         }
       }
+    },
+    "sez4": {
+      "benefitsLabel": "Vantaggi",
+      "title": "Perché lavorare con me?",
+      "subtitle": "La grande fotografia è più di un servizio: è un'esperienza costruita su collaborazione, fiducia e creatività.",
+      "benefits": {
+        "reliability": {
+          "title": "Affidabilità",
+          "description": "Qualità costante e consegna puntuale in ogni progetto, garantendo che la tua visione diventi realtà."
+        },
+        "passion": {
+          "title": "Passione",
+          "description": "Ogni shooting è guidato da genuino entusiasmo per catturare momenti e storie uniche."
+        },
+        "creativity": {
+          "title": "Visione Creativa",
+          "description": "Approcci innovativi e prospettive fresche che fanno distinguere le tue immagini dalla massa."
+        },
+        "efficiency": {
+          "title": "Processo Efficiente",
+          "description": "Flusso di lavoro ottimizzato dal concept alla consegna finale, massimizzando tempo e investimento."
+        },
+        "quality": {
+          "title": "Qualità Professionale",
+          "description": "Anni di esperienza e attrezzature professionali garantiscono risultati eccezionali che superano le aspettative."
+        },
+        "collaboration": {
+          "title": "Partnership"
+        },
+        "trust": {
+          "title": "Fiducia Costruita"
+        },
+        "excellence": {
+          "title": "Eccellenza",
+          "description": "Impegnato a fornire risultati eccezionali che riflettano il tuo brand e la tua visione."
+        }
+      }
     }
   },
   "PortfolioPage": {

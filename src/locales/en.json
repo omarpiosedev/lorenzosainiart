@@ -27,6 +27,43 @@
           "description": "PROFESSIONAL PORTRAITS DESIGNED TO REFLECT YOUR INDIVIDUALITY, VISION, AND ESSENCE."
         }
       }
+    },
+    "sez4": {
+      "benefitsLabel": "Benefits",
+      "title": "Why work with me?",
+      "subtitle": "Great photography is more than a service—it is an experience built on collaboration, trust, and creativity.",
+      "benefits": {
+        "reliability": {
+          "title": "Reliability",
+          "description": "Consistent quality and timely delivery on every project, ensuring your vision becomes reality."
+        },
+        "passion": {
+          "title": "Passion",
+          "description": "Every shoot is driven by genuine enthusiasm for capturing unique moments and stories."
+        },
+        "creativity": {
+          "title": "Creative Vision",
+          "description": "Innovative approaches and fresh perspectives that make your images stand out from the crowd."
+        },
+        "efficiency": {
+          "title": "Efficient Process",
+          "description": "Streamlined workflow from concept to final delivery, maximizing your time and investment."
+        },
+        "quality": {
+          "title": "Professional Quality",
+          "description": "Years of experience and professional equipment ensure exceptional results that exceed expectations."
+        },
+        "collaboration": {
+          "title": "Partnership"
+        },
+        "trust": {
+          "title": "Trust Built"
+        },
+        "excellence": {
+          "title": "Excellence",
+          "description": "Committed to delivering outstanding results that reflect your brand and vision."
+        }
+      }
     }
   },
   "PortfolioPage": {
