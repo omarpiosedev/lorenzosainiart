@@ -105,8 +105,9 @@ export default async function RootLayout(props: {
       </head>
       <body style={{ margin: 0, padding: 0, left: 0, right: 0, position: 'relative' }}>
         <NextIntlClientProvider>
-          {props.children}
-          <LayoutClient navItems={navItems} />
+          <LayoutClient navItems={navItems}>
+            {props.children}
+          </LayoutClient>
         </NextIntlClientProvider>
       </body>
     </html>

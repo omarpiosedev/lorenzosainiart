@@ -40,5 +40,8 @@
   },
   "ContactPage": {
     "title": "Contact"
+  },
+  "loading": {
+    "message": "Loading..."
   }
 }

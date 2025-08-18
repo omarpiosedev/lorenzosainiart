@@ -40,5 +40,8 @@
   },
   "ContactPage": {
     "title": "Contatti"
+  },
+  "loading": {
+    "message": "Caricamento in corso..."
   }
 }
