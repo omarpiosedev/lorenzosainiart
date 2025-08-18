@@ -305,11 +305,10 @@ export default function HeroHome() {
         </button>
       </div>
 
-      {/* Container solo per background */}
+      {/* Background Image - LCP optimized */}
       <div
-        className="absolute bg-cover bg-center bg-no-repeat"
+        className="absolute"
         style={{
-          backgroundImage: 'url(/assets/images/backgropund.webp)',
           width: `${baseWidth}px`,
           height: `${baseHeight}px`,
           transform: `scale(${scale * 1.02})`,
@@ -322,6 +321,15 @@ export default function HeroHome() {
           zIndex: 1,
         }}
       >
+        <Image
+          src="/assets/images/backgropund.webp"
+          alt="Background"
+          fill
+          priority
+          fetchPriority="high"
+          className="object-cover"
+          sizes="100vw"
+        />
       </div>
 
       {/* Container separato per sposi e nuvola - scala insieme */}
@@ -371,8 +379,7 @@ export default function HeroHome() {
             alt="Couple"
             width={650}
             height={800}
-            priority
-            fetchPriority="high"
+            loading="lazy"
             style={{
               width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '650px',
               height: 'auto',
