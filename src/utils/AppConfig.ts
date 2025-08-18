@@ -6,7 +6,7 @@ const localePrefix: LocalePrefixMode = 'always';
 export const AppConfig = {
   name: 'Portfolio Site',
   locales: ['it', 'en'],
-  defaultLocale: 'it',
+  defaultLocale: 'en',
   localePrefix,
 };
 

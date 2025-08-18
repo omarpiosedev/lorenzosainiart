@@ -1,16 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { routing } from '@/libs/I18nRouting';
 import { getBaseUrl } from '@/utils/AppConfig';
+import LayoutClient from './LayoutClient';
 import '@/styles/global.css';
-
-// Lazy load NavBar since it's not critical for first paint
-const NavBar = dynamic(() => import('@/components/ui/NavBar'), {
-  loading: () => null, // No loading spinner for smoother experience
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
@@ -111,16 +106,7 @@ export default async function RootLayout(props: {
       <body style={{ margin: 0, padding: 0, left: 0, right: 0, position: 'relative' }}>
         <NextIntlClientProvider>
           {props.children}
-          <NavBar
-            logo="/assets/images/LogoBianco.webp"
-            logoAlt="Lorenzo Saini Art"
-            items={navItems}
-            baseColor="#060010"
-            pillColor="#fff"
-            hoveredPillTextColor="#fff"
-            pillTextColor="#060010"
-            initialLoadAnimation={true}
-          />
+          <LayoutClient navItems={navItems} />
         </NextIntlClientProvider>
       </body>
     </html>
