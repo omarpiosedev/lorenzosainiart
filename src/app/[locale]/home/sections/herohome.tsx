@@ -372,6 +372,7 @@ export default function HeroHome() {
             width={650}
             height={800}
             priority
+            fetchPriority="high"
             style={{
               width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '650px',
               height: 'auto',
