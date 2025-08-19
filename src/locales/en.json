@@ -72,8 +72,36 @@
       }
     },
     "sez5": {
-      "title": "Section 5",
-      "subtitle": "Coming soon"
+      "testimonialsLabel": "Testimonials",
+      "title": "What my clients say",
+      "subtitle": "Real feedback from people I've worked with. Their experiences tell you more about my approach than I ever could.",
+      "testimonials": {
+        "marco": {
+          "name": "Marco Bianchi",
+          "company": "Founder, Milano Fashion",
+          "text": "Lorenzo captured our brand essence with extraordinary product photos. His attention to detail and ability to tell a story through images are truly unique."
+        },
+        "sofia": {
+          "name": "Sofia Rossi",
+          "company": "Artist, Rome",
+          "text": "Professionalism and creativity unite in Lorenzo's work. He interpreted my artistic vision and transformed it into powerful and emotional images."
+        },
+        "alessandro": {
+          "name": "Alessandro Conti",
+          "company": "CEO, Italian Innovation",
+          "text": "An exceptional photographer! Lorenzo captured our corporate event with elegant and modern style. Every shot tells a story."
+        },
+        "elena": {
+          "name": "Elena Martini",
+          "company": "Bride, Florence",
+          "text": "Lorenzo has an extraordinary artistic eye. My wedding photos are simply perfect, every moment was captured with sensitivity and mastery."
+        },
+        "luca": {
+          "name": "Luca Ferrari",
+          "company": "Real Estate Agent, Turin",
+          "text": "I've worked with Lorenzo for years on my real estate projects. His photos enhance every space with natural light that makes the difference in sales."
+        }
+      }
     }
   },
   "PortfolioPage": {

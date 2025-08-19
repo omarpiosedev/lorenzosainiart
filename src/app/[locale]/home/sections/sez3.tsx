@@ -14,16 +14,6 @@ export default function Sez3() {
 
   return (
     <div ref={sectionRef} data-section="sez3" className="relative bg-white min-h-screen mt-16 md:mt-24 lg:mt-0">
-      {/* Top fade gradient for mobile */}
-      <div className="absolute top-0 left-0 right-0 h-20 md:h-16 pointer-events-none z-30">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.3) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0.9) 80%, white 100%)',
-          }}
-        />
-      </div>
-
       {/* Main Content */}
       <div className="relative z-20 flex items-center justify-center px-4 md:px-8 lg:px-16 pt-24 pb-16 md:py-20 lg:py-24 min-h-screen">
         <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-start lg:items-center">
