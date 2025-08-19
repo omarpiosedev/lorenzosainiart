@@ -217,6 +217,7 @@ export default function HeroHome() {
 
   return (
     <section
+      data-section="hero"
       className="w-screen h-screen overflow-hidden relative"
       style={{
         margin: '0 !important',

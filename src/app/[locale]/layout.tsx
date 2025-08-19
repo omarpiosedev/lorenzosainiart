@@ -89,7 +89,7 @@ export default async function RootLayout(props: {
     { label: 'HOME', href: `/${locale}` },
     { label: 'PORTFOLIO', href: `/${locale}/portfolio` },
     { label: 'BLOG', href: `/${locale}/blog` },
-    { label: 'ABOUT ME', href: `/${locale}/about` },
+    { label: 'ABOUT ME', href: `/${locale}/aboutme` },
     { label: 'CONTACT', href: `/${locale}/contact` },
   ];
 
@@ -98,12 +98,10 @@ export default async function RootLayout(props: {
       <head>
         {/* Critical images preload - LCP first */}
         <link rel="preload" as="image" href="/assets/images/backgropund.webp" />
-        <link rel="preload" as="image" href="/assets/images/cloud.webp" />
-        <link rel="preload" as="image" href="/assets/images/sposi.webp" />
         {/* Font preload for performance */}
         <link rel="preload" as="font" href="/assets/fonts/LAVENER.ttf" type="font/ttf" crossOrigin="anonymous" />
       </head>
-      <body style={{ margin: 0, padding: 0, left: 0, right: 0, position: 'relative' }}>
+      <body style={{ margin: '0px', padding: '0px', left: '0px', right: '0px', position: 'relative' }}>
         <NextIntlClientProvider>
           <LayoutClient navItems={navItems}>
             {props.children}

@@ -17,17 +17,16 @@ type UseResourceLoaderReturn = {
 
 export function useResourceLoader(): UseResourceLoaderReturn {
   const [resources, setResources] = useState<LoadingResource[]>([
-    { name: 'video', loaded: false, weight: 30 },
-    { name: 'fonts', loaded: false, weight: 20 },
-    { name: 'criticalImages', loaded: false, weight: 25 },
-    { name: 'gsap', loaded: false, weight: 15 },
-    { name: 'i18n', loaded: false, weight: 10 },
+    { name: 'video', loaded: false, weight: 40 }, // Video logo del loading screen
+    { name: 'fonts', loaded: false, weight: 30 }, // Font per testo visibile
+    { name: 'heroBackground', loaded: false, weight: 30 }, // Background della prima sezione
   ]);
 
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
   const [actualProgress, setActualProgress] = useState(0); // Progresso reale delle risorse
+  const [isClient, setIsClient] = useState(false); // Per evitare problemi di hydration
 
   // Calcola la percentuale di progresso reale delle risorse
   useEffect(() => {
@@ -42,8 +41,14 @@ export function useResourceLoader(): UseResourceLoaderReturn {
 
   // Gestisce il progresso smooth e il timing
   useEffect(() => {
+    // Non avviare il timer se non siamo lato client
+    if (!isClient) {
+      return;
+    }
+
     const minDuration = 3000; // 3 secondi
-    const startTime = (window as any).loadingStartTime || Date.now();
+    const maxDuration = 8000; // Timeout di sicurezza: massimo 8 secondi
+    const startTime = (typeof window !== 'undefined' && (window as any).loadingStartTime) || Date.now();
 
     const updateProgress = () => {
       const elapsedTime = Date.now() - startTime;
@@ -52,8 +57,14 @@ export function useResourceLoader(): UseResourceLoaderReturn {
       // La barra va sempre da 0 a 100 in modo fluido in 3 secondi
       setProgress(Math.round(timeProgress));
 
-      // Completa quando sono passati 3 secondi E le risorse sono tutte caricate
-      if (elapsedTime >= minDuration && actualProgress >= 100) {
+      // Completa quando:
+      // 1. Sono passati 3 secondi E le risorse sono tutte caricate, OPPURE
+      // 2. È scaduto il timeout di sicurezza (8 secondi)
+      const shouldComplete
+        = (elapsedTime >= minDuration && actualProgress >= 100)
+          || elapsedTime >= maxDuration;
+
+      if (shouldComplete) {
         if (!isComplete) {
           // Mostra 100% per 500ms prima di completare
           setProgress(100);
@@ -69,7 +80,7 @@ export function useResourceLoader(): UseResourceLoaderReturn {
     };
 
     updateProgress();
-  }, [actualProgress, isComplete]);
+  }, [actualProgress, isComplete, isClient]);
 
   // Funzione per marcare una risorsa come caricata
   const markResourceLoaded = (resourceName: string) => {
@@ -82,13 +93,28 @@ export function useResourceLoader(): UseResourceLoaderReturn {
     );
   };
 
+  // Effect per inizializzare lato client
   useEffect(() => {
-    // Segna il tempo di inizio caricamento
-    (window as any).loadingStartTime = Date.now();
+    setIsClient(true);
+  }, []);
 
-    // 1. Caricamento fonts
-    if (document.fonts) {
+  useEffect(() => {
+    // Esegui solo lato client per evitare problemi di hydration
+    if (!isClient) {
+      return;
+    }
+
+    // Segna il tempo di inizio caricamento
+    if (typeof window !== 'undefined') {
+      (window as any).loadingStartTime = Date.now();
+    }
+
+    // 1. Caricamento fonts (critici per il testo visibile)
+    if (typeof document !== 'undefined' && document.fonts) {
       document.fonts.ready.then(() => {
+        markResourceLoaded('fonts');
+      }).catch(() => {
+        // Fallback in caso di errore
         markResourceLoaded('fonts');
       });
     } else {
@@ -96,48 +122,30 @@ export function useResourceLoader(): UseResourceLoaderReturn {
       setTimeout(() => markResourceLoaded('fonts'), 1000);
     }
 
-    // 2. Preload immagini critiche
-    const criticalImages = [
-      '/assets/images/LogoBianco.webp',
-      '/assets/images/backgropund.webp',
-    ];
-
-    Promise.all(
-      criticalImages.map((src) => {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.onload = resolve;
-          img.onerror = resolve; // Continua anche se immagine non carica
-          img.src = src;
-        });
-      }),
-    ).then(() => {
-      markResourceLoaded('criticalImages');
-    });
-
-    // 3. GSAP ready (se disponibile)
-    if (typeof window !== 'undefined') {
-      // GSAP è già importato, quindi è disponibile
-      setTimeout(() => markResourceLoaded('gsap'), 100);
-    }
-
-    // 4. I18n ready
-    setTimeout(() => markResourceLoaded('i18n'), 200);
-  }, []);
+    // 2. Preload solo background hero (visibile immediatamente)
+    const heroImage = new Image();
+    heroImage.onload = () => markResourceLoaded('heroBackground');
+    heroImage.onerror = () => markResourceLoaded('heroBackground'); // Continua anche se fallisce
+    heroImage.src = '/assets/images/backgropund.webp';
+  }, [isClient]);
 
   // Handler per il video
   const handleVideoLoaded = () => {
     markResourceLoaded('video');
   };
 
-  // Espone la funzione per il video component
+  // Espone la funzione per il video component immediatamente
   useEffect(() => {
-    (window as any).markVideoLoaded = handleVideoLoaded;
+    if (isClient && typeof window !== 'undefined') {
+      (window as any).markVideoLoaded = handleVideoLoaded;
+    }
 
     return () => {
-      delete (window as any).markVideoLoaded;
+      if (typeof window !== 'undefined') {
+        delete (window as any).markVideoLoaded;
+      }
     };
-  }, []);
+  }, [isClient]);
 
   return {
     progress,

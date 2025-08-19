@@ -22,6 +22,20 @@ body {
   right: 0 !important;
 }
 
+/* Lenis smooth scrolling optimization */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
 /* Reset any browser defaults */
 * {
   box-sizing: border-box;

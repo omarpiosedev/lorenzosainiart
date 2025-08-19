@@ -18,10 +18,30 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
   const { progress, isComplete } = useResourceLoader();
 
+  // Safety timeout per evitare che si blocchi per sempre
+  useEffect(() => {
+    const safetyTimeout = setTimeout(() => {
+      if (typeof onComplete === 'function') {
+        onComplete();
+      }
+    }, 10000); // 10 secondi timeout di sicurezza
+
+    return () => clearTimeout(safetyTimeout);
+  }, [onComplete]);
+
   // Handler per quando il video può essere riprodotto
   const handleVideoCanPlay = () => {
-    if (typeof window !== 'undefined' && (window as any).markVideoLoaded) {
-      (window as any).markVideoLoaded();
+    if (typeof window !== 'undefined') {
+      // Retry logic per assicurarsi che la funzione sia disponibile
+      const tryMarkVideo = () => {
+        if ((window as any).markVideoLoaded) {
+          (window as any).markVideoLoaded();
+        } else {
+          // Retry dopo un piccolo delay se la funzione non è ancora disponibile
+          setTimeout(tryMarkVideo, 100);
+        }
+      };
+      tryMarkVideo();
     }
   };
 

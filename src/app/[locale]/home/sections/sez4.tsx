@@ -4,7 +4,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lottie from 'lottie-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { TrustedUsers } from '@/components/lightswind/trustedusers';
 import { Compare } from '@/components/ui/compare';
 import clockAnimation from '../../../../../public/assets/animations/12-hr-clock.json';
 
@@ -20,6 +21,13 @@ export default function Sez4() {
   const rightHandMobileRef = useRef<HTMLDivElement>(null);
   const clockDesktopRef = useRef<HTMLDivElement>(null);
   const clockMobileRef = useRef<HTMLDivElement>(null);
+  const quintaImageDesktopRef = useRef<HTMLDivElement>(null);
+  const quintaImageMobileRef = useRef<HTMLDivElement>(null);
+  const trustedUsersDesktopRef = useRef<HTMLDivElement>(null);
+  const trustedUsersMobileRef = useRef<HTMLDivElement>(null);
+  const polaroidDesktopRef = useRef<HTMLDivElement>(null);
+  const polaroidMobileRef = useRef<HTMLDivElement>(null);
+  const [restartTrigger, setRestartTrigger] = useState(0);
   const t = useTranslations('HomePage.sez4');
 
   useEffect(() => {
@@ -167,6 +175,154 @@ export default function Sez4() {
       });
     }
 
+    // Quinta Image Desktop animation - reduce size
+    if (quintaImageDesktopRef.current) {
+      // Imposta dimensioni iniziali (size aumentata)
+      gsap.set(quintaImageDesktopRef.current, {
+        width: 'calc(80% + 100px)',
+        height: 'calc(80% + 100px)',
+      });
+
+      gsap.to(quintaImageDesktopRef.current, {
+        width: '80%', // Riduce a dimensioni normali (-100px)
+        height: '80%', // Riduce a dimensioni normali (-100px)
+        ease: 'none',
+        scrollTrigger: {
+          trigger: quintaImageDesktopRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // Quinta Image Mobile animation - reduce size (preciso)
+    if (quintaImageMobileRef.current) {
+      // Imposta dimensioni iniziali (size aumentata)
+      gsap.set(quintaImageMobileRef.current, {
+        width: 'calc(160% + 200px)', // Partenza aumentata
+        height: 'calc(160% + 200px)', // Partenza aumentata
+      });
+
+      gsap.to(quintaImageMobileRef.current, {
+        width: '160%', // Ritorna alle dimensioni originali precise
+        height: '160%', // Ritorna alle dimensioni originali precise
+        ease: 'none',
+        scrollTrigger: {
+          trigger: quintaImageMobileRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // TrustedUsers restart trigger (Card 6 - Desktop)
+    ScrollTrigger.create({
+      trigger: trustedUsersDesktopRef.current,
+      start: 'top 80%', // Quando Card 6 entra in viewport
+      onEnter: () => {
+        // Incrementa restartTrigger per forzare il restart del CountUp
+        setRestartTrigger(prev => prev + 1);
+      },
+      onEnterBack: () => {
+        // Restart anche quando si scrolla indietro verso la card
+        setRestartTrigger(prev => prev + 1);
+      },
+    });
+
+    // TrustedUsers restart trigger (Card 6 - Mobile)
+    ScrollTrigger.create({
+      trigger: trustedUsersMobileRef.current,
+      start: 'top 80%', // Quando Card 6 entra in viewport
+      onEnter: () => {
+        // Incrementa restartTrigger per forzare il restart del CountUp
+        setRestartTrigger(prev => prev + 1);
+      },
+      onEnterBack: () => {
+        // Restart anche quando si scrolla indietro verso la card
+        setRestartTrigger(prev => prev + 1);
+      },
+    });
+
+    // Polaroid scattered animation - Desktop
+    if (polaroidDesktopRef.current) {
+      const polaroids = polaroidDesktopRef.current.querySelectorAll('.polaroid');
+
+      // Predefined scattered positions and rotations for each polaroid (more spread out)
+      const scatteredPositions = [
+        { x: -80, y: -60, rotation: -20 }, // Far top left
+        { x: 100, y: -40, rotation: 15 }, // Far top right
+        { x: 10, y: 10, rotation: 3 }, // Center (slightly rotated)
+        { x: -90, y: 80, rotation: -12 }, // Far bottom left
+        { x: 85, y: 90, rotation: 18 }, // Far bottom right
+      ];
+
+      // Set initial state - all stacked on top of each other
+      gsap.set(polaroids, {
+        rotation: 0,
+        x: 0,
+        y: 0,
+        scale: 1,
+        zIndex: i => polaroids.length - i, // First polaroid on top
+      });
+
+      gsap.to(polaroids, {
+        rotation: i => scatteredPositions[i]?.rotation || 0,
+        x: i => scatteredPositions[i]?.x || 0,
+        y: i => scatteredPositions[i]?.y || 0,
+        scale: 1,
+        duration: 1.2,
+        ease: 'back.out(1.4)',
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: polaroidDesktopRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // Polaroid scattered animation - Mobile
+    if (polaroidMobileRef.current) {
+      const polaroids = polaroidMobileRef.current.querySelectorAll('.polaroid');
+
+      // Predefined scattered positions and rotations for mobile (more spread out)
+      const scatteredPositionsMobile = [
+        { x: -50, y: -40, rotation: -18 }, // Far top left
+        { x: 60, y: -30, rotation: 12 }, // Far top right
+        { x: 5, y: 5, rotation: 2 }, // Center (slightly rotated)
+        { x: -55, y: 50, rotation: -10 }, // Far bottom left
+        { x: 50, y: 60, rotation: 16 }, // Far bottom right
+      ];
+
+      // Set initial state - all stacked on top of each other
+      gsap.set(polaroids, {
+        rotation: 0,
+        x: 0,
+        y: 0,
+        scale: 1,
+        zIndex: i => polaroids.length - i, // First polaroid on top
+      });
+
+      gsap.to(polaroids, {
+        rotation: i => scatteredPositionsMobile[i]?.rotation || 0,
+        x: i => scatteredPositionsMobile[i]?.x || 0,
+        y: i => scatteredPositionsMobile[i]?.y || 0,
+        scale: 1,
+        duration: 1.2,
+        ease: 'back.out(1.4)',
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: polaroidMobileRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
@@ -234,9 +390,9 @@ export default function Sez4() {
         </div>
 
         {/* First 3 Cards - Desktop Layout - Empty */}
-        {/* Card 1 */}
+        {/* Card 1 - Portrait Gallery */}
         <div
-          className="absolute bg-gray-100 rounded-2xl overflow-hidden"
+          className="absolute bg-gray-100 rounded-2xl overflow-hidden flex items-center justify-center p-4"
           style={{
             top: '40.56vh', // Spostato più in basso (+10vh)
             left: '18.23vw', // ~350px (425px scaled down)
@@ -244,7 +400,81 @@ export default function Sez4() {
             height: '57.88vh', // ~625px (521px * 1.2)
           }}
         >
-          {/* Empty card - ready for content */}
+          {/* Polaroid Container */}
+          <div
+            ref={polaroidDesktopRef}
+            className="relative w-full h-full flex items-center justify-center"
+          >
+            {/* Polaroid 1 */}
+            <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
+              <img
+                src="/assets/images/4831a354-4deb-472f-9f1e-cad013deab74.webp"
+                alt="Portrait 1"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="h-4 bg-white flex items-center justify-center">
+                <span className="text-xs text-gray-600 font-handwriting">Portrait 1</span>
+              </div>
+            </div>
+
+            {/* Polaroid 2 */}
+            <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
+              <img
+                src="/assets/images/ChatGPT Image 19 ago 2025, 18_30_36.webp"
+                alt="Portrait 2"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="h-4 bg-white flex items-center justify-center">
+                <span className="text-xs text-gray-600 font-handwriting">Portrait 2</span>
+              </div>
+            </div>
+
+            {/* Polaroid 3 */}
+            <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
+              <img
+                src="/assets/images/ChatGPT Image 19 ago 2025, 18_30_41.webp"
+                alt="Portrait 3"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="h-4 bg-white flex items-center justify-center">
+                <span className="text-xs text-gray-600 font-handwriting">Portrait 3</span>
+              </div>
+            </div>
+
+            {/* Polaroid 4 */}
+            <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
+              <img
+                src="/assets/images/e05dd087-50aa-42dd-a47b-8eabbb6823e3.webp"
+                alt="Portrait 4"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="h-4 bg-white flex items-center justify-center">
+                <span className="text-xs text-gray-600 font-handwriting">Portrait 4</span>
+              </div>
+            </div>
+
+            {/* Polaroid 5 */}
+            <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
+              <img
+                src="/assets/images/f0137b66-fcfa-4e3d-8374-2b822059a091.webp"
+                alt="Portrait 5"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="h-4 bg-white flex items-center justify-center">
+                <span className="text-xs text-gray-600 font-handwriting">Portrait 5</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Card 2 - Equipment */}
@@ -294,6 +524,8 @@ export default function Sez4() {
               src="/assets/images/camera-lens.webp"
               alt="Professional Camera Lens"
               className="w-full h-full object-contain"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </div>
@@ -367,6 +599,8 @@ export default function Sez4() {
               src="/assets/images/manosinistra.webp"
               alt="Left Hand"
               className="w-full h-full object-contain"
+              loading="lazy"
+              decoding="async"
             />
           </div>
 
@@ -384,6 +618,8 @@ export default function Sez4() {
               src="/assets/images/manodestra.webp"
               alt="Right Hand"
               className="w-full h-full object-contain"
+              loading="lazy"
+              decoding="async"
             />
           </div>
 
@@ -418,16 +654,71 @@ export default function Sez4() {
           style={{
             top: '102vh', // Spostato più in basso per nuove dimensioni
             left: 'calc(100vw - 44.06vw - 15.47vw)', // Stessa distanza dal margine destro della Card 3
-            width: '44.06vw', // ~846px (705px * 1.2)
-            height: '26.40vh', // ~285px (238px * 1.2)
+            width: '44.06vw', // ~846px (705px * 1.2) - dimensione originale
+            height: '26.40vh', // ~285px (238px * 1.2) - dimensione originale
           }}
         >
-          {/* Empty card - ready for content */}
+          <div
+            ref={quintaImageDesktopRef}
+            className="absolute"
+            style={{
+              right: '-10%', // Posizione originale: -10% della card
+              bottom: '-10%', // Posizione originale: -10% della card
+              width: 'calc(80% + 100px)', // Ingrandita di 100px in larghezza (iniziale)
+              height: 'calc(80% + 100px)', // Ingrandita di 100px in altezza (iniziale)
+            }}
+          >
+            <img
+              src="/assets/images/quintacard.webp"
+              alt="Portrait Photography - Eyes"
+              className="w-full h-full object-contain"
+              loading="lazy"
+              decoding="async"
+              style={{
+                transform: 'scale(2.3)', // Scala originale: 2.3x
+                transformOrigin: 'center center',
+              }}
+            />
+          </div>
+
+          {/* Text Overlay */}
+          <div
+            className="absolute text-left flex items-center"
+            style={{
+              top: '13.20vh', // 50% convertito: 50% di 26.40vh = 13.20vh
+              left: '2.20vw', // 5% convertito: 5% di 44.06vw = 2.20vw
+              width: '22.03vw', // 50% convertito: 50% di 44.06vw = 22.03vw
+              height: '8.24vh', // Stessa altezza delle altre card
+              transform: 'translateY(-50%)', // Centrato verticalmente
+              zIndex: 10, // Davanti all'overlay
+            }}
+          >
+            <h3
+              className="text-black font-semibold leading-tight"
+              style={{
+                fontSize: '1.77vw', // Stessa dimensione delle altre card
+                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+              }}
+            >
+              Tailored to
+              <br />
+              your vision
+            </h3>
+          </div>
+
+          {/* Overlay fade from left - Desktop only */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to right, #f3f4f6 0%, #f3f4f6 30%, rgba(243, 244, 246, 0.6) 45%, rgba(243, 244, 246, 0.3) 55%, transparent 65%)',
+            }}
+          />
         </div>
 
         {/* Card 6 - Desktop Layout */}
         <div
-          className="absolute bg-gray-100 rounded-2xl overflow-hidden"
+          ref={trustedUsersDesktopRef}
+          className="absolute bg-gray-100 rounded-2xl overflow-hidden flex items-center justify-center p-4"
           style={{
             top: 'calc(130vh + 4px)', // Spostato 4px più in basso
             left: '40.78vw', // ~783px (790px scaled)
@@ -435,7 +726,21 @@ export default function Sez4() {
             height: '20.53vh', // ~222px (185px * 1.2)
           }}
         >
-          {/* Empty card - ready for content */}
+          <div className="flex items-center justify-center w-full h-full">
+            <TrustedUsers
+              avatars={[]}
+              rating={5}
+              totalUsersText={300}
+              caption="satisfied"
+              className="text-center"
+              starColorClass="text-orange-500"
+              ringColors={[]}
+              starSize="2vw" // Stelle grandi per desktop (basate su viewport width)
+              numberSize="4vw" // Numero molto grande per desktop
+              textSize="1.2vw" // Testo proporzionale per desktop
+              restartTrigger={restartTrigger}
+            />
+          </div>
         </div>
 
         {/* Card 7 - Desktop Layout */}
@@ -513,9 +818,83 @@ export default function Sez4() {
           {/* Cards - Mobile/Tablet Layout - Empty (All stacked vertically) */}
           <div className="flex flex-col gap-6 w-full max-w-sm sm:max-w-lg lg:max-w-xl">
 
-            {/* Card 1 - Mobile/Tablet - Empty - Responsive aspect ratio 352:522 */}
-            <div className="bg-gray-100 rounded-2xl w-full overflow-hidden" style={{ aspectRatio: '352/522' }}>
-              {/* Empty card - ready for content */}
+            {/* Card 1 - Mobile/Tablet - Portrait Gallery - Responsive aspect ratio 352:522 */}
+            <div className="bg-gray-100 rounded-2xl w-full overflow-hidden flex items-center justify-center p-4" style={{ aspectRatio: '352/522' }}>
+              {/* Polaroid Container */}
+              <div
+                ref={polaroidMobileRef}
+                className="relative w-full h-full flex items-center justify-center"
+              >
+                {/* Polaroid 1 */}
+                <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
+                  <img
+                    src="/assets/images/4831a354-4deb-472f-9f1e-cad013deab74.webp"
+                    alt="Portrait 1"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="h-3 bg-white flex items-center justify-center">
+                    <span className="text-xs text-gray-600">Portrait 1</span>
+                  </div>
+                </div>
+
+                {/* Polaroid 2 */}
+                <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
+                  <img
+                    src="/assets/images/ChatGPT Image 19 ago 2025, 18_30_36.webp"
+                    alt="Portrait 2"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="h-3 bg-white flex items-center justify-center">
+                    <span className="text-xs text-gray-600">Portrait 2</span>
+                  </div>
+                </div>
+
+                {/* Polaroid 3 */}
+                <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
+                  <img
+                    src="/assets/images/ChatGPT Image 19 ago 2025, 18_30_41.webp"
+                    alt="Portrait 3"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="h-3 bg-white flex items-center justify-center">
+                    <span className="text-xs text-gray-600">Portrait 3</span>
+                  </div>
+                </div>
+
+                {/* Polaroid 4 */}
+                <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
+                  <img
+                    src="/assets/images/e05dd087-50aa-42dd-a47b-8eabbb6823e3.webp"
+                    alt="Portrait 4"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="h-3 bg-white flex items-center justify-center">
+                    <span className="text-xs text-gray-600">Portrait 4</span>
+                  </div>
+                </div>
+
+                {/* Polaroid 5 */}
+                <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
+                  <img
+                    src="/assets/images/f0137b66-fcfa-4e3d-8374-2b822059a091.webp"
+                    alt="Portrait 5"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="h-3 bg-white flex items-center justify-center">
+                    <span className="text-xs text-gray-600">Portrait 5</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Card 2 - Mobile/Tablet - Equipment - Responsive aspect ratio 352:522 */}
@@ -556,6 +935,8 @@ export default function Sez4() {
                   src="/assets/images/camera-lens.webp"
                   alt="Professional Camera Lens"
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -613,6 +994,8 @@ export default function Sez4() {
                   src="/assets/images/manosinistra.webp"
                   alt="Left Hand"
                   className="w-full h-full object-contain"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
 
@@ -630,6 +1013,8 @@ export default function Sez4() {
                   src="/assets/images/manodestra.webp"
                   alt="Right Hand"
                   className="w-full h-full object-contain"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
 
@@ -658,14 +1043,79 @@ export default function Sez4() {
               </div>
             </div>
 
-            {/* Card 5 - Mobile/Tablet - Empty - Responsive aspect ratio 352:522 */}
-            <div className="bg-gray-100 rounded-2xl w-full overflow-hidden" style={{ aspectRatio: '352/522' }}>
-              {/* Empty card - ready for content */}
+            {/* Card 5 - Mobile/Tablet - Responsive aspect ratio 352:522 */}
+            <div className="relative bg-gray-100 rounded-2xl w-full overflow-hidden" style={{ aspectRatio: '352/522' }}>
+              {/* Image - Much larger */}
+              <div
+                ref={quintaImageMobileRef}
+                className="absolute"
+                style={{
+                  top: '-15%',
+                  left: '-30%',
+                  width: 'calc(160% + 200px)', // Ingrandita di 200px in larghezza (iniziale enfatizzata)
+                  height: 'calc(160% + 200px)', // Ingrandita di 200px in altezza (iniziale enfatizzata)
+                }}
+              >
+                <img
+                  src="/assets/images/quintacard.webp"
+                  alt="Portrait Photography - Eyes"
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+
+              {/* Text - Top positioned and centered */}
+              <div
+                className="absolute text-center flex items-center justify-center"
+                style={{
+                  top: '6.7%', // 35px / 522px = 6.7% della card
+                  left: '7.7%', // 27px / 352px = 7.7% della card
+                  width: '84.7%', // 298px / 352px = 84.7% della card
+                  height: '17%', // 89px / 522px = 17% della card
+                  zIndex: 10,
+                }}
+              >
+                <h3
+                  className="font-semibold text-black leading-tight"
+                  style={{
+                    fontSize: '4.5vh', // Font size che si scala con il viewport come l'immagine
+                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                  }}
+                >
+                  Tailored to
+                  <br />
+                  your vision
+                </h3>
+              </div>
+
+              {/* Overlay fade from top */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'linear-gradient(to bottom, #f3f4f6 0%, #f3f4f6 30%, rgba(243, 244, 246, 0.6) 45%, rgba(243, 244, 246, 0.3) 55%, transparent 65%)',
+                  zIndex: 5, // Sotto il testo ma sopra l'immagine
+                }}
+              />
             </div>
 
-            {/* Card 6 - Mobile/Tablet - Empty - Responsive aspect ratio 352:201 */}
-            <div className="bg-gray-100 rounded-2xl w-full overflow-hidden" style={{ aspectRatio: '352/201' }}>
-              {/* Empty card - ready for content */}
+            {/* Card 6 - Mobile/Tablet - Responsive aspect ratio 352:201 */}
+            <div ref={trustedUsersMobileRef} className="bg-gray-100 rounded-2xl w-full overflow-hidden flex items-center justify-center p-4" style={{ aspectRatio: '352/201' }}>
+              <div className="flex items-center justify-center w-full h-full">
+                <TrustedUsers
+                  avatars={[]}
+                  rating={5}
+                  totalUsersText={300}
+                  caption="satisfied"
+                  className="text-center"
+                  starColorClass="text-orange-500"
+                  ringColors={[]}
+                  starSize="5vh" // Stelle grandi per mobile (basate su viewport height)
+                  numberSize="8vh" // Numero molto grande per mobile
+                  textSize="3vh" // Testo proporzionale per mobile
+                  restartTrigger={restartTrigger}
+                />
+              </div>
             </div>
 
             {/* Card 7 - Mobile/Tablet - Turnaround - Responsive aspect ratio 352:201 */}
@@ -676,9 +1126,9 @@ export default function Sez4() {
                 style={{ top: '24px' }}
               >
                 <h3
-                  className="text-black font-semibold leading-tight"
+                  className="font-semibold text-black leading-tight"
                   style={{
-                    fontSize: '3.5vh', // Mobile font size ingrandito
+                    fontSize: '4.5vh', // Font size che si scala con il viewport come nelle altre card
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
                 >
