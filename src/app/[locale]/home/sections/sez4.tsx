@@ -1,12 +1,136 @@
 'use client';
 
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Compare } from '@/components/ui/compare';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Sez4() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const cameraImageDesktopRef = useRef<HTMLDivElement>(null);
+  const cameraImageMobileRef = useRef<HTMLDivElement>(null);
+  const leftHandRef = useRef<HTMLDivElement>(null);
+  const rightHandRef = useRef<HTMLDivElement>(null);
+  const leftHandMobileRef = useRef<HTMLDivElement>(null);
+  const rightHandMobileRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('HomePage.sez4');
+
+  useEffect(() => {
+    // Desktop animation
+    if (cameraImageDesktopRef.current) {
+      // Imposta posizione iniziale
+      gsap.set(cameraImageDesktopRef.current, { top: '35vh' });
+
+      gsap.to(cameraImageDesktopRef.current, {
+        top: '12vh',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: cameraImageDesktopRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // Mobile animation
+    if (cameraImageMobileRef.current) {
+      // Imposta posizione iniziale
+      gsap.set(cameraImageMobileRef.current, { top: '50%' });
+
+      gsap.to(cameraImageMobileRef.current, {
+        top: '20%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: cameraImageMobileRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // Left hand animation (moves to the right)
+    if (leftHandRef.current) {
+      // Imposta posizione iniziale
+      gsap.set(leftHandRef.current, { right: '13.23vw' });
+
+      gsap.to(leftHandRef.current, {
+        right: '11vw', // Movimento ridotto
+        ease: 'none',
+        scrollTrigger: {
+          trigger: leftHandRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // Right hand animation (moves to the left)
+    if (rightHandRef.current) {
+      // Imposta posizione iniziale
+      gsap.set(rightHandRef.current, { left: '13.54vw' });
+
+      gsap.to(rightHandRef.current, {
+        left: '11vw', // Movimento ridotto
+        ease: 'none',
+        scrollTrigger: {
+          trigger: rightHandRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // Mobile left hand animation (moves to the right)
+    if (leftHandMobileRef.current) {
+      // Imposta posizione iniziale
+      gsap.set(leftHandMobileRef.current, { right: '57.39%' });
+
+      gsap.to(leftHandMobileRef.current, {
+        right: '47%', // Movimento aumentato per mobile
+        ease: 'none',
+        scrollTrigger: {
+          trigger: leftHandMobileRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // Mobile right hand animation (moves to the left)
+    if (rightHandMobileRef.current) {
+      // Imposta posizione iniziale
+      gsap.set(rightHandMobileRef.current, { left: '65.34%' });
+
+      gsap.to(rightHandMobileRef.current, {
+        left: '55%', // Movimento aumentato per mobile
+        ease: 'none',
+        scrollTrigger: {
+          trigger: rightHandMobileRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
 
   return (
     <div ref={sectionRef} data-section="sez4" className="relative bg-white min-h-screen">
@@ -77,7 +201,7 @@ export default function Sez4() {
             top: '40.56vh', // Spostato più in basso (+10vh)
             left: '18.23vw', // ~350px (425px scaled down)
             width: '21.20vw', // ~407px (339px * 1.2)
-            height: '48.23vh', // ~521px (434px * 1.2)
+            height: '57.88vh', // ~625px (521px * 1.2)
           }}
         >
           {/* Empty card - ready for content */}
@@ -91,7 +215,7 @@ export default function Sez4() {
             top: '40.56vh', // Spostato più in basso (+10vh)
             left: '40.78vw', // ~783px (790px scaled)
             width: '21.20vw', // ~407px (339px * 1.2)
-            height: '48.23vh', // ~521px (434px * 1.2)
+            height: '57.88vh', // ~625px (521px * 1.2)
           }}
         >
           {/* Text - Top */}
@@ -117,19 +241,19 @@ export default function Sez4() {
 
           {/* Camera Lens Image - Bottom */}
           <div
+            ref={cameraImageDesktopRef}
             className="absolute"
             style={{
-              top: '16.76vh', // 181px / 1080px = 16.76vh
-              left: '3.28vw', // 63px / 1920px = 3.28vw
-              right: '3.28vw', // 63px / 1920px = 3.28vw
-              width: '14.64vw', // 281px / 1920px = 14.64vw
-              height: '45.37vh', // 490px / 1080px = 45.37vh
+              left: '2vw', // Expanded left margin
+              right: '2vw', // Expanded right margin
+              width: '17.20vw', // Increased width
+              height: '50vh', // Increased height for larger image
             }}
           >
             <img
               src="/assets/images/camera-lens.webp"
               alt="Professional Camera Lens"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         </div>
@@ -141,7 +265,7 @@ export default function Sez4() {
             top: '40.56vh', // Spostato più in basso (+10vh)
             left: '63.33vw', // ~1216px (1155px scaled)
             width: '21.20vw', // ~407px (339px * 1.2)
-            height: '48.23vh', // ~521px (434px * 1.2)
+            height: '57.88vh', // ~625px (521px * 1.2)
           }}
         >
           <Compare
@@ -155,24 +279,46 @@ export default function Sez4() {
             firstImageClassName="object-cover"
             secondImageClassName="object-cover"
           />
+
+          {/* Text Overlay - Bottom */}
+          <div
+            className="absolute text-center flex items-center justify-center"
+            style={{
+              bottom: '0',
+              left: '0',
+              right: '0',
+              height: '8.24vh', // Stessa altezza della Card 2 (89px / 1080px = 8.24vh)
+            }}
+          >
+            <h3
+              className="text-white font-medium leading-tight"
+              style={{
+                fontSize: '1.77vw', // Stessa grandezza delle altre card (34px / 1920px = 1.77vw)
+                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
+              }}
+            >
+              {t('benefits.editing.title')}
+            </h3>
+          </div>
         </div>
 
         {/* Card 4 - Desktop Layout */}
         <div
           className="absolute bg-gray-100 rounded-2xl overflow-hidden"
           style={{
-            top: '91.85vh', // Spostato più in basso (+10vh)
+            top: '102vh', // Spostato più in basso per nuove dimensioni
             left: '18.23vw', // ~350px (425px scaled down)
             width: '21.20vw', // ~407px (339px * 1.2)
-            height: '41.22vh', // ~445px (371px * 1.2)
+            height: '49.46vh', // ~534px (445px * 1.2)
           }}
         >
           {/* Mano Sinistra - 262x152, top 92, destra 254 */}
           <div
+            ref={leftHandRef}
             className="absolute"
             style={{
-              top: '8.52vh', // 92px / 1080px = 8.52vh
-              right: '13.23vw', // 254px / 1920px = 13.23vw
+              top: '15vh', // Abbassata
               width: '13.65vw', // 262px / 1920px = 13.65vw
               height: '14.07vh', // 152px / 1080px = 14.07vh
             }}
@@ -180,16 +326,16 @@ export default function Sez4() {
             <img
               src="/assets/images/manosinistra.webp"
               alt="Left Hand"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
 
           {/* Mano Destra - 210x115, top 131, sinistra 260 */}
           <div
+            ref={rightHandRef}
             className="absolute"
             style={{
-              top: '12.13vh', // 131px / 1080px = 12.13vh
-              left: '13.54vw', // 260px / 1920px = 13.54vw
+              top: '19vh', // Abbassata
               width: '10.94vw', // 210px / 1920px = 10.94vw
               height: '10.65vh', // 115px / 1080px = 10.65vh
             }}
@@ -197,7 +343,7 @@ export default function Sez4() {
             <img
               src="/assets/images/manodestra.webp"
               alt="Right Hand"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
 
@@ -205,7 +351,7 @@ export default function Sez4() {
           <div
             className="absolute text-center flex items-center justify-center"
             style={{
-              top: '30.00vh', // 324px / 1080px = 30.00vh
+              top: '38vh', // Abbassata
               left: '3.18vw', // 61px / 1920px = 3.18vw
               right: '3.18vw', // 61px / 1920px = 3.18vw
               width: '14.84vw', // 285px / 1920px = 14.84vw
@@ -230,10 +376,10 @@ export default function Sez4() {
         <div
           className="absolute bg-gray-100 rounded-2xl overflow-hidden"
           style={{
-            top: '91.85vh', // Spostato più in basso (+10vh)
+            top: '102vh', // Spostato più in basso per nuove dimensioni
             left: '40.78vw', // ~783px (790px scaled)
             width: '44.06vw', // ~846px (705px * 1.2)
-            height: '22.00vh', // ~238px (198px * 1.2)
+            height: '26.40vh', // ~285px (238px * 1.2)
           }}
         >
           {/* Empty card - ready for content */}
@@ -243,10 +389,10 @@ export default function Sez4() {
         <div
           className="absolute bg-gray-100 rounded-2xl overflow-hidden"
           style={{
-            top: '116.85vh', // Spostato più in basso (+10vh)
+            top: '130vh', // Spostato più in basso per nuove dimensioni
             left: '40.78vw', // ~783px (790px scaled)
             width: '21.31vw', // ~409px (341px * 1.2)
-            height: '17.11vh', // ~185px (154px * 1.2)
+            height: '20.53vh', // ~222px (185px * 1.2)
           }}
         >
           {/* Empty card - ready for content */}
@@ -256,10 +402,10 @@ export default function Sez4() {
         <div
           className="absolute bg-gray-100 rounded-2xl overflow-hidden"
           style={{
-            top: '116.85vh', // Spostato più in basso (+10vh)
+            top: '130vh', // Spostato più in basso per nuove dimensioni
             left: '64.53vw', // ~1239px (1156px scaled)
             width: '21.31vw', // ~409px (341px * 1.2)
-            height: '17.11vh', // ~185px (154px * 1.2)
+            height: '20.53vh', // ~222px (185px * 1.2)
           }}
         >
           {/* Empty card - ready for content */}
@@ -324,9 +470,9 @@ export default function Sez4() {
 
               {/* Camera Lens Image - Bottom */}
               <div
+                ref={cameraImageMobileRef}
                 className="absolute"
                 style={{
-                  top: '35.8%', // 187px / 522px = 35.8% della card mobile
                   left: '9.9%', // 35px / 352px = 9.9% della card mobile
                   right: '9.9%', // 35px / 352px = 9.9% della card mobile
                   width: '79.8%', // 281px / 352px = 79.8% della card mobile
@@ -342,7 +488,7 @@ export default function Sez4() {
             </div>
 
             {/* Card 3 - Mobile/Tablet - Compare Component - Responsive aspect ratio 352:522 */}
-            <div className="rounded-2xl w-full overflow-hidden" style={{ aspectRatio: '352/522' }}>
+            <div className="relative rounded-2xl w-full overflow-hidden" style={{ aspectRatio: '352/522' }}>
               <Compare
                 firstImage="/assets/images/fotononeditata.webp"
                 secondImage="/assets/images/fotoeditata.webp"
@@ -354,16 +500,38 @@ export default function Sez4() {
                 firstImageClassName="object-cover"
                 secondImageClassName="object-cover"
               />
+
+              {/* Text Overlay - Bottom */}
+              <div
+                className="absolute text-center flex items-center justify-center"
+                style={{
+                  bottom: '0',
+                  left: '0',
+                  right: '0',
+                  height: '17%', // Stessa altezza proporzionale della Card 2 mobile (89px / 522px = 17%)
+                }}
+              >
+                <h3
+                  className="font-medium text-white leading-tight"
+                  style={{
+                    fontSize: '4.5vh', // Stessa grandezza delle altre card mobile
+                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
+                  }}
+                >
+                  {t('benefits.editing.title')}
+                </h3>
+              </div>
             </div>
 
             {/* Card 4 - Mobile/Tablet - Experience - Responsive aspect ratio 352:522 */}
             <div className="relative rounded-2xl w-full p-6 flex flex-col shadow-sm overflow-hidden" style={{ aspectRatio: '352/522', backgroundColor: '#f3f4f6' }}>
               {/* Mano Sinistra - 262x152, top 109, destra 202 */}
               <div
+                ref={leftHandMobileRef}
                 className="absolute"
                 style={{
                   top: '20.88%', // 109px / 522px = 20.88%
-                  right: '57.39%', // 202px / 352px = 57.39%
                   width: '74.43%', // 262px / 352px = 74.43%
                   height: '29.12%', // 152px / 522px = 29.12%
                 }}
@@ -371,16 +539,16 @@ export default function Sez4() {
                 <img
                   src="/assets/images/manosinistra.webp"
                   alt="Left Hand"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
 
               {/* Mano Destra - 210x115, top 159, sinistra 230 */}
               <div
+                ref={rightHandMobileRef}
                 className="absolute"
                 style={{
                   top: '30.46%', // 159px / 522px = 30.46%
-                  left: '65.34%', // 230px / 352px = 65.34%
                   width: '59.66%', // 210px / 352px = 59.66%
                   height: '22.03%', // 115px / 522px = 22.03%
                 }}
@@ -388,7 +556,7 @@ export default function Sez4() {
                 <img
                   src="/assets/images/manodestra.webp"
                   alt="Right Hand"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
 
