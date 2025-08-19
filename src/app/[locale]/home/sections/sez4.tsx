@@ -2,9 +2,11 @@
 
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lottie from 'lottie-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
 import { Compare } from '@/components/ui/compare';
+import clockAnimation from '../../../../../public/assets/animations/12-hr-clock.json';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,6 +18,8 @@ export default function Sez4() {
   const rightHandRef = useRef<HTMLDivElement>(null);
   const leftHandMobileRef = useRef<HTMLDivElement>(null);
   const rightHandMobileRef = useRef<HTMLDivElement>(null);
+  const clockDesktopRef = useRef<HTMLDivElement>(null);
+  const clockMobileRef = useRef<HTMLDivElement>(null);
   const t = useTranslations('HomePage.sez4');
 
   useEffect(() => {
@@ -25,7 +29,7 @@ export default function Sez4() {
       gsap.set(cameraImageDesktopRef.current, { top: '35vh' });
 
       gsap.to(cameraImageDesktopRef.current, {
-        top: '12vh',
+        top: '18vh',
         ease: 'none',
         scrollTrigger: {
           trigger: cameraImageDesktopRef.current,
@@ -43,7 +47,7 @@ export default function Sez4() {
       gsap.set(cameraImageMobileRef.current, { top: '50%' });
 
       gsap.to(cameraImageMobileRef.current, {
-        top: '20%',
+        top: '30%',
         ease: 'none',
         scrollTrigger: {
           trigger: cameraImageMobileRef.current,
@@ -127,13 +131,49 @@ export default function Sez4() {
       });
     }
 
+    // Clock Desktop animation
+    if (clockDesktopRef.current) {
+      // Imposta posizione iniziale
+      gsap.set(clockDesktopRef.current, { top: '150px' });
+
+      gsap.to(clockDesktopRef.current, {
+        top: '80px',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: clockDesktopRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
+    // Clock Mobile animation
+    if (clockMobileRef.current) {
+      // Imposta posizione iniziale
+      gsap.set(clockMobileRef.current, { top: '150px' });
+
+      gsap.to(clockMobileRef.current, {
+        top: '80px',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: clockMobileRef.current,
+          start: 'top 120%',
+          end: 'top 60%',
+          scrub: 2,
+          toggleActions: 'play none none reverse',
+        },
+      });
+    }
+
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
 
   return (
-    <div ref={sectionRef} data-section="sez4" className="relative bg-white min-h-screen">
+    <div ref={sectionRef} data-section="sez4" className="relative bg-white" style={{ minHeight: '160vh' }}>
       {/* Desktop Layout - Scales proportionally based on 1920x1080 design */}
       <div className="hidden xl:block">
         {/* Benefits Button - Proportional scaling */}
@@ -176,7 +216,7 @@ export default function Sez4() {
         <div
           className="absolute"
           style={{
-            top: '24.07vh', // ~260px / 1080px (raised from 290px)
+            top: '26vh', // Abbassato ulteriormente
             left: '35.99vw', // 691px / 1920px
             width: '28.02vw', // 538px / 1920px
             height: '5.56vh', // 60px / 1080px
@@ -229,7 +269,7 @@ export default function Sez4() {
             }}
           >
             <h3
-              className="text-black font-medium leading-tight"
+              className="text-black font-semibold leading-tight"
               style={{
                 fontSize: '1.77vw', // 34px / 1920px = 1.77vw
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -291,7 +331,7 @@ export default function Sez4() {
             }}
           >
             <h3
-              className="text-white font-medium leading-tight"
+              className="text-white font-semibold leading-tight"
               style={{
                 fontSize: '1.77vw', // Stessa grandezza delle altre card (34px / 1920px = 1.77vw)
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -318,7 +358,7 @@ export default function Sez4() {
             ref={leftHandRef}
             className="absolute"
             style={{
-              top: '15vh', // Abbassata
+              top: '17vh', // Abbassata ulteriormente
               width: '13.65vw', // 262px / 1920px = 13.65vw
               height: '14.07vh', // 152px / 1080px = 14.07vh
             }}
@@ -359,7 +399,7 @@ export default function Sez4() {
             }}
           >
             <h3
-              className="text-black font-medium leading-tight"
+              className="text-black font-semibold leading-tight"
               style={{
                 fontSize: '1.77vw', // Stessa grandezza della Card 2 (34px / 1920px = 1.77vw)
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -377,7 +417,7 @@ export default function Sez4() {
           className="absolute bg-gray-100 rounded-2xl overflow-hidden"
           style={{
             top: '102vh', // Spostato più in basso per nuove dimensioni
-            left: '40.78vw', // ~783px (790px scaled)
+            left: 'calc(100vw - 44.06vw - 15.47vw)', // Stessa distanza dal margine destro della Card 3
             width: '44.06vw', // ~846px (705px * 1.2)
             height: '26.40vh', // ~285px (238px * 1.2)
           }}
@@ -389,7 +429,7 @@ export default function Sez4() {
         <div
           className="absolute bg-gray-100 rounded-2xl overflow-hidden"
           style={{
-            top: '130vh', // Spostato più in basso per nuove dimensioni
+            top: 'calc(130vh + 4px)', // Spostato 4px più in basso
             left: '40.78vw', // ~783px (790px scaled)
             width: '21.31vw', // ~409px (341px * 1.2)
             height: '20.53vh', // ~222px (185px * 1.2)
@@ -402,13 +442,46 @@ export default function Sez4() {
         <div
           className="absolute bg-gray-100 rounded-2xl overflow-hidden"
           style={{
-            top: '130vh', // Spostato più in basso per nuove dimensioni
-            left: '64.53vw', // ~1239px (1156px scaled)
+            top: 'calc(130vh + 4px)', // Spostato 4px più in basso
+            left: 'calc(100vw - 21.31vw - 15.47vw)', // Stessa distanza dal margine destro della Card 3
             width: '21.31vw', // ~409px (341px * 1.2)
             height: '20.53vh', // ~222px (185px * 1.2)
           }}
         >
-          {/* Empty card - ready for content */}
+          {/* Text */}
+          <div
+            className="absolute w-full text-center"
+            style={{ top: '32px' }}
+          >
+            <h3
+              className="text-black font-semibold leading-tight"
+              style={{
+                fontSize: '1.5vw', // Ingrandito
+                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+              }}
+            >
+              7 day turnaround
+            </h3>
+          </div>
+
+          {/* Clock Animation */}
+          <div
+            ref={clockDesktopRef}
+            className="absolute"
+            style={{
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '224px',
+              height: '224px',
+            }}
+          >
+            <Lottie
+              animationData={clockAnimation}
+              loop={true}
+              autoplay={true}
+              className="w-full h-full"
+            />
+          </div>
         </div>
       </div>
 
@@ -423,7 +496,7 @@ export default function Sez4() {
 
           {/* Title - Mobile/Tablet */}
           <h2
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10"
             style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
           >
             {t('title')}
@@ -458,7 +531,7 @@ export default function Sez4() {
                 }}
               >
                 <h3
-                  className="font-medium text-black leading-tight"
+                  className="font-semibold text-black leading-tight"
                   style={{
                     fontSize: '4.5vh', // Font size che si scala con il viewport come l'immagine
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -512,7 +585,7 @@ export default function Sez4() {
                 }}
               >
                 <h3
-                  className="font-medium text-white leading-tight"
+                  className="font-semibold text-white leading-tight"
                   style={{
                     fontSize: '4.5vh', // Stessa grandezza delle altre card mobile
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -531,7 +604,7 @@ export default function Sez4() {
                 ref={leftHandMobileRef}
                 className="absolute"
                 style={{
-                  top: '20.88%', // 109px / 522px = 20.88%
+                  top: '24%', // Abbassata ulteriormente (era 20.88%)
                   width: '74.43%', // 262px / 352px = 74.43%
                   height: '29.12%', // 152px / 522px = 29.12%
                 }}
@@ -572,7 +645,7 @@ export default function Sez4() {
                 }}
               >
                 <h3
-                  className="font-medium text-black leading-tight"
+                  className="font-semibold text-black leading-tight"
                   style={{
                     fontSize: '4.5vh', // Stessa grandezza della Card 2 mobile
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -595,9 +668,42 @@ export default function Sez4() {
               {/* Empty card - ready for content */}
             </div>
 
-            {/* Card 7 - Mobile/Tablet - Empty - Responsive aspect ratio 352:201 */}
-            <div className="bg-gray-100 rounded-2xl w-full overflow-hidden" style={{ aspectRatio: '352/201' }}>
-              {/* Empty card - ready for content */}
+            {/* Card 7 - Mobile/Tablet - Turnaround - Responsive aspect ratio 352:201 */}
+            <div className="relative bg-gray-100 rounded-2xl w-full overflow-hidden" style={{ aspectRatio: '352/201' }}>
+              {/* Text */}
+              <div
+                className="absolute w-full text-center"
+                style={{ top: '24px' }}
+              >
+                <h3
+                  className="text-black font-semibold leading-tight"
+                  style={{
+                    fontSize: '3.5vh', // Mobile font size ingrandito
+                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                  }}
+                >
+                  7 day turnaround
+                </h3>
+              </div>
+
+              {/* Clock Animation */}
+              <div
+                ref={clockMobileRef}
+                className="absolute"
+                style={{
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '240px',
+                  height: '240px',
+                }}
+              >
+                <Lottie
+                  animationData={clockAnimation}
+                  loop={true}
+                  autoplay={true}
+                  className="w-full h-full"
+                />
+              </div>
             </div>
 
           </div>
