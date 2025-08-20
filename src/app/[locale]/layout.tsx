@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { notFound } from 'next/navigation';
+import { lavener } from '@/libs/fonts';
 import { routing } from '@/libs/I18nRouting';
 import { getBaseUrl } from '@/utils/AppConfig';
 import LayoutClient from './LayoutClient';
@@ -25,12 +26,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
 
   const baseUrl = getBaseUrl();
-  const title = 'Lorenzo Saini - Photography & Visual Art';
-  const description = locale === 'it'
-    ? 'Portfolio di Lorenzo Saini - Fotografo professionista specializzato in fashion, ritratti e fotografia commerciale. Creatività, passione e qualità professionale.'
-    : 'Lorenzo Saini Portfolio - Professional photographer specializing in fashion, portraits and commercial photography. Creativity, passion and professional quality.';
 
-  const ogLocale = locale === 'it' ? 'it_IT' : 'en_US';
+  const tMeta = await getTranslations({ locale, namespace: 'Meta' });
+  const title = tMeta('title');
+  const description = tMeta('description');
+  const keywords = tMeta.raw('keywords') as string[];
+  const ogLocale = tMeta('ogLocale');
 
   return {
     metadataBase: new URL(baseUrl),
@@ -39,9 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       default: title,
     },
     description,
-    keywords: locale === 'it'
-      ? ['lorenzo saini', 'fotografo', 'fotografia', 'fashion', 'ritratti', 'commerciale', 'portfolio', 'italia']
-      : ['lorenzo saini', 'photographer', 'photography', 'fashion', 'portraits', 'commercial', 'portfolio', 'italy'],
+    keywords,
     authors: [{ name: 'Lorenzo Saini', url: baseUrl }],
     creator: 'Lorenzo Saini',
     publisher: 'Lorenzo Saini',
@@ -134,6 +133,9 @@ export function generateStaticParams() {
   return routing.locales.map(locale => ({ locale }));
 }
 
+// Force static rendering for better performance
+export const dynamic = 'force-static';
+
 export default async function RootLayout(props: LayoutProps) {
   const { locale } = await props.params;
 
@@ -145,83 +147,46 @@ export default async function RootLayout(props: LayoutProps) {
   setRequestLocale(locale);
 
   // Get translations for navigation
-  const t = await getTranslations({ locale, namespace: 'Navigation' });
+  const tNav = await getTranslations({ locale, namespace: 'Navigation' });
+
+  // Get translations for structured data (JSON-LD)
+  const tMeta = await getTranslations({ locale, namespace: 'Meta' });
+
+  // Get messages for NextIntlClientProvider
+  const messages = await getMessages({ locale });
 
   // Generate navigation items with translations and accessibility
   const navItems: NavItem[] = [
     {
-      label: t('home'),
+      label: tNav('home'),
       href: `/${locale}`,
-      ariaLabel: locale === 'it' ? 'Vai alla homepage' : 'Go to homepage',
+      ariaLabel: tNav('aria.home'),
     },
     {
-      label: t('portfolio'),
+      label: tNav('portfolio'),
       href: `/${locale}/portfolio`,
-      ariaLabel: locale === 'it' ? 'Visualizza il portfolio' : 'View portfolio',
+      ariaLabel: tNav('aria.portfolio'),
     },
     {
-      label: t('blog'),
+      label: tNav('blog'),
       href: `/${locale}/blog`,
-      ariaLabel: locale === 'it' ? 'Leggi il blog' : 'Read blog',
+      ariaLabel: tNav('aria.blog'),
     },
     {
-      label: t('aboutMe'),
+      label: tNav('aboutMe'),
       href: `/${locale}/aboutme`,
-      ariaLabel: locale === 'it' ? 'Scopri di più su Lorenzo' : 'Learn more about Lorenzo',
+      ariaLabel: tNav('aria.aboutMe'),
     },
     {
-      label: t('contact'),
+      label: tNav('contact'),
       href: `/${locale}/contact`,
-      ariaLabel: locale === 'it' ? 'Contatta Lorenzo' : 'Contact Lorenzo',
+      ariaLabel: tNav('aria.contact'),
     },
   ];
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className={lavener.variable}>
       <head>
-        {/* Critical resources preload for performance */}
-        <link
-          rel="preload"
-          as="image"
-          href="/assets/images/backgropund.webp"
-          fetchPriority="high"
-        />
-        <link
-          rel="preload"
-          as="font"
-          href="/assets/fonts/LAVENER.ttf"
-          type="font/truetype"
-          crossOrigin="anonymous"
-          fetchPriority="high"
-        />
-        <link rel="preload" as="image" href="/assets/images/LogoBianco.webp" />
-
-        {/* DNS prefetch for potential external resources */}
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="//www.google-analytics.com" />
-
-        {/* SEO and performance meta tags */}
-        <meta name="author" content="Lorenzo Saini" />
-        <meta name="copyright" content="© 2024 Lorenzo Saini. All rights reserved." />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="msapplication-TileColor" content="#060010" />
-        <meta name="msapplication-config" content="/browserconfig.xml" />
-
-        {/* Progressive Web App meta tags */}
-        <meta name="application-name" content="Lorenzo Saini Portfolio" />
-        <meta name="apple-mobile-web-app-title" content="Lorenzo Saini" />
-
-        {/* Social media optimization */}
-        <meta property="og:site_name" content="Lorenzo Saini - Photography & Visual Art" />
-        <meta property="og:type" content="profile" />
-        <meta property="profile:first_name" content="Lorenzo" />
-        <meta property="profile:last_name" content="Saini" />
-        <meta property="profile:gender" content="male" />
-
-        {/* Additional Twitter Card optimization */}
-        <meta name="twitter:site" content="@lorenzosaini" />
-        <meta name="twitter:domain" content={getBaseUrl().replace('https://', '').replace('http://', '')} />
-
         {/* Structured Data for Artist */}
         <script
           type="application/ld+json"
@@ -231,10 +196,8 @@ export default async function RootLayout(props: LayoutProps) {
               '@type': 'Person',
               '@id': `${getBaseUrl()}/#person`,
               'name': 'Lorenzo Saini',
-              'jobTitle': locale === 'it' ? 'Fotografo Professionista' : 'Professional Photographer',
-              'description': locale === 'it'
-                ? 'Fotografo professionista specializzato in fashion, ritratti e fotografia commerciale'
-                : 'Professional photographer specializing in fashion, portraits and commercial photography',
+              'jobTitle': tMeta('jobTitle'),
+              'description': tMeta('description'),
               'url': getBaseUrl(),
               'sameAs': [
                 // Add actual social media URLs when available
@@ -256,8 +219,8 @@ export default async function RootLayout(props: LayoutProps) {
           }}
         />
       </head>
-      <body className="m-0 p-0 relative" style={{ fontFamily: 'LAVENER, sans-serif' }}>
-        <NextIntlClientProvider>
+      <body className={`m-0 p-0 relative ${lavener.className}`}>
+        <NextIntlClientProvider messages={messages} locale={locale}>
           <LayoutClient navItems={navItems}>
             {props.children}
           </LayoutClient>

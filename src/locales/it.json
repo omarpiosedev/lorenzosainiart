@@ -119,11 +119,25 @@
   "loading": {
     "message": "Caricamento in corso..."
   },
+  "Meta": {
+    "title": "Lorenzo Saini - Photography & Visual Art",
+    "description": "Portfolio di Lorenzo Saini - Fotografo professionista specializzato in fashion, ritratti e fotografia commerciale. Creatività, passione e qualità professionale.",
+    "keywords": ["lorenzo saini", "fotografo", "fotografia", "fashion", "ritratti", "commerciale", "portfolio", "italia"],
+    "ogLocale": "it_IT",
+    "jobTitle": "Fotografo Professionista"
+  },
   "Navigation": {
     "home": "HOME",
     "portfolio": "PORTFOLIO",
     "blog": "BLOG",
     "aboutMe": "CHI SONO",
-    "contact": "CONTATTI"
+    "contact": "CONTATTI",
+    "aria": {
+      "home": "Vai alla homepage",
+      "portfolio": "Visualizza il portfolio",
+      "blog": "Leggi il blog",
+      "aboutMe": "Scopri di più su Lorenzo",
+      "contact": "Contatta Lorenzo"
+    }
   }
 }

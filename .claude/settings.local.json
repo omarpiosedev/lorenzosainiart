@@ -1,7 +1,10 @@
 {
-  "statusLine": {
-    "type": "command",
-    "command": "powershell.exe -ExecutionPolicy Bypass -File C:\\Users\\omarp\\LorenzoSainiArt\\.claude\\vercel-status.ps1"
+  "permissions": {
+    "allow": [
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)"
+    ]
   },
   "hooks": {
     "Stop": [
@@ -28,5 +31,9 @@
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "powershell.exe -ExecutionPolicy Bypass -File C:\\Users\\omarp\\LorenzoSainiArt\\.claude\\vercel-status.ps1"
   }
 }
