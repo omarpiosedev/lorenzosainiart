@@ -45,15 +45,19 @@ const NavBar = ({
   const logoTweenRef = useRef<gsap.core.Tween | null>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
+  const openerRef = useRef<HTMLButtonElement | null>(null);
   const navItemsRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
 
   // Get current active href based on pathname
   const getActiveHref = () => {
-    // Remove locale from pathname for comparison
-    const cleanPathname = pathname.replace(/^\/[a-z]{2}/, '') || '/';
+    const normalize = (p: string) => (p.replace(/\/+$/, '') || '/');
+    const stripLocale = (p: string) => p.replace(/^\/([a-z]{2})(?:-[A-Z]{2})?(?=\/|$)/, '') || '/';
+
+    const cleanPathname = normalize(stripLocale(pathname));
     return items.find((item) => {
-      const cleanItemHref = item.href.replace(/^\/[a-z]{2}/, '') || '/';
+      const cleanItemHref = normalize(stripLocale(item.href));
       return cleanItemHref === cleanPathname;
     })?.href;
   };
@@ -241,6 +245,7 @@ const NavBar = ({
 
   const toggleMobileMenu = () => {
     const newState = !isMobileMenuOpen;
+    openerRef.current = hamburgerRef.current ?? null;
     setIsMobileMenuOpen(newState);
 
     const hamburger = hamburgerRef.current;
@@ -290,6 +295,13 @@ const NavBar = ({
           },
         });
       }
+    }
+
+    // Focus management
+    if (newState) {
+      requestAnimationFrame(() => firstLinkRef.current?.focus());
+    } else {
+      requestAnimationFrame(() => openerRef.current?.focus());
     }
 
     onMobileMenuClick?.();
@@ -573,6 +585,7 @@ const NavBar = ({
         id="mobile-menu"
         ref={mobileMenuRef}
         role="dialog"
+        aria-modal="true"
         aria-hidden={!isMobileMenuOpen}
         className="md:hidden absolute bottom-[3.5rem] left-0 right-0 rounded-[27px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-30 origin-bottom"
         style={{
@@ -583,7 +596,7 @@ const NavBar = ({
         }}
       >
         <ul className="list-none m-0 p-[3px] flex flex-col gap-[3px]">
-          {items.map((item) => {
+          {items.map((item, index) => {
             const defaultStyle = {
               background: 'var(--pill-bg, #fff)',
               color: 'var(--pill-text, #fff)',
@@ -597,6 +610,7 @@ const NavBar = ({
                 {isRouterLink(item.href)
                   ? (
                       <Link
+                        ref={index === 0 ? firstLinkRef : null}
                         href={item.href}
                         className={linkClasses}
                         style={defaultStyle}
@@ -607,6 +621,7 @@ const NavBar = ({
                     )
                   : (
                       <a
+                        ref={index === 0 ? firstLinkRef : null}
                         href={item.href}
                         className={linkClasses}
                         style={defaultStyle}

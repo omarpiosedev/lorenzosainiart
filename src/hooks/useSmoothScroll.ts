@@ -3,76 +3,82 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-// Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
 export const useSmoothScroll = (enabled: boolean = true) => {
   const lenisRef = useRef<Lenis | null>(null);
-  const rafRef = useRef<number | null>(null);
+  const tickerAddedRef = useRef(false);
 
   useEffect(() => {
-    // Solo inizializza se enabled è true e siamo lato client
-    if (!enabled || typeof window === 'undefined') {
+    if (!enabled || typeof window === 'undefined' || lenisRef.current) {
       return;
     }
 
-    // Aggiungi classe al documento per Lenis
     document.documentElement.classList.add('lenis');
 
-    // Initialize Lenis
     const lenis = new Lenis({
-      duration: 1.2, // Durata dell'animazione (1.2s per un effetto fluido)
-      easing: (t: number) => Math.min(1, 1.001 - 2 ** (-10 * t)), // Easing personalizzato
-      touchMultiplier: 2, // Sensibilità touch
-      wheelMultiplier: 1, // Sensibilità wheel
-      infinite: false, // Non infinito per portfolio
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - 2 ** (-10 * t)),
+      touchMultiplier: 2,
+      wheelMultiplier: 1,
+      infinite: false,
     });
-
     lenisRef.current = lenis;
 
-    // Integrazione con GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
+    // Collega Lenis a ScrollTrigger
+    const onLenisScroll = () => ScrollTrigger.update();
+    lenis.on('scroll', onLenisScroll);
 
-    // Animation frame loop per Lenis
-    const raf = (time: number) => {
-      lenis.raf(time);
-      rafRef.current = requestAnimationFrame(raf);
-    };
+    // Usa il ticker GSAP come RAF unico
+    if (!tickerAddedRef.current) {
+      gsap.ticker.add((t) => {
+        // gsap.ticker passa secondi; Lenis si aspetta ms
+        lenisRef.current?.raf(t * 1000);
+      });
+      tickerAddedRef.current = true;
+    }
 
-    rafRef.current = requestAnimationFrame(raf);
+    // Facoltativo: refresh dopo init per layout corretti
+    ScrollTrigger.refresh();
 
-    // Cleanup function
     return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
+      // Cleanup in ordine: listener -> istanza -> ticker -> classe
+      try {
+        lenis.off('scroll', onLenisScroll);
+      } catch {}
+      lenis.destroy();
+      lenisRef.current = null;
+
+      // Rimuovi il ticker solo quando non c'è più alcuna istanza
+      if (tickerAddedRef.current) {
+        gsap.ticker.remove((t) => {
+          lenisRef.current?.raf(t * 1000);
+        });
+        tickerAddedRef.current = false;
       }
-      if (lenisRef.current) {
-        document.documentElement.classList.remove('lenis');
-        lenisRef.current.destroy();
-        lenisRef.current = null;
-      }
+
+      document.documentElement.classList.remove('lenis');
     };
   }, [enabled]);
 
-  // Funzione per scrollare verso una sezione specifica
-  const scrollToSection = (target: string | HTMLElement, offset: number = 0) => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(target, {
+  const getLenis = useCallback(() => lenisRef.current, []);
+
+  const scrollToSection = useCallback(
+    (target: string | HTMLElement, offset: number = 0) => {
+      const lenis = lenisRef.current;
+      if (!lenis) {
+        return;
+      }
+      lenis.scrollTo(target, {
         offset,
         duration: 1.5,
         easing: (t: number) => 1 - (1 - t) ** 3, // easeOutCubic
       });
-    }
-  };
+    },
+    [],
+  );
 
-  // Funzione per ottenere l'istanza Lenis (utile per controlli avanzati)
-  const getLenis = () => lenisRef.current;
-
-  return {
-    scrollToSection,
-    getLenis,
-  };
+  return { scrollToSection, getLenis };
 };
