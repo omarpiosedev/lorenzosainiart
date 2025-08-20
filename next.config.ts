@@ -3,6 +3,30 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 import createNextIntlPlugin from 'next-intl/plugin';
 import './src/libs/Env';
 
+// Security headers for production
+const securityHeaders = [
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'DENY',
+  },
+  {
+    key: 'X-XSS-Protection',
+    value: '1; mode=block',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
+  },
+];
+
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
   eslint: {
@@ -29,6 +53,16 @@ const baseConfig: NextConfig = {
   },
   // Modern browser support - reduces polyfills by 11.5KB
   // swcMinify: true, // Enabled by default in Next.js 15
+
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+    ];
+  },
 };
 
 // Initialize the Next-Intl plugin

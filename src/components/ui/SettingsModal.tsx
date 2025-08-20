@@ -117,7 +117,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   return (
     <div
       ref={modalRef}
-      className="fixed inset-0 z-[99999] items-center justify-center"
+      className="fixed inset-0 z-50 items-center justify-center"
       style={{ display: isOpen ? 'flex' : 'none' }}
     >
       {/* Overlay */}
@@ -140,11 +140,14 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
         ref={contentRef}
         className="relative bg-white rounded-3xl shadow-2xl p-8 mx-4 max-w-md w-full"
         style={{ maxHeight: '90vh' }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-title"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+            <h2 id="settings-title" className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}>
               Settings
             </h2>
             <p className="text-gray-600 text-sm mt-1">

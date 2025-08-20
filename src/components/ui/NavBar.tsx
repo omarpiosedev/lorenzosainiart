@@ -4,12 +4,12 @@ import { gsap } from 'gsap';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 type NavBarProps = {
   logo: string;
   logoAlt?: string;
-  items: Array<{ label: string; href: string; ariaLabel?: string }>;
+  items: ReadonlyArray<{ label: string; href: string; ariaLabel?: string }>;
   className?: string;
   ease?: string;
   baseColor?: string;
@@ -26,7 +26,7 @@ const NavBar = ({
   logoAlt = 'Logo',
   items,
   className = '',
-  ease = 'power3.easeOut',
+  ease = 'power3.out',
   baseColor = '#fff',
   pillColor = '#060010',
   hoveredPillTextColor = '#060010',
@@ -60,7 +60,7 @@ const NavBar = ({
 
   const activeHref = getActiveHref();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const layout = () => {
       circleRefs.current.forEach((circle) => {
         if (!circle?.parentElement) {
@@ -183,7 +183,16 @@ const NavBar = ({
       }
     }
 
-    return () => window.removeEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      // Kill tutte le timeline/tween attive
+      tlRefs.current.forEach(tl => tl?.kill());
+      activeTweenRefs.current.forEach(tw => tw?.kill());
+      logoTweenRef.current?.kill();
+      tlRefs.current = [];
+      activeTweenRefs.current = [];
+      circleRefs.current = [];
+    };
   }, [items, ease, initialLoadAnimation]);
 
   // Riferimento al pathname precedente per rilevare i cambi di pagina
@@ -300,6 +309,33 @@ const NavBar = ({
     }
   }, [pathname, isMobileMenuOpen]);
 
+  // Gestione Escape key e outside click per mobile menu
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const onPointerDown = (e: MouseEvent) => {
+      if (!isMobileMenuOpen) {
+        return;
+      }
+      if (!mobileMenuRef.current?.contains(e.target as Node)
+        && !hamburgerRef.current?.contains(e.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('pointerdown', onPointerDown);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('pointerdown', onPointerDown);
+    };
+  }, [isMobileMenuOpen]);
+
   const isExternalLink = (href: string) =>
     href.startsWith('http://')
     || href.startsWith('https://')
@@ -322,7 +358,7 @@ const NavBar = ({
   };
 
   return (
-    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-[99999] pb-4" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
+    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-40 pb-4" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}>
       <nav
         className={`w-full md:w-max flex items-center justify-between md:justify-start box-border px-4 md:px-0 ${className}`}
         aria-label="Primary"
@@ -334,7 +370,6 @@ const NavBar = ({
                 href={items[0].href}
                 aria-label="Home"
                 onMouseEnter={handleLogoEnter}
-                role="menuitem"
                 ref={(el) => {
                   logoRef.current = el;
                 }}
@@ -351,7 +386,6 @@ const NavBar = ({
                   ref={logoImgRef}
                   width={48}
                   height={48}
-                  priority
                   className="w-full h-full object-cover block"
                 />
               </Link>
@@ -377,7 +411,6 @@ const NavBar = ({
                   ref={logoImgRef}
                   width={48}
                   height={48}
-                  priority
                   className="w-full h-full object-cover block"
                 />
               </a>
@@ -393,7 +426,6 @@ const NavBar = ({
           }}
         >
           <ul
-            role="menubar"
             className="list-none flex items-stretch m-0 p-[3px] h-full"
             style={{ gap: 'var(--pill-gap)' }}
           >
@@ -454,30 +486,34 @@ const NavBar = ({
                 = 'relative overflow-hidden inline-flex items-center justify-center h-full no-underline rounded-full box-border font-semibold text-[16px] leading-[0] uppercase tracking-[0.2px] whitespace-nowrap cursor-pointer px-0';
 
               return (
-                <li key={item.href} role="none" className="flex h-full">
+                <li key={item.href} className="flex h-full">
                   {isRouterLink(item.href)
                     ? (
                         <Link
-                          role="menuitem"
                           href={item.href}
                           className={basePillClasses}
                           style={pillStyle}
                           aria-label={item.ariaLabel || item.label}
+                          aria-current={isActive ? 'page' : undefined}
                           onMouseEnter={() => handleEnter(i)}
                           onMouseLeave={() => handleLeave(i)}
+                          onFocus={() => handleEnter(i)}
+                          onBlur={() => handleLeave(i)}
                         >
                           {PillContent}
                         </Link>
                       )
                     : (
                         <a
-                          role="menuitem"
                           href={item.href}
                           className={basePillClasses}
                           style={pillStyle}
                           aria-label={item.ariaLabel || item.label}
+                          aria-current={isActive ? 'page' : undefined}
                           onMouseEnter={() => handleEnter(i)}
                           onMouseLeave={() => handleLeave(i)}
+                          onFocus={() => handleEnter(i)}
+                          onBlur={() => handleLeave(i)}
                         >
                           {PillContent}
                         </a>
@@ -486,7 +522,7 @@ const NavBar = ({
               );
             })}
             {/* Settings Button - Desktop */}
-            <li role="none" className="flex h-full ml-2">
+            <li className="flex h-full ml-2">
               <button
                 type="button"
                 onClick={() => onSettingsClick?.()}
@@ -513,6 +549,7 @@ const NavBar = ({
           onClick={toggleMobileMenu}
           aria-label="Toggle menu"
           aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-menu"
           className="md:hidden rounded-full border-0 flex flex-col items-center justify-center gap-1 cursor-pointer p-0 relative"
           style={{
             width: 'var(--nav-h)',
@@ -533,8 +570,11 @@ const NavBar = ({
 
       {/* Mobile Menu */}
       <div
+        id="mobile-menu"
         ref={mobileMenuRef}
-        className="md:hidden absolute bottom-[3.5rem] left-0 right-0 rounded-[27px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-[998] origin-bottom"
+        role="dialog"
+        aria-hidden={!isMobileMenuOpen}
+        className="md:hidden absolute bottom-[3.5rem] left-0 right-0 rounded-[27px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-30 origin-bottom"
         style={{
           ...cssVars,
           background: 'var(--base, #f0f0f0)',
@@ -548,17 +588,9 @@ const NavBar = ({
               background: 'var(--pill-bg, #fff)',
               color: 'var(--pill-text, #fff)',
             };
-            const hoverIn = (e: React.MouseEvent<HTMLAnchorElement>) => {
-              e.currentTarget.style.background = 'var(--base)';
-              e.currentTarget.style.color = 'var(--hover-text, #fff)';
-            };
-            const hoverOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
-              e.currentTarget.style.background = 'var(--pill-bg, #fff)';
-              e.currentTarget.style.color = 'var(--pill-text, #fff)';
-            };
 
             const linkClasses
-              = 'block py-3 px-4 text-[16px] font-medium rounded-[50px] transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]';
+              = 'block py-3 px-4 text-[16px] font-medium rounded-[50px] transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)] hover:bg-[var(--base)] hover:text-[var(--hover-text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--base)]';
 
             return (
               <li key={item.href}>
@@ -568,8 +600,6 @@ const NavBar = ({
                         href={item.href}
                         className={linkClasses}
                         style={defaultStyle}
-                        onMouseEnter={hoverIn}
-                        onMouseLeave={hoverOut}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.label}
@@ -580,8 +610,6 @@ const NavBar = ({
                         href={item.href}
                         className={linkClasses}
                         style={defaultStyle}
-                        onMouseEnter={hoverIn}
-                        onMouseLeave={hoverOut}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.label}

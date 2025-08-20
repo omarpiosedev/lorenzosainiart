@@ -6,15 +6,15 @@ import { notFound } from 'next/navigation';
 import { lavener } from '@/libs/fonts';
 import { routing } from '@/libs/I18nRouting';
 import { getBaseUrl } from '@/utils/AppConfig';
-import LayoutClient from './LayoutClient';
+import ClientShell from './ClientShell';
 import '@/styles/global.css';
 
 // Types
-type NavItem = {
+export type NavItem = Readonly<{
   label: string;
   href: string;
   ariaLabel?: string;
-};
+}>;
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -220,10 +220,16 @@ export default async function RootLayout(props: LayoutProps) {
         />
       </head>
       <body className={`m-0 p-0 relative ${lavener.className}`}>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:no-underline"
+        >
+          Salta al contenuto
+        </a>
         <NextIntlClientProvider messages={messages} locale={locale}>
-          <LayoutClient navItems={navItems}>
+          <ClientShell navItems={navItems}>
             {props.children}
-          </LayoutClient>
+          </ClientShell>
         </NextIntlClientProvider>
       </body>
     </html>
