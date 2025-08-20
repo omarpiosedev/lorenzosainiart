@@ -2,7 +2,7 @@
 
 import { gsap } from 'gsap';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useResourceLoader } from '@/hooks/useResourceLoader';
 import ProgressBar from './ProgressBar';
 import VideoLogo from './VideoLogo';
@@ -20,44 +20,55 @@ export default function IntroOverlay({ onComplete }: IntroOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const { progress, isComplete } = useResourceLoader();
+  const { progress, isComplete, markResourceLoaded } = useResourceLoader();
 
-  // Safety timeout to prevent infinite loading
-  useEffect(() => {
-    const safetyTimeout = setTimeout(() => {
-      if (typeof onComplete === 'function') {
-        onComplete();
-      }
-    }, 8000); // 8 seconds timeout
-
-    return () => clearTimeout(safetyTimeout);
-  }, [onComplete]);
-
-  // Handler for when video can play
-  const handleVideoCanPlay = () => {
-    if (typeof window !== 'undefined') {
-      const tryMarkVideo = () => {
-        if ((window as any).markVideoLoaded) {
-          (window as any).markVideoLoaded();
-        } else {
-          setTimeout(tryMarkVideo, 100);
-        }
-      };
-      tryMarkVideo();
+  // --- GUARDIE ---
+  const doneRef = useRef(false);
+  const completeOnce = () => {
+    if (doneRef.current) {
+      return;
     }
+    doneRef.current = true;
+    onComplete();
   };
 
-  // Entry animation
+  const videoMarkedRef = useRef(false);
+  const handleVideoReady = () => {
+    if (videoMarkedRef.current) {
+      return;
+    }
+    videoMarkedRef.current = true;
+    markResourceLoaded('video');
+  };
+  // ---------------
+
+  // PRM: riduci o azzera le animazioni
+  const [reducedMotion, setReducedMotion] = useState(false);
   useEffect(() => {
-    if (containerRef.current && contentRef.current) {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener?.('change', update);
+    return () => mq.removeEventListener?.('change', update);
+  }, []);
+
+  // Safety timeout (più breve dell'hook)
+  useEffect(() => {
+    const id = setTimeout(completeOnce, 6000);
+    return () => clearTimeout(id);
+  }, []);
+
+  // Entry animation con cleanup e PRM
+  useLayoutEffect(() => {
+    if (!containerRef.current || !contentRef.current) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
       gsap.fromTo(
         containerRef.current,
         { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 0.5,
-          ease: 'power2.out',
-        },
+        { opacity: 1, duration: reducedMotion ? 0 : 0.5, ease: 'power2.out' },
       );
 
       gsap.fromTo(
@@ -66,32 +77,38 @@ export default function IntroOverlay({ onComplete }: IntroOverlayProps) {
         {
           y: 0,
           opacity: 1,
-          duration: 0.8,
-          delay: 0.2,
+          duration: reducedMotion ? 0 : 0.8,
+          delay: reducedMotion ? 0 : 0.2,
           ease: 'power2.out',
         },
       );
-    }
-  }, []);
+    });
 
-  // Exit animation when loading complete
+    return () => ctx.revert(); // kill animazioni
+  }, [reducedMotion]);
+
+  // Exit animation quando completo
   useEffect(() => {
-    if (isComplete && containerRef.current) {
-      gsap.to(containerRef.current, {
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power2.inOut',
-        onComplete: () => {
-          onComplete();
-        },
-      });
+    if (!isComplete || !containerRef.current) {
+      return;
     }
-  }, [isComplete, onComplete]);
+
+    const tween = gsap.to(containerRef.current, {
+      opacity: 0,
+      duration: reducedMotion ? 0 : 0.8,
+      ease: 'power2.inOut',
+      onComplete: completeOnce,
+    });
+
+    return () => {
+      tween.kill();
+    };
+  }, [isComplete, reducedMotion]);
 
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-60 flex items-center justify-center bg-white pointer-events-auto"
+      className="fixed inset-0 z-60 flex items-center justify-center bg-white pointer-events-none"
       aria-hidden="true" // Hidden from screen readers as it's decorative
     >
       <div
@@ -100,8 +117,8 @@ export default function IntroOverlay({ onComplete }: IntroOverlayProps) {
       >
         {/* Video Logo */}
         <VideoLogo
-          onCanPlay={handleVideoCanPlay}
-          onLoadedData={handleVideoCanPlay}
+          onCanPlay={handleVideoReady}
+          onLoadedData={handleVideoReady}
         />
 
         {/* Progress Bar */}

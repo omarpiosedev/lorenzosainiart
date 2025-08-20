@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type LoadingResource = {
   name: string;
@@ -13,6 +13,7 @@ type UseResourceLoaderReturn = {
   isLoading: boolean;
   isComplete: boolean;
   resources: LoadingResource[];
+  markResourceLoaded: (name: string) => void; // Exposed for direct usage
 };
 
 export function useResourceLoader(): UseResourceLoaderReturn {
@@ -26,11 +27,12 @@ export function useResourceLoader(): UseResourceLoaderReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
   const [actualProgress, setActualProgress] = useState(0); // Progresso reale delle risorse
-  const [isClient, setIsClient] = useState(false); // Per evitare problemi di hydration
+
+  const startTimeRef = useRef<number | null>(null);
 
   // Calcola la percentuale di progresso reale delle risorse
   useEffect(() => {
-    const totalWeight = resources.reduce((sum, resource) => sum + resource.weight, 0);
+    const totalWeight = resources.reduce((sum, resource) => sum + resource.weight, 0) || 1;
     const loadedWeight = resources
       .filter(resource => resource.loaded)
       .reduce((sum, resource) => sum + resource.weight, 0);
@@ -38,49 +40,6 @@ export function useResourceLoader(): UseResourceLoaderReturn {
     const newActualProgress = Math.round((loadedWeight / totalWeight) * 100);
     setActualProgress(newActualProgress);
   }, [resources]);
-
-  // Gestisce il progresso smooth e il timing
-  useEffect(() => {
-    // Non avviare il timer se non siamo lato client
-    if (!isClient) {
-      return;
-    }
-
-    const minDuration = 3000; // 3 secondi
-    const maxDuration = 8000; // Timeout di sicurezza: massimo 8 secondi
-    const startTime = (typeof window !== 'undefined' && (window as any).loadingStartTime) || Date.now();
-
-    const updateProgress = () => {
-      const elapsedTime = Date.now() - startTime;
-      const timeProgress = Math.min((elapsedTime / minDuration) * 100, 100);
-
-      // La barra va sempre da 0 a 100 in modo fluido in 3 secondi
-      setProgress(Math.round(timeProgress));
-
-      // Completa quando:
-      // 1. Sono passati 3 secondi E le risorse sono tutte caricate, OPPURE
-      // 2. È scaduto il timeout di sicurezza (8 secondi)
-      const shouldComplete
-        = (elapsedTime >= minDuration && actualProgress >= 100)
-          || elapsedTime >= maxDuration;
-
-      if (shouldComplete) {
-        if (!isComplete) {
-          // Mostra 100% per 500ms prima di completare
-          setProgress(100);
-          setTimeout(() => {
-            setIsComplete(true);
-            setIsLoading(false);
-          }, 500);
-        }
-      } else {
-        // Continua ad aggiornare ogni 50ms per fluidità
-        setTimeout(updateProgress, 50);
-      }
-    };
-
-    updateProgress();
-  }, [actualProgress, isComplete, isClient]);
 
   // Funzione per marcare una risorsa come caricata
   const markResourceLoaded = (resourceName: string) => {
@@ -93,64 +52,100 @@ export function useResourceLoader(): UseResourceLoaderReturn {
     );
   };
 
-  // Effect per inizializzare lato client
+  // Initialize start time once
   useEffect(() => {
-    setIsClient(true);
+    if (startTimeRef.current === null) {
+      startTimeRef.current = Date.now();
+    }
   }, []);
 
+  // Gestisce il progresso smooth e il timing con cleanup robusto
   useEffect(() => {
-    // Esegui solo lato client per evitare problemi di hydration
-    if (!isClient) {
-      return;
+    const minDuration = 3000; // 3 secondi
+    const maxDuration = 8000; // Timeout di sicurezza: massimo 8 secondi
+    if (startTimeRef.current === null) {
+      startTimeRef.current = Date.now();
     }
 
-    // Segna il tempo di inizio caricamento
-    if (typeof window !== 'undefined') {
-      (window as any).loadingStartTime = Date.now();
-    }
+    let intervalId: number | null = null;
+    let completionTimeoutId: number | null = null;
+
+    const tick = () => {
+      const elapsed = Date.now() - (startTimeRef.current as number);
+      const timeProgress = Math.min((elapsed / minDuration) * 100, 100);
+      setProgress(Math.round(timeProgress));
+
+      const shouldComplete
+        = (elapsed >= minDuration && actualProgress >= 100) || elapsed >= maxDuration;
+
+      if (shouldComplete) {
+        if (!isComplete) {
+          setProgress(100);
+          completionTimeoutId = window.setTimeout(() => {
+            setIsComplete(true);
+            setIsLoading(false);
+          }, 500);
+        }
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      }
+    };
+
+    tick();
+    intervalId = window.setInterval(tick, 50);
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      if (completionTimeoutId) {
+        clearTimeout(completionTimeoutId);
+      }
+    };
+  }, [actualProgress, isComplete]);
+
+  // Font loading with proper cleanup
+  useEffect(() => {
+    let timeoutId: number | null = null;
 
     // 1. Caricamento fonts (critici per il testo visibile)
-    if (typeof document !== 'undefined' && document.fonts) {
-      document.fonts.ready.then(() => {
-        markResourceLoaded('fonts');
-      }).catch(() => {
-        // Fallback in caso di errore
-        markResourceLoaded('fonts');
-      });
+    if (document.fonts?.ready) {
+      document.fonts.ready
+        .then(() => markResourceLoaded('fonts'))
+        .catch(() => markResourceLoaded('fonts'));
     } else {
       // Fallback per browser older
-      setTimeout(() => markResourceLoaded('fonts'), 1000);
-    }
-
-    // 2. Preload solo background hero (visibile immediatamente)
-    const heroImage = new Image();
-    heroImage.onload = () => markResourceLoaded('heroBackground');
-    heroImage.onerror = () => markResourceLoaded('heroBackground'); // Continua anche se fallisce
-    heroImage.src = '/assets/images/backgropund.webp';
-  }, [isClient]);
-
-  // Handler per il video
-  const handleVideoLoaded = () => {
-    markResourceLoaded('video');
-  };
-
-  // Espone la funzione per il video component immediatamente
-  useEffect(() => {
-    if (isClient && typeof window !== 'undefined') {
-      (window as any).markVideoLoaded = handleVideoLoaded;
+      timeoutId = window.setTimeout(() => markResourceLoaded('fonts'), 1000);
     }
 
     return () => {
-      if (typeof window !== 'undefined') {
-        delete (window as any).markVideoLoaded;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
     };
-  }, [isClient]);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    // 2. Preload hero background con abort mechanism
+    const heroImage = new Image();
+    heroImage.onload = () => !cancelled && markResourceLoaded('heroBackground');
+    heroImage.onerror = () => !cancelled && markResourceLoaded('heroBackground');
+    heroImage.src = '/assets/images/background.webp'; // Fixed typo: backgropund -> background
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return {
     progress,
     isLoading,
     isComplete,
     resources,
+    markResourceLoaded, // Exposed for direct usage
   };
 }
