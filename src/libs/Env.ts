@@ -1,7 +1,9 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
-export const Env = createEnv({
+// Env configuration for T3 stack (currently unused)
+// export const Env = createEnv({
+createEnv({
   server: {},
   client: {
     // App configuration
