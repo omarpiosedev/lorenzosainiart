@@ -118,5 +118,12 @@
   },
   "loading": {
     "message": "Loading..."
+  },
+  "Navigation": {
+    "home": "HOME",
+    "portfolio": "PORTFOLIO",
+    "blog": "BLOG",
+    "aboutMe": "ABOUT ME",
+    "contact": "CONTACT"
   }
 }
