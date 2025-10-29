@@ -1,3 +1,8 @@
 {
-  "outputStyle": "default"
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "shadcn",
+    "DeepGraph Next.js MCP",
+    "DeepGraph React MCP"
+  ]
 }

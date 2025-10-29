@@ -46,8 +46,8 @@ export function useResourceLoader(): UseResourceLoaderReturn {
       return;
     }
 
-    const minDuration = 3000; // 3 secondi
-    const maxDuration = 8000; // Timeout di sicurezza: massimo 8 secondi
+    const minDuration = 800; // 800ms - tempo minimo per UX fluida
+    const maxDuration = 3000; // Timeout di sicurezza: massimo 3 secondi
     const startTime = (typeof window !== 'undefined' && (window as any).loadingStartTime) || Date.now();
 
     const updateProgress = () => {

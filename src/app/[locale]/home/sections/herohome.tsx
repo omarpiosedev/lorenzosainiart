@@ -1,8 +1,12 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+
+// Register GSAP plugins
+gsap.registerPlugin(useGSAP);
 
 export default function HeroHome() {
   const [scale, setScale] = useState(1);
@@ -11,12 +15,14 @@ export default function HeroHome() {
   const [isReady, setIsReady] = useState(false);
 
   // Refs per le animazioni
+  const containerRef = useRef<HTMLElement>(null);
   const sposiRef = useRef<HTMLImageElement>(null);
   const cloudRef = useRef<HTMLImageElement>(null);
   const titleDesktopRef = useRef<HTMLHeadingElement>(null);
   const titleMobileRef = useRef<HTMLHeadingElement>(null);
   const signatureRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const tl = useRef<gsap.core.Timeline | undefined>(undefined);
 
   useEffect(() => {
     const updateScale = () => {
@@ -102,104 +108,112 @@ export default function HeroHome() {
     };
   }, [initialViewport]);
 
-  // Animazioni quando la pagina è pronta
-  useEffect(() => {
-    if (isReady && sposiRef.current && cloudRef.current && (titleDesktopRef.current || titleMobileRef.current) && signatureRef.current && contactRef.current) {
-      // === NUVOLA ===
-      // Trasformazione originale della nuvola per breakpoint
-      const cloudOriginalTransform = breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)';
-
-      // Posizione iniziale nuvola (dall'alto)
-      const cloudStartTransform = breakpoint === 'desktop'
-        ? 'scale(0.5) translateY(-200px)'
-        : breakpoint === 'tablet'
-          ? 'scale(0.6) translateY(-200px)'
-          : 'scale(1.25) translateY(-200px)';
-
-      gsap.set(cloudRef.current, {
-        transform: cloudStartTransform,
-        filter: 'blur(8px)', // Blur iniziale
-      });
-
-      // === SPOSI ===
-      // Trasformazione originale degli sposi per breakpoint
-      const sposiOriginalTransform = breakpoint === 'mobile'
-        ? 'translate(15px, 20px)'
-        : breakpoint === 'tablet'
-          ? 'translate(10px, 30px)'
-          : 'translate(20px, 60px)';
-
-      // Posizione iniziale sposi (dal basso)
-      const sposiStartTransform = breakpoint === 'mobile'
-        ? 'translate(15px, 220px)' // 20px + 200px
-        : breakpoint === 'tablet'
-          ? 'translate(10px, 230px)' // 30px + 200px
-          : 'translate(20px, 260px)'; // 60px + 200px
-
-      gsap.set(sposiRef.current, {
-        transform: sposiStartTransform,
-        filter: 'blur(8px)', // Blur iniziale
-      });
-
-      // === SIGNATURE E CONTACT ===
-      // Impostano stati iniziali per signature e contact
-      gsap.set([signatureRef.current, contactRef.current], {
-        opacity: 0,
-        scale: 0.8,
-        filter: 'blur(6px)',
-      });
-
-      // === TITOLO ===
-      // Imposta stato iniziale del titolo
-      const activeTitle = titleDesktopRef.current || titleMobileRef.current;
-      if (activeTitle) {
-        gsap.set(activeTitle, {
-          opacity: 0,
-          scale: 0.6,
-          filter: 'blur(10px)',
-          y: 50, // Parte leggermente dal basso
-        });
-      }
-
-      // === TIMELINE CINEMATOGRAFICA ===
-      const tl = gsap.timeline({ delay: 0.2 });
-
-      // Nuvola, sposi, signature e contact appaiono insieme
-      tl.set([cloudRef.current, sposiRef.current, signatureRef.current, contactRef.current], {
-        opacity: 1, // Appaiono istantaneamente insieme
-      })
-        .to(cloudRef.current, {
-          transform: cloudOriginalTransform,
-          filter: 'blur(0px)', // Blur si dissolve
-          duration: 2.0,
-          ease: 'power4.out',
-        }, '+=0')
-        .to(sposiRef.current, {
-          transform: sposiOriginalTransform,
-          filter: 'blur(0px)', // Blur si dissolve
-          duration: 2.0, // Stessa durata per sincronizzazione perfetta
-          ease: 'power4.out',
-        }, '<') // "<" significa che inizia esattamente insieme al precedente
-
-        // Signature e contact si animano insieme alle immagini
-        .to([signatureRef.current, contactRef.current], {
-          scale: 1,
-          filter: 'blur(0px)',
-          duration: 2.0,
-          ease: 'power4.out',
-        }, '<') // Iniziano insieme alle immagini
-
-        // === TITOLO - Appare dopo con effetto cinematografico ===
-        .to(activeTitle, {
-          opacity: 1,
-          scale: 1,
-          filter: 'blur(0px)',
-          y: 0,
-          duration: 1.8, // Durata più lunga per effetto drammatico
-          ease: 'power3.out',
-        }, '-=1.2'); // Inizia 1.2s prima che finiscano nuvola e sposi (più presto)
+  // Animazioni quando la pagina è pronta - usando useGSAP per cleanup automatico
+  useGSAP(() => {
+    if (!isReady) {
+      return;
     }
-  }, [isReady, breakpoint]);
+    if (!sposiRef.current || !cloudRef.current || (!titleDesktopRef.current && !titleMobileRef.current) || !signatureRef.current || !contactRef.current) {
+      return;
+    }
+    // === NUVOLA ===
+    // Trasformazione originale della nuvola per breakpoint
+    const cloudOriginalTransform = breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)';
+
+    // Posizione iniziale nuvola (dall'alto)
+    const cloudStartTransform = breakpoint === 'desktop'
+      ? 'scale(0.5) translateY(-200px)'
+      : breakpoint === 'tablet'
+        ? 'scale(0.6) translateY(-200px)'
+        : 'scale(1.25) translateY(-200px)';
+
+    gsap.set(cloudRef.current, {
+      transform: cloudStartTransform,
+      filter: 'blur(8px)', // Blur iniziale
+    });
+
+    // === SPOSI ===
+    // Trasformazione originale degli sposi per breakpoint
+    const sposiOriginalTransform = breakpoint === 'mobile'
+      ? 'translate(15px, 20px)'
+      : breakpoint === 'tablet'
+        ? 'translate(10px, 30px)'
+        : 'translate(20px, 60px)';
+
+    // Posizione iniziale sposi (dal basso)
+    const sposiStartTransform = breakpoint === 'mobile'
+      ? 'translate(15px, 220px)' // 20px + 200px
+      : breakpoint === 'tablet'
+        ? 'translate(10px, 230px)' // 30px + 200px
+        : 'translate(20px, 260px)'; // 60px + 200px
+
+    gsap.set(sposiRef.current, {
+      transform: sposiStartTransform,
+      filter: 'blur(8px)', // Blur iniziale
+    });
+
+    // === SIGNATURE E CONTACT ===
+    // Impostano stati iniziali per signature e contact
+    gsap.set([signatureRef.current, contactRef.current], {
+      opacity: 0,
+      scale: 0.8,
+      filter: 'blur(6px)',
+    });
+
+    // === TITOLO ===
+    // Imposta stato iniziale del titolo
+    const activeTitle = titleDesktopRef.current || titleMobileRef.current;
+    if (activeTitle) {
+      gsap.set(activeTitle, {
+        opacity: 0,
+        scale: 0.6,
+        filter: 'blur(10px)',
+        y: 50, // Parte leggermente dal basso
+      });
+    }
+
+    // === TIMELINE CINEMATOGRAFICA ===
+    tl.current = gsap.timeline({ delay: 0.2 });
+
+    // Nuvola, sposi, signature e contact appaiono insieme
+    tl.current.set([cloudRef.current, sposiRef.current, signatureRef.current, contactRef.current], {
+      opacity: 1, // Appaiono istantaneamente insieme
+    })
+      .to(cloudRef.current, {
+        transform: cloudOriginalTransform,
+        filter: 'blur(0px)', // Blur si dissolve
+        duration: 2.0,
+        ease: 'power4.out',
+      }, '+=0')
+      .to(sposiRef.current, {
+        transform: sposiOriginalTransform,
+        filter: 'blur(0px)', // Blur si dissolve
+        duration: 2.0, // Stessa durata per sincronizzazione perfetta
+        ease: 'power4.out',
+      }, '<') // "<" significa che inizia esattamente insieme al precedente
+
+    // Signature e contact si animano insieme alle immagini
+      .to([signatureRef.current, contactRef.current], {
+        scale: 1,
+        filter: 'blur(0px)',
+        duration: 2.0,
+        ease: 'power4.out',
+      }, '<') // Iniziano insieme alle immagini
+
+    // === TITOLO - Appare dopo con effetto cinematografico ===
+      .to(activeTitle, {
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        y: 0,
+        duration: 1.8, // Durata più lunga per effetto drammatico
+        ease: 'power3.out',
+      }, '-=1.2'); // Inizia 1.2s prima che finiscano nuvola e sposi (più presto)
+  }, {
+    dependencies: [isReady, breakpoint],
+    scope: containerRef,
+    revertOnUpdate: true, // Cleanup automatico quando breakpoint cambia
+  });
 
   // Ottieni dimensioni base del breakpoint corrente
   const getBaseDimensions = () => {
@@ -217,6 +231,7 @@ export default function HeroHome() {
 
   return (
     <section
+      ref={containerRef}
       data-section="hero"
       className="w-screen h-screen overflow-hidden relative"
       style={{

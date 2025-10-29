@@ -20,10 +20,24 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
+  const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
 
   // Assicurati che siamo lato client prima di mostrare il loading
   useEffect(() => {
     setIsClient(true);
+
+    // Check if user has visited before (session storage)
+    // Skip loading screen for returning visitors in the same session
+    if (typeof window !== 'undefined' && sessionStorage) {
+      const visited = sessionStorage.getItem('portfolio_visited');
+      if (visited === 'true') {
+        setHasVisitedBefore(true);
+        setIsLoading(false); // Skip loading for returning visitors
+      } else {
+        // Mark as visited for future page navigations in this session
+        sessionStorage.setItem('portfolio_visited', 'true');
+      }
+    }
   }, []);
 
   const handleLoadingComplete = () => {
@@ -53,8 +67,8 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
 
   return (
     <>
-      {/* Loading Screen - mostra solo lato client */}
-      {isClient && isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
+      {/* Loading Screen - mostra solo lato client e solo per nuovi visitatori */}
+      {isClient && isLoading && !hasVisitedBefore && <LoadingScreen onComplete={handleLoadingComplete} />}
 
       {/* Main Content - renderizzato solo dopo il loading e lato client */}
       {isClient && !isLoading && (

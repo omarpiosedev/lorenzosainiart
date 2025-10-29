@@ -410,7 +410,7 @@ export default function Sez3() {
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
             >
               <source src="/assets/videos/videomdesktop.webm" type="video/webm" />
             </video>
@@ -422,7 +422,7 @@ export default function Sez3() {
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
             >
               <source src="/assets/videos/videommobile.webm" type="video/webm" />
             </video>
@@ -467,7 +467,7 @@ export default function Sez3() {
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
             >
               <source src="/assets/videos/dronedesktop.webm" type="video/webm" />
             </video>
@@ -479,7 +479,7 @@ export default function Sez3() {
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
             >
               <source src="/assets/videos/dronemobile.webm" type="video/webm" />
             </video>

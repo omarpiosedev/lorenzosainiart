@@ -26,6 +26,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@spotlightjs/spotlight": "4.3.0",
     "@t3-oss/env-nextjs": "^0.13.8",
     "clsx": "^2.1.1",
