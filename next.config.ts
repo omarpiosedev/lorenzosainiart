@@ -5,11 +5,13 @@ import './src/libs/Env';
 
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
-  eslint: {
-    dirs: ['.'],
-  },
+  // MIGRATED: Removed eslint config (moved to .eslintrc or eslint.config)
+  // ESLint configuration is no longer supported in next.config.ts in Next.js 16
   poweredByHeader: false,
   reactStrictMode: true,
+  // React Compiler v1.0 (Stable) - Automatic memoization and optimization
+  // Eliminates need for manual useMemo, useCallback, React.memo
+  reactCompiler: true,
   // Performance optimizations - SWC minification is enabled by default in Next.js 15
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

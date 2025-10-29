@@ -3,9 +3,13 @@ import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import { routing } from './libs/I18nRouting';
 
+// MIGRATED: Renamed from createMiddleware -> still using the same function
+// The function name from next-intl remains the same; only our export name changed
 const handleI18nRouting = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
+// MIGRATED: Renamed from 'middleware' to 'proxy' (Next.js 16 convention)
+// The "middleware" concept has been renamed to "proxy" in Next.js 16
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Handle root redirect to default locale with /home
