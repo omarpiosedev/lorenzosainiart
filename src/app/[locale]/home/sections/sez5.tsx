@@ -1,6 +1,12 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
 import { useTranslations } from 'next-intl';
+import { useRef } from 'react';
+
+// Register GSAP plugins
+gsap.registerPlugin(useGSAP);
 
 const testimonials = [
   {
@@ -71,23 +77,82 @@ function TestimonialCard({
 export default function Sez5() {
   const t = useTranslations('HomePage.sez5');
 
+  // Refs per marquee containers
+  const marqueeDesktopRef = useRef<HTMLDivElement>(null);
+  const marqueeMobileRef = useRef<HTMLDivElement>(null);
+
+  // Refs per hover controls (optional)
+  const { contextSafe } = useGSAP({ revertOnUpdate: true });
+
+  // Setup GSAP marquee animations
+  useGSAP(() => {
+    // Desktop marquee
+    if (marqueeDesktopRef.current) {
+      const marqueeContainer = marqueeDesktopRef.current;
+      const marqueeContent = marqueeContainer.querySelector('.marquee-content') as HTMLElement;
+
+      if (marqueeContent) {
+        // Calcola larghezza per loop seamless
+        const contentWidth = marqueeContent.scrollWidth / 2; // Diviso 2 perché abbiamo duplicati
+
+        // Crea animazione infinita
+        gsap.to(marqueeContent, {
+          x: -contentWidth,
+          duration: 80, // 80 secondi come originale
+          ease: 'none',
+          repeat: -1, // Infinito
+          modifiers: {
+            x: gsap.utils.unitize(x => Number.parseFloat(x) % contentWidth), // Loop seamless
+          },
+        });
+      }
+    }
+
+    // Mobile marquee
+    if (marqueeMobileRef.current) {
+      const marqueeContainer = marqueeMobileRef.current;
+      const marqueeContent = marqueeContainer.querySelector('.marquee-content') as HTMLElement;
+
+      if (marqueeContent) {
+        // Calcola larghezza per loop seamless
+        const contentWidth = marqueeContent.scrollWidth / 2;
+
+        // Crea animazione infinita
+        gsap.to(marqueeContent, {
+          x: -contentWidth,
+          duration: 60, // 60 secondi per mobile
+          ease: 'none',
+          repeat: -1,
+          modifiers: {
+            x: gsap.utils.unitize(x => Number.parseFloat(x) % contentWidth),
+          },
+        });
+      }
+    }
+  }, {
+    dependencies: [],
+    revertOnUpdate: true, // Cleanup automatico
+  });
+
+  // Hover controls: pause on hover, resume on leave
+  const handleMouseEnter = contextSafe(() => {
+    gsap.to('.marquee-content', {
+      timeScale: 0,
+      duration: 0.3,
+      ease: 'power2.out',
+    });
+  });
+
+  const handleMouseLeave = contextSafe(() => {
+    gsap.to('.marquee-content', {
+      timeScale: 1,
+      duration: 0.3,
+      ease: 'power2.in',
+    });
+  });
+
   return (
     <>
-      <style jsx>
-        {`
-        @keyframes marqueeMove {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
-        .marquee-animation {
-          animation: marqueeMove linear infinite;
-        }
-      `}
-      </style>
       <div data-section="sez5" className="relative bg-white min-h-screen">
         {/* Desktop Layout */}
         <div className="hidden xl:block">
@@ -161,13 +226,18 @@ export default function Sez5() {
               height: '380px',
             }}
           >
-            <div className="relative w-full h-full overflow-hidden">
+            <div
+              ref={marqueeDesktopRef}
+              className="relative w-full h-full overflow-hidden"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
               <div
-                className="flex marquee-animation"
+                className="flex marquee-content"
                 style={{
                   gap: '2rem',
-                  animationDuration: '80s',
                   width: 'fit-content',
+                  willChange: 'transform', // GPU acceleration
                 }}
               >
                 {/* Prima serie di testimonial */}
@@ -225,13 +295,19 @@ export default function Sez5() {
             </p>
 
             {/* Marquee Component - Mobile/Tablet */}
-            <div className="relative w-full overflow-hidden" style={{ height: '280px' }}>
+            <div
+              ref={marqueeMobileRef}
+              className="relative w-full overflow-hidden"
+              style={{ height: '280px' }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
               <div
-                className="flex marquee-animation"
+                className="flex marquee-content"
                 style={{
                   gap: '1rem',
-                  animationDuration: '60s',
                   width: 'fit-content',
+                  willChange: 'transform', // GPU acceleration
                 }}
               >
                 {/* Prima serie di testimonial */}

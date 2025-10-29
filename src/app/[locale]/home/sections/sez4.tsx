@@ -1,36 +1,47 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lottie from 'lottie-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { TrustedUsers } from '@/components/lightswind/trustedusers';
 import { Compare } from '@/components/ui/compare';
 import clockAnimation from '../../../../../public/assets/animations/12-hr-clock.json';
 
-gsap.registerPlugin(ScrollTrigger);
+// Register GSAP plugins
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Sez4() {
+  // Container ref for GSAP scope - enables proper cleanup
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Desktop refs
   const cameraImageDesktopRef = useRef<HTMLDivElement>(null);
-  const cameraImageMobileRef = useRef<HTMLDivElement>(null);
   const leftHandRef = useRef<HTMLDivElement>(null);
   const rightHandRef = useRef<HTMLDivElement>(null);
+  const clockDesktopRef = useRef<HTMLDivElement>(null);
+  const quintaImageDesktopRef = useRef<HTMLDivElement>(null);
+  const trustedUsersDesktopRef = useRef<HTMLDivElement>(null);
+  const polaroidDesktopRef = useRef<HTMLDivElement>(null);
+
+  // Mobile refs
+  const cameraImageMobileRef = useRef<HTMLDivElement>(null);
   const leftHandMobileRef = useRef<HTMLDivElement>(null);
   const rightHandMobileRef = useRef<HTMLDivElement>(null);
-  const clockDesktopRef = useRef<HTMLDivElement>(null);
   const clockMobileRef = useRef<HTMLDivElement>(null);
-  const quintaImageDesktopRef = useRef<HTMLDivElement>(null);
   const quintaImageMobileRef = useRef<HTMLDivElement>(null);
-  const trustedUsersDesktopRef = useRef<HTMLDivElement>(null);
   const trustedUsersMobileRef = useRef<HTMLDivElement>(null);
-  const polaroidDesktopRef = useRef<HTMLDivElement>(null);
   const polaroidMobileRef = useRef<HTMLDivElement>(null);
+
+  // State for TrustedUsers animation restart
   const [restartTrigger, setRestartTrigger] = useState(0);
   const t = useTranslations('HomePage.sez4');
 
-  useEffect(() => {
+  // Modern useGSAP hook replaces useEffect for automatic cleanup
+  // All tweens and ScrollTriggers created here are automatically killed on unmount
+  useGSAP(() => {
     // Desktop animation
     if (cameraImageDesktopRef.current) {
       // Imposta posizione iniziale
@@ -220,32 +231,38 @@ export default function Sez4() {
     }
 
     // TrustedUsers restart trigger (Card 6 - Desktop)
-    ScrollTrigger.create({
-      trigger: trustedUsersDesktopRef.current,
-      start: 'top 80%', // Quando Card 6 entra in viewport
-      onEnter: () => {
-        // Incrementa restartTrigger per forzare il restart del CountUp
-        setRestartTrigger(prev => prev + 1);
-      },
-      onEnterBack: () => {
-        // Restart anche quando si scrolla indietro verso la card
-        setRestartTrigger(prev => prev + 1);
-      },
-    });
+    // Note: setRestartTrigger is safe here because it's a simple state update
+    // and doesn't cause re-renders that would affect GSAP animations
+    if (trustedUsersDesktopRef.current) {
+      ScrollTrigger.create({
+        trigger: trustedUsersDesktopRef.current,
+        start: 'top 80%', // Quando Card 6 entra in viewport
+        onEnter: () => {
+          // Incrementa restartTrigger per forzare il restart del CountUp
+          setRestartTrigger(prev => prev + 1);
+        },
+        onEnterBack: () => {
+          // Restart anche quando si scrolla indietro verso la card
+          setRestartTrigger(prev => prev + 1);
+        },
+      });
+    }
 
     // TrustedUsers restart trigger (Card 6 - Mobile)
-    ScrollTrigger.create({
-      trigger: trustedUsersMobileRef.current,
-      start: 'top 80%', // Quando Card 6 entra in viewport
-      onEnter: () => {
-        // Incrementa restartTrigger per forzare il restart del CountUp
-        setRestartTrigger(prev => prev + 1);
-      },
-      onEnterBack: () => {
-        // Restart anche quando si scrolla indietro verso la card
-        setRestartTrigger(prev => prev + 1);
-      },
-    });
+    if (trustedUsersMobileRef.current) {
+      ScrollTrigger.create({
+        trigger: trustedUsersMobileRef.current,
+        start: 'top 80%', // Quando Card 6 entra in viewport
+        onEnter: () => {
+          // Incrementa restartTrigger per forzare il restart del CountUp
+          setRestartTrigger(prev => prev + 1);
+        },
+        onEnterBack: () => {
+          // Restart anche quando si scrolla indietro verso la card
+          setRestartTrigger(prev => prev + 1);
+        },
+      });
+    }
 
     // Polaroid scattered animation - Desktop
     if (polaroidDesktopRef.current) {
@@ -323,10 +340,16 @@ export default function Sez4() {
       });
     }
 
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
+    // No manual cleanup needed! useGSAP automatically kills all tweens and ScrollTriggers
+    // when the component unmounts or dependencies change. This prevents memory leaks.
+  }, {
+    // Empty dependencies array - animations only run once on mount
+    dependencies: [],
+    // Scope to sectionRef - limits GSAP context to this container for better cleanup
+    scope: sectionRef,
+    // revertOnUpdate ensures all GSAP properties are reverted on re-render
+    revertOnUpdate: true,
+  });
 
   return (
     <div ref={sectionRef} data-section="sez4" className="relative bg-white" style={{ minHeight: '160vh' }}>

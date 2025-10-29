@@ -1,17 +1,21 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 // Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export default function Sez3() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  // Main container ref for GSAP scope
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Sub-element refs
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   const horizontalContentRef = useRef<HTMLDivElement>(null);
   const whiteBar1Ref = useRef<HTMLDivElement>(null);
@@ -22,14 +26,23 @@ export default function Sez3() {
   const textContent2Ref = useRef<HTMLDivElement>(null);
   const textContent3Ref = useRef<HTMLDivElement>(null);
   const textContent4Ref = useRef<HTMLDivElement>(null);
+
   const [_isHorizontalScrollActive, setIsHorizontalScrollActive] = useState(false);
 
   const t = useTranslations('HomePage.sez3');
   const params = useParams();
   const locale = params.locale as string;
 
-  useEffect(() => {
-    if (!sectionRef.current || !horizontalContainerRef.current || !horizontalContentRef.current) {
+  /**
+   * REFACTORED: Consolidated animation logic using useGSAP hook
+   * - Replaced 2 conflicting useEffect hooks with single useGSAP
+   * - Removed document.body.style.overflow manipulation (handled via CSS/parent component)
+   * - Kept all onUpdate logic as-is per requirements (bar animations require per-frame updates)
+   * - Added proper scope and revertOnUpdate for automatic cleanup
+   */
+  useGSAP(() => {
+    // Early returns for guard conditions
+    if (!containerRef.current || !horizontalContainerRef.current || !horizontalContentRef.current) {
       return;
     }
 
@@ -62,33 +75,34 @@ export default function Sez3() {
       gsap.set(textContent4Ref.current, { opacity: 0, y: 30 });
     }
 
-    // Create timeline with delay
+    // Create timeline with ScrollTrigger
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: container,
         start: 'center center',
-        end: '+=3000vh', // Molto più scroll per movimento lentissimo
-        scrub: 0.5, // Scrub più fluido per evitare tremori
-        // RIMOSSO SNAP - movimento 100% dipendente da scroll
+        end: '+=3000vh', // Very long scroll for slow movement
+        scrub: 0.5, // Smooth scrub to avoid jitter
         pin: true,
         anticipatePin: 1,
-        pinSpacing: '200vh', // Aggiunto spazio extra dopo la sezione
+        pinSpacing: '200vh', // Extra space after section
         onEnter: () => {
-          document.body.style.overflow = 'hidden';
+          // NOTE: document.body.style.overflow removed - overflow management should be handled
+          // at app level or via CSS to avoid side effects across component lifecycle
         },
         onLeave: () => {
-          document.body.style.overflow = 'auto';
           setIsHorizontalScrollActive(false);
         },
         onEnterBack: () => {
-          document.body.style.overflow = 'hidden';
+          // Overflow management removed
         },
         onLeaveBack: () => {
-          document.body.style.overflow = 'auto';
           setIsHorizontalScrollActive(false);
         },
         onUpdate: (self) => {
-          // Animate white bars based on scroll progress with better timing
+          // NOTE: These animations must remain in onUpdate because they require
+          // per-frame calculations based on scroll progress with complex conditional logic
+          // Moving them to timeline properties would require 20+ separate tweens with complex timing
+
           const progress = self.progress;
 
           // Screen 1 bar animation - starts when screen 1 enters center (20% progress)
@@ -224,9 +238,9 @@ export default function Sez3() {
       },
     });
 
-    // Add delay phase (no movement) - molto più lungo
+    // Add delay phase (no movement) - much longer duration
     tl.to({}, { duration: 0.2 }) // 20% of timeline is empty/delay
-    // Add horizontal scroll phase - molto più lento
+    // Add horizontal scroll phase - much slower
       .to(content, {
         xPercent: -80, // 5 screens = 500vw, so -80% to show all screens
         ease: 'none',
@@ -236,25 +250,19 @@ export default function Sez3() {
         },
       });
 
-    const horizontalScrollTween = tl;
-
-    return () => {
-      horizontalScrollTween.kill();
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
-
-  useEffect(() => {
-    // Refresh ScrollTrigger when component mounts
+    // Refresh ScrollTrigger after setup to ensure proper calculations
     ScrollTrigger.refresh();
 
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
+    // NOTE: Cleanup is now handled automatically by useGSAP with revertOnUpdate
+    // No manual cleanup needed - prevents memory leaks and ensures proper state restoration
+  }, {
+    dependencies: [],
+    scope: containerRef,
+    revertOnUpdate: true,
+  });
 
   return (
-    <div ref={sectionRef} data-section="sez3" className="relative bg-white mb-[10vh]">
+    <div ref={containerRef} data-section="sez3" className="relative bg-white mb-[10vh]">
       {/* Horizontal Scrolling Container */}
       <div
         ref={horizontalContainerRef}
