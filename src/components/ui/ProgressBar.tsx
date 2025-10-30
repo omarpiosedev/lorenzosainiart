@@ -39,24 +39,25 @@ export default function ProgressBar({ progress, className = '' }: ProgressBarPro
       {/* Barra di progresso */}
       <div
         ref={progressRef}
-        className="relative h-1 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm"
+        className="relative h-1.5 bg-black/10 rounded-full overflow-hidden"
       >
+        {/* Glow effect sottile */}
         <div
           ref={fillRef}
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-black/80 to-black rounded-full transition-all duration-300 ease-out"
+          className="absolute top-0 left-0 h-full bg-black rounded-full shadow-[0_0_8px_rgba(0,0,0,0.3)]"
           style={{ width: '0%' }}
         />
       </div>
 
       {/* Percentuale */}
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-3">
         <span
           ref={percentageRef}
-          className="text-sm font-lavener text-black/80 tabular-nums"
+          className="text-base font-lavener text-black/70 tabular-nums tracking-wide"
         >
           0
         </span>
-        <span className="text-sm font-lavener text-black/60 ml-1">%</span>
+        <span className="text-base font-lavener text-black/50 ml-0.5">%</span>
       </div>
     </div>
   );

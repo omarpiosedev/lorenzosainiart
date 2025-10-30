@@ -65,7 +65,7 @@ export default function VideoLogo({ onCanPlay, onLoadedData }: VideoLogoProps) {
         muted
         playsInline
         loop
-        preload="metadata"
+        preload="auto"
         aria-label="Lorenzo Saini Logo"
       >
         <source src="/videos/Logoanimated.mp4" type="video/mp4" />

@@ -148,6 +148,34 @@
       "problemMatcher": []
     },
     {
+      "label": "☠️ Kill All Dev Ports",
+      "type": "shell",
+      "command": "for port in 3000 3001 3002 3003 4200 5000 5173 8000 8080 8888 9000; do lsof -ti:$port | xargs kill -9 2>/dev/null && echo \"Killed port $port\" || echo \"Port $port not in use\"; done",
+      "group": "none",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "📋 List Active Ports",
+      "type": "shell",
+      "command": "echo '=== Active Ports ===' && lsof -iTCP -sTCP:LISTEN -n -P | grep -E '(COMMAND|node|python|npm|next)' || echo 'No development servers found'",
+      "group": "none",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "⚡ Complete Workflow",
       "dependsOrder": "sequence",
       "dependsOn": ["🚀 Fix All (Recommended)", "✅ Check All"],

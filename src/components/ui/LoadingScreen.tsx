@@ -3,7 +3,6 @@
 import type { RefObject } from 'react';
 import type { CameraIrisHandle } from './CameraIris';
 import { gsap } from 'gsap';
-import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
 import { useResourceLoader } from '@/hooks/useResourceLoader';
 import ProgressBar from './ProgressBar';
@@ -14,33 +13,20 @@ type LoadingScreenProps = {
   irisRef: RefObject<CameraIrisHandle | null>;
 };
 
-export default function LoadingScreen({ onComplete, irisRef }: LoadingScreenProps) {
-  const t = useTranslations('loading');
+export default function LoadingScreen({ onComplete: _onComplete, irisRef }: LoadingScreenProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const hasStartedTransition = useRef(false);
 
-  const { progress } = useResourceLoader();
-
-  // ✅ BEST PRACTICE: Safety timeout ragionevole per evitare che si blocchi
-  // 5 secondi è un buon bilanciamento tra UX e sicurezza
-  useEffect(() => {
-    const safetyTimeout = setTimeout(() => {
-      if (typeof onComplete === 'function') {
-        onComplete();
-      }
-    }, 5000); // 5 secondi timeout di sicurezza
-
-    return () => clearTimeout(safetyTimeout);
-  }, [onComplete]);
+  const { progress, isComplete } = useResourceLoader();
 
   // Handler per quando il video può essere riprodotto
   const handleVideoCanPlay = () => {
     if (typeof window !== 'undefined') {
       // Retry logic per assicurarsi che la funzione sia disponibile
       const tryMarkVideo = () => {
-        if ((window as any).markVideoLoaded) {
-          (window as any).markVideoLoaded();
+        if ((window as any).markResourceLoaded) {
+          (window as any).markResourceLoaded('loading-video');
         } else {
           // Retry dopo un piccolo delay se la funzione non è ancora disponibile
           setTimeout(tryMarkVideo, 100);
@@ -69,10 +55,10 @@ export default function LoadingScreen({ onComplete, irisRef }: LoadingScreenProp
     }
   }, []);
 
-  // Animazione di uscita quando caricamento quasi completo
+  // Animazione di uscita quando caricamento completato
   useEffect(() => {
-    // Far partire l'iris quando il progresso raggiunge il 95% (solo una volta)
-    if (progress >= 95 && irisRef.current && !hasStartedTransition.current) {
+    // Far partire l'iris quando il caricamento è completo (solo una volta)
+    if (isComplete && irisRef.current && !hasStartedTransition.current) {
       hasStartedTransition.current = true;
 
       const runTransition = async () => {
@@ -84,7 +70,7 @@ export default function LoadingScreen({ onComplete, irisRef }: LoadingScreenProp
 
       runTransition();
     }
-  }, [progress]);
+  }, [isComplete]);
 
   return (
     <div
@@ -106,13 +92,6 @@ export default function LoadingScreen({ onComplete, irisRef }: LoadingScreenProp
           progress={progress}
           className="w-full max-w-xs sm:max-w-sm"
         />
-
-        {/* Loading Text */}
-        <div className="text-center">
-          <p className="text-black/60 font-lavener text-sm">
-            {t('message')}
-          </p>
-        </div>
       </div>
     </div>
   );

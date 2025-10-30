@@ -131,6 +131,7 @@ export default function HeroHome() {
     gsap.set(cloudRef.current, {
       transform: cloudStartTransform,
       filter: 'blur(8px)', // Blur iniziale
+      willChange: 'transform, filter', // Hardware acceleration
     });
 
     // === SPOSI ===
@@ -151,6 +152,7 @@ export default function HeroHome() {
     gsap.set(sposiRef.current, {
       transform: sposiStartTransform,
       filter: 'blur(8px)', // Blur iniziale
+      willChange: 'transform, filter', // Hardware acceleration
     });
 
     // === SIGNATURE E CONTACT ===
@@ -159,6 +161,7 @@ export default function HeroHome() {
       opacity: 0,
       scale: 0.8,
       filter: 'blur(6px)',
+      willChange: 'opacity, transform, filter', // Hardware acceleration
     });
 
     // === TITOLO ===
@@ -167,11 +170,20 @@ export default function HeroHome() {
     if (activeTitle) {
       gsap.set(activeTitle, {
         opacity: 0,
+        willChange: 'opacity', // Hardware acceleration
       });
     }
 
     // === TIMELINE CINEMATOGRAFICA ===
-    tl.current = gsap.timeline({ delay: 0.2 });
+    tl.current = gsap.timeline({
+      delay: 0.2,
+      onComplete: () => {
+        // Rimuovi will-change dopo le animazioni per liberare risorse
+        gsap.set([cloudRef.current, sposiRef.current, signatureRef.current, contactRef.current, activeTitle], {
+          willChange: 'auto',
+        });
+      },
+    });
 
     // Nuvola, sposi, signature e contact appaiono insieme
     tl.current.set([cloudRef.current, sposiRef.current, signatureRef.current, contactRef.current], {
@@ -339,6 +351,12 @@ export default function HeroHome() {
           priority
           fetchPriority="high"
           quality={65}
+          onLoad={() => {
+            // Notifica il resource loader quando l'immagine è caricata
+            if (typeof window !== 'undefined' && (window as any).markResourceLoaded) {
+              (window as any).markResourceLoaded('hero-bg');
+            }
+          }}
           className="object-cover"
           sizes="100vw"
         />
@@ -375,7 +393,14 @@ export default function HeroHome() {
             alt="Clouds"
             width={1920}
             height={1080}
-            loading="lazy"
+            priority
+            fetchPriority="high"
+            onLoad={() => {
+              // Notifica il resource loader quando l'immagine è caricata
+              if (typeof window !== 'undefined' && (window as any).markResourceLoaded) {
+                (window as any).markResourceLoaded('hero-cloud');
+              }
+            }}
             className="absolute w-full h-auto object-cover"
             style={{
               zIndex: 1,
@@ -394,6 +419,12 @@ export default function HeroHome() {
             priority
             fetchPriority="high"
             quality={70}
+            onLoad={() => {
+              // Notifica il resource loader quando l'immagine è caricata
+              if (typeof window !== 'undefined' && (window as any).markResourceLoaded) {
+                (window as any).markResourceLoaded('hero-sposi');
+              }
+            }}
             style={{
               width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '650px',
               height: 'auto',
