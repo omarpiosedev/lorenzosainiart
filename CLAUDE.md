@@ -1,175 +1,206 @@
-# CLAUDE.md
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# CLAUDE.md - Lorenzo Saini Portfolio
+
+## 🚨 CRITICAL: Context7 MCP First
+
+**YOU MUST use Context7 MCP for EVERY coding request before implementation:**
+
+**When to use Context7 (ALWAYS):**
+- ✅ Before implementing ANY feature, component, or fix
+- ✅ When working with ANY library (Next.js, GSAP, Tailwind, next-intl, etc.)
+- ✅ When debugging or troubleshooting issues
+- ✅ When considering new dependencies
+- ✅ For modern best practices (October 2025)
+
+**How to use:**
+1. `mcp__context7__resolve-library-id` - Find the library (e.g., "next.js", "gsap")
+2. `mcp__context7__get-library-docs` - Get latest docs, patterns, examples
+3. Apply modern best practices from Context7 results
+
+**Examples:**
+- "Before adding GSAP animation, check Context7 for React 19 patterns..."
+- "Query Context7 for Next.js 16 App Router best practices..."
+- "Get latest Tailwind CSS 4 utilities from Context7..."
+- "Verify next-intl API in Context7 before modifying i18n..."
+
+**Available Skills & Agents:**
+- Always check which specialized skills (gsap-nextjs, gsap-react, nextjs-fullstack) are available
+- Use relevant agents when appropriate for the task
+
+---
 
 ## Project Overview
 
-This is a portfolio website built with Next.js 15+ and based on a comprehensive boilerplate. It features a multi-language portfolio showcasing creative work including photography, video, and art projects. The site is configured for Lorenzo Saini's art portfolio with Italian and English localization.
+Portfolio website for creative work (photography, video, art) with multi-language support and sophisticated GSAP animations.
 
-## Key Technologies & Architecture
+## Tech Stack
 
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript with strict type checking
-- **Styling**: Tailwind CSS 4 with custom fluid design system
-- **Animations**: GSAP for complex UI animations
-- **Internationalization**: next-intl with Italian (default) and English support
-- **Security**: Arcjet for bot protection and WAF
-- **Testing**: Vitest for unit tests, Playwright for E2E testing
-- **Deployment**: Optimized for production with bundle analysis
+- Next.js 16 (App Router) + React 19 + TypeScript (strict mode)
+- Tailwind CSS 4 with custom fluid design tokens
+- GSAP + Lenis smooth scrolling
+- next-intl (Italian primary, English secondary)
+- Vitest + Playwright + Storybook
 
-## Essential Development Commands
+## Commands
 
-### Development
 ```bash
-npm run dev          # Start development server with Turbopack and Spotlight
-npm run dev:next     # Start only Next.js dev server
-npm run dev:spotlight # Start Spotlight error monitoring
+# Development
+npm run dev              # Dev server + Spotlight (default port 3000)
+npm run dev:next         # Next.js only (no Spotlight)
+
+# Build & Test
+npm run build            # Production build
+npm run test             # Vitest unit tests
+npm run test:e2e         # Playwright E2E (first run: npx playwright install)
+npm run storybook        # Storybook on :6006
+
+# Code Quality
+npm run lint:fix         # Auto-fix linting
+npm run check:types      # TypeScript check
+npm run check:deps       # Find unused deps (knip)
+npm run check:i18n       # Validate translations (IMPORTANT: run before commits)
+
+# Utilities
+npm run build-stats      # Bundle analyzer
+npm run commit           # Conventional commits CLI
 ```
 
-### Building & Testing
-```bash
-npm run build        # Production build
-npm start           # Start production server
-npm run test         # Run unit tests with Vitest
-npm run test:e2e     # Run E2E tests with Playwright
-npm run storybook    # Start Storybook on port 6006
+## File Structure
+
+```
+src/
+├── app/[locale]/          # All pages (home, aboutme, portfolio, blog, contact)
+│   └── layout.tsx         # Root layout + metadata
+├── components/
+│   ├── ui/                # GSAP-animated components
+│   │   ├── NavBar.tsx     # Circular morphing animations (reference for GSAP patterns)
+│   │   ├── LoadingScreen.tsx + CameraIris.tsx  # Cinematic iris transition
+│   │   ├── focus/         # Focus components
+│   │   └── GSAPScrollReveal.tsx
+│   └── seo/               # JSON-LD structured data
+├── libs/                  # I18n.ts, I18nRouting.ts, I18nNavigation.ts
+├── locales/               # en.json, it.json (keep in sync!)
+├── styles/global.css      # Design tokens + custom fonts
+└── utils/AppConfig.ts     # Centralized config (locales, URLs)
 ```
 
-### Code Quality
-```bash
-npm run lint         # Check for linting errors
-npm run lint:fix     # Auto-fix linting issues
-npm run check:types  # TypeScript type checking
-npm run check:deps   # Check for unused dependencies
-npm run check:i18n   # Validate translation completeness
+## Styling Rules
+
+**Custom Fonts** (in `/public/assets/fonts/`):
+- Lavener (primary), Will (secondary), Effloresce It (decorative)
+
+**Fluid Design Tokens** (defined in `global.css`):
+- Typography: `--text-sm` to `--text-4xl`
+- Spacing: `--space-1` to `--space-16`
+- iOS safe areas: `.safe-top`, `.safe-bottom`, `.safe-left`, `.safe-right`
+- IMPORTANT: `.poster` class disables fluid tokens for fixed-size content
+
+**CSS Approach**:
+- Use Tailwind utilities first
+- Mobile-first breakpoints: base (mobile) → `768px` (tablet) → `1024px` (desktop)
+- Avoid hardcoded pixels - use CSS variables
+- Test iOS Safari carefully - horizontal overflow is specifically fixed
+
+## GSAP Animations (React 19 Compatible)
+
+**CRITICAL RULES:**
+- ALWAYS use `useGSAP` hook from `@gsap/react` - NEVER raw `useEffect`
+- Import: `import { useGSAP } from '@gsap/react'`
+- Store timelines in refs: `useRef<gsap.core.Timeline[]>()`
+- Use `gsap.context()` for scoped queries
+- Cleanup is automatic via useGSAP hook
+
+**Pattern Example:**
+```tsx
+const tlRef = useRef<gsap.core.Timeline>();
+useGSAP(() => {
+  tlRef.current = gsap.timeline({ /* config */ });
+  // animations...
+}, { dependencies: [...] });
 ```
 
-### Database & Analysis
-```bash
-npm run build-stats  # Analyze bundle size with visual output
-npm run clean        # Clean .next, out, and coverage directories
-npm run commit       # Interactive commit message generator
+**Animation Performance:**
+- Animate `transform` and `opacity` only (GPU accelerated)
+- Avoid `width`, `height`, `top`, `left`
+- Test on mobile devices
+- See `NavBar.tsx` for complex animation reference
+
+## i18n (next-intl)
+
+**Configuration:**
+- Primary locale: Italian (`it`)
+- Secondary: English (`en`)
+- URL format: ALWAYS includes locale prefix (e.g., `/it/portfolio`, `/en/portfolio`)
+- Files: `src/locales/en.json` + `src/locales/it.json`
+
+**IMPORTANT Workflow:**
+1. Add keys to BOTH `en.json` AND `it.json` simultaneously
+2. Use `const t = useTranslations('namespace')` in components
+3. Run `npm run check:i18n` BEFORE every commit
+4. Navigation components auto-strip locale for path comparison
+
+## Testing
+
+- **Unit Tests**: `*.test.ts[x]` alongside source, run `npm run test` (Vitest + V8 coverage)
+- **E2E Tests**: `tests/e2e/*.e2e.ts`, run `npm run test:e2e` (Playwright - install first)
+- **Storybook**: `npm run storybook` on port 6006 for isolated component dev
+
+## Next.js Config
+
+- React Compiler v1.0 ENABLED - no manual `useMemo`/`useCallback` needed
+- Production: removes console logs, optimizes images (WebP/AVIF)
+- GSAP imports optimized via `experimental.optimizePackageImports`
+- Bundle analyzer: `npm run build-stats`
+- Env: `NEXT_PUBLIC_SITE_URL` for production
+
+## Code Standards
+
+**TypeScript:**
+- Strict mode enabled
+- Interfaces for all component props
+- Run `npm run check:types` before commits
+
+**Commits:**
+- Conventional Commits required - use `npm run commit` for CLI helper
+- Run `npm run check:i18n` before every commit
+
+**Component Dev:**
+- Test in Storybook before integration
+- Follow GSAP patterns from `NavBar.tsx`
+- Use fluid design tokens, not hardcoded pixels
+- iOS Safari testing is critical
+
+## Quick Workflows
+
+**⚠️ FIRST STEP for ALL workflows: Query Context7 for latest best practices!**
+
+**Add New Page:**
+1. **Check Context7** for Next.js 16 page patterns first
+2. Create `src/app/[locale]/your-page/page.tsx`
+3. Add translations to `en.json` + `it.json`
+4. Add link to NavBar items
+5. Test `/it/your-page` and `/en/your-page`
+
+**Add GSAP Animation:**
+1. **Check Context7** for GSAP + React 19 latest patterns first
+2. Apply modern pattern:
+```tsx
+import { useGSAP } from '@gsap/react';
+const tlRef = useRef<gsap.core.Timeline>();
+useGSAP(() => {
+  tlRef.current = gsap.timeline();
+  // your animations
+}, { dependencies: [] });
 ```
 
-## Architecture & File Structure
+**Add Translation:**
+1. **Check Context7** for next-intl latest API first
+2. Add to `locales/en.json` + `locales/it.json`
+3. Use: `const t = useTranslations('namespace')` → `{t('key')}`
+4. Validate: `npm run check:i18n`
 
-### Core Application Structure
-- **`src/app/[locale]/`**: App Router pages with internationalization
-  - Dynamic locale routing for Italian (`it`) and English (`en`)
-  - Layout.tsx defines global metadata and navigation structure
-  - Each page directory contains route-specific components
+## Key Files
 
-### Key Directories
-- **`src/components/`**: Reusable React components
-  - `ui/NavBar.tsx`: Complex animated navigation with GSAP
-  - `reactsbits/`: Third-party component integrations
-- **`src/libs/`**: Library configurations (I18n, environment, routing)
-- **`src/locales/`**: Translation files (en.json, it.json)
-- **`src/styles/`**: Global CSS with fluid design tokens
-- **`src/utils/`**: Utility functions and app configuration
-
-### Important Configuration Files
-- **`next.config.ts`**: Next.js configuration with bundle analyzer and i18n
-- **`src/utils/AppConfig.ts`**: Central app configuration (locales, URLs)
-- **`src/libs/I18nRouting.ts`**: Internationalization routing setup
-
-## Design System & Styling
-
-### Fluid Design System
-The project uses a sophisticated fluid design system defined in `global.css`:
-- Responsive typography scale (--step-0 through --step-3)
-- Fluid spacing scale (--space-2 through --space-4)
-- Viewport-based scaling between 360px and 1280px
-- Custom Lavener font for branding
-
-### Animation System
-- **GSAP**: Primary animation library for complex interactions
-- **NavBar Component**: Features sophisticated hover animations with circular morphing
-- **Responsive**: All animations adapt to different screen sizes
-
-### CSS Architecture
-- **Tailwind CSS 4**: Modern utility-first framework
-- **Custom Design Tokens**: Fluid responsive values
-- **Component-Scoped Styles**: CSS variables for component theming
-- **Poster System**: Special scaling system for fixed-size content
-
-## Internationalization (i18n)
-
-### Configuration
-- **Default Locale**: Italian (`it`)
-- **Supported Locales**: Italian (`it`), English (`en`)
-- **URL Structure**: Always prefixed with locale (e.g., `/it/portfolio`, `/en/portfolio`)
-- **Translation Files**: `src/locales/en.json` and `src/locales/it.json`
-
-### Key Files
-- **`src/libs/I18n.ts`**: Core i18n configuration
-- **`src/libs/I18nRouting.ts`**: Routing configuration
-- **`src/libs/I18nNavigation.ts`**: Navigation helpers
-
-## Testing Strategy
-
-### Unit Testing (Vitest)
-- **Location**: Alongside source code (`*.test.ts`, `*.test.tsx`)
-- **Framework**: Vitest with React Testing Library replacement
-- **Coverage**: V8 coverage reporting
-
-### E2E Testing (Playwright)
-- **Location**: `tests/e2e/` directory
-- **File Pattern**: `*.e2e.ts`
-- **Features**: Cross-browser testing, visual regression testing
-- **Setup**: `npx playwright install` for first-time setup
-
-### Storybook
-- **Port**: 6006
-- **Features**: UI component development, accessibility testing
-- **Integration**: Vite-based with Next.js integration
-
-## Security & Performance
-
-### Security Features
-- **Arcjet Integration**: Bot detection and WAF protection
-- **TypeScript**: Strict type checking with comprehensive rules
-- **Environment Variables**: T3 Env for type-safe environment handling
-
-### Performance Optimizations
-- **Turbopack**: Fast development builds
-- **Bundle Analyzer**: Built-in bundle analysis with `npm run build-stats`
-- **Next.js 15**: Latest optimizations including React 19 support
-- **Image Optimization**: Next.js automatic image optimization
-
-## Development Guidelines
-
-### Code Quality Standards
-- **ESLint**: Antfu configuration with Next.js and Tailwind rules
-- **TypeScript**: Strict mode with comprehensive type checking
-- **Prettier**: Code formatting (integrated with ESLint)
-- **Conventional Commits**: Required commit message format
-
-### Component Development
-- Use TypeScript interfaces for all component props
-- Follow existing animation patterns when adding GSAP animations
-- Maintain responsive design using the fluid design system
-- Test components in Storybook before integration
-
-### Internationalization Best Practices
-- Always add new text content to both translation files
-- Use the `useTranslations` hook for dynamic content
-- Test locale switching functionality
-- Validate translations with `npm run check:i18n`
-
-## Deployment & Production
-
-### Environment Setup
-- **Development**: Runs on `http://localhost:3000`
-- **Production URL**: Configure `NEXT_PUBLIC_SITE_URL` environment variable
-- **Database**: Optional - supports DrizzleORM with PostgreSQL
-
-### Build Process
-- **Production Build**: `npm run build`
-- **Bundle Analysis**: `npm run build-stats` for optimization insights
-- **Type Checking**: Automatic during build process
-- **Asset Optimization**: Automatic with Next.js
-
-### Performance Monitoring
-- **Spotlight**: Local development error monitoring
-- **Bundle Analyzer**: Built-in bundle size analysis
-- **Core Web Vitals**: Optimized for performance metrics
+- `next.config.ts` - Next.js config (i18n, bundle analyzer)
+- `src/utils/AppConfig.ts` - Locales + URLs config
+- `src/styles/global.css` - Design tokens, fonts, iOS fixes
+- `src/components/ui/NavBar.tsx` - GSAP animation reference

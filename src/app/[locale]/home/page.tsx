@@ -1,30 +1,66 @@
+import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+import { getBaseUrl } from '@/utils/AppConfig';
 import HeroHome from './sections/herohome';
+import Sez2 from './sections/sez2';
+import Sez3 from './sections/sez3';
+import Sez4 from './sections/sez4';
+import Sez5 from './sections/sez5';
 
-// Lazy load Sez2 since it's below the fold
-const Sez2 = dynamic(() => import('./sections/sez2'), {
-  loading: () => <div style={{ height: '100vh' }} />, // Preserve layout
-});
-
-// Lazy load Sez3
-const Sez3 = dynamic(() => import('./sections/sez3'), {
-  loading: () => <div style={{ height: '100vh' }} />, // Preserve layout
-});
-
-// Lazy load Sez4
-const Sez4 = dynamic(() => import('./sections/sez4'), {
-  loading: () => <div style={{ height: '100vh' }} />, // Preserve layout
-});
-
-// Lazy load Sez5
-const Sez5 = dynamic(() => import('./sections/sez5'), {
-  loading: () => <div style={{ height: '100vh' }} />, // Preserve layout
-});
+// Loading skeleton component for sections
+function SectionSkeleton() {
+  return (
+    <div
+      style={{ height: '100vh' }}
+      className="flex items-center justify-center bg-gray-50/50 animate-pulse"
+      aria-label="Loading section"
+    >
+      <div className="w-16 h-16 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+    </div>
+  );
+}
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const baseUrl = getBaseUrl();
+
+  return {
+    title: 'Home',
+    description: 'Welcome to Lorenzo Saini\'s creative portfolio showcasing photography, video production, and artistic projects.',
+    keywords: ['home', 'portfolio', 'photography', 'video', 'creative art', 'Lorenzo Saini'],
+    openGraph: {
+      title: 'Lorenzo Saini Art | Creative Portfolio',
+      description: 'Welcome to Lorenzo Saini\'s creative portfolio showcasing photography, video production, and artistic projects.',
+      url: `${baseUrl}/${locale}`,
+      type: 'website',
+      images: [
+        {
+          url: `${baseUrl}/assets/images/backgropund.webp`,
+          width: 1200,
+          height: 630,
+          alt: 'Lorenzo Saini Portfolio',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Lorenzo Saini Art | Creative Portfolio',
+      description: 'Welcome to Lorenzo Saini\'s creative portfolio showcasing photography, video production, and artistic projects.',
+    },
+    alternates: {
+      canonical: `${baseUrl}/${locale}`,
+      languages: {
+        it: `${baseUrl}/it`,
+        en: `${baseUrl}/en`,
+      },
+    },
+  };
+}
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
@@ -46,11 +82,25 @@ export default async function HomePage({ params }: HomePageProps) {
         right: 0,
       }}
     >
+      {/* Hero section loads immediately - critical for LCP */}
       <HeroHome />
-      <Sez2 />
-      <Sez3 />
-      <Sez4 />
-      <Sez5 />
+
+      {/* Below-the-fold sections use Suspense for progressive rendering */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <Sez2 />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <Sez3 />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <Sez4 />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <Sez5 />
+      </Suspense>
     </main>
   );
 }

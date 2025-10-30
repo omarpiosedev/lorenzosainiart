@@ -3,6 +3,7 @@ import pick from 'lodash/pick';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { PersonJsonLd, WebsiteJsonLd } from '@/components/seo/JsonLd';
 import { routing } from '@/libs/I18nRouting';
 import { getBaseUrl } from '@/utils/AppConfig';
 import LayoutClient from './LayoutClient';
@@ -107,6 +108,9 @@ export default async function RootLayout(props: {
         <link rel="preload" as="video" href="/videos/Logoanimated.mp4" type="video/mp4" />
         {/* Font preload for performance */}
         <link rel="preload" as="font" href="/assets/fonts/LAVENER.ttf" type="font/ttf" crossOrigin="anonymous" />
+        {/* JSON-LD Structured Data for SEO */}
+        <WebsiteJsonLd locale={locale} />
+        <PersonJsonLd locale={locale} />
       </head>
       <body style={{ margin: '0px', padding: '0px', left: '0px', right: '0px', position: 'relative' }}>
         {/* ✅ BEST PRACTICE: Passa solo i messaggi necessari per i componenti del layout
