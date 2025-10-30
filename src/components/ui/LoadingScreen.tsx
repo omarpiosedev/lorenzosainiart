@@ -18,16 +18,18 @@ export default function LoadingScreen({ onComplete, irisRef }: LoadingScreenProp
   const t = useTranslations('loading');
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const hasStartedTransition = useRef(false);
 
-  const { progress, isComplete } = useResourceLoader();
+  const { progress } = useResourceLoader();
 
-  // Safety timeout per evitare che si blocchi per sempre
+  // ✅ BEST PRACTICE: Safety timeout ragionevole per evitare che si blocchi
+  // 5 secondi è un buon bilanciamento tra UX e sicurezza
   useEffect(() => {
     const safetyTimeout = setTimeout(() => {
       if (typeof onComplete === 'function') {
         onComplete();
       }
-    }, 10000); // 10 secondi timeout di sicurezza
+    }, 5000); // 5 secondi timeout di sicurezza
 
     return () => clearTimeout(safetyTimeout);
   }, [onComplete]);
@@ -67,26 +69,22 @@ export default function LoadingScreen({ onComplete, irisRef }: LoadingScreenProp
     }
   }, []);
 
-  // Animazione di uscita quando caricamento completo
+  // Animazione di uscita quando caricamento quasi completo
   useEffect(() => {
-    if (isComplete && irisRef.current && contentRef.current) {
-      // Fai partire l'iris IMMEDIATAMENTE
-      const runTransition = async () => {
-        // Fade del contenuto mentre l'iris si chiude
-        gsap.to(contentRef.current, {
-          opacity: 0,
-          duration: 0.3,
-          ease: 'power2.out',
-        });
+    // Far partire l'iris quando il progresso raggiunge il 95% (solo una volta)
+    if (progress >= 95 && irisRef.current && !hasStartedTransition.current) {
+      hasStartedTransition.current = true;
 
+      const runTransition = async () => {
         // Avvia l'animazione dell'iris (chiudi + riapri)
         // L'onHalfway callback rimuoverà il LoadingScreen quando l'iris è completamente chiuso
+        // NO fade out del contenuto, resta visibile fino a che l'iris si chiude
         await irisRef.current?.open();
       };
 
       runTransition();
     }
-  }, [isComplete]);
+  }, [progress]);
 
   return (
     <div

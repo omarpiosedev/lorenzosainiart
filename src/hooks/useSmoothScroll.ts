@@ -43,7 +43,6 @@ const isMacOS = (): boolean => {
 
 export const useSmoothScroll = (enabled: boolean = true) => {
   const lenisRef = useRef<Lenis | null>(null);
-  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Check if we should enable Lenis:
@@ -63,34 +62,39 @@ export const useSmoothScroll = (enabled: boolean = true) => {
     // Aggiungi classe al documento per Lenis
     document.documentElement.classList.add('lenis');
 
-    // Initialize Lenis
+    // Initialize Lenis with autoRaf disabled (we'll use GSAP ticker)
     const lenis = new Lenis({
       duration: 1.2, // Durata dell'animazione (1.2s per un effetto fluido)
       easing: (t: number) => Math.min(1, 1.001 - 2 ** (-10 * t)), // Easing personalizzato
       touchMultiplier: 2, // Sensibilità touch
       wheelMultiplier: 1, // Sensibilità wheel
       infinite: false, // Non infinito per portfolio
+      autoRaf: false, // ✅ BEST PRACTICE: Disabilita RAF automatico per usare GSAP ticker
     });
 
     lenisRef.current = lenis;
 
+    // ✅ BEST PRACTICE: Integrazione GSAP ticker (più performante e sincronizzato)
+    // Usa GSAP ticker invece di requestAnimationFrame manuale
+    const update = (time: number) => {
+      lenis.raf(time * 1000); // GSAP ticker passa tempo in secondi, Lenis vuole millisecondi
+    };
+
     // Integrazione con GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
 
-    // Animation frame loop per Lenis
-    const raf = (time: number) => {
-      lenis.raf(time);
-      rafRef.current = requestAnimationFrame(raf);
-    };
+    // Aggiungi update al ticker GSAP
+    gsap.ticker.add(update);
 
-    rafRef.current = requestAnimationFrame(raf);
+    // ✅ BEST PRACTICE: Disabilita lag smoothing per scroll immediato
+    // Previene delay nelle animazioni di scroll
+    gsap.ticker.lagSmoothing(0);
 
     // Cleanup function
     return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
+      // Rimuovi update dal ticker GSAP
+      gsap.ticker.remove(update);
+
       if (lenisRef.current) {
         document.documentElement.classList.remove('lenis');
         lenisRef.current.destroy();

@@ -74,7 +74,7 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
       <CameraIris
         ref={irisRef}
         color="#060010"
-        duration={0.5}
+        duration={1.0}
         onHalfway={handleLoadingComplete}
       />
 

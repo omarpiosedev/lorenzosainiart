@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
+import pick from 'lodash/pick';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/libs/I18nRouting';
 import { getBaseUrl } from '@/utils/AppConfig';
@@ -85,6 +86,9 @@ export default async function RootLayout(props: {
 
   setRequestLocale(locale);
 
+  // ✅ BEST PRACTICE: Ottieni tutti i messaggi dal server
+  const messages = await getMessages();
+
   const navItems = [
     { label: 'HOME', href: `/${locale}` },
     { label: 'PORTFOLIO', href: `/${locale}/portfolio` },
@@ -102,7 +106,12 @@ export default async function RootLayout(props: {
         <link rel="preload" as="font" href="/assets/fonts/LAVENER.ttf" type="font/ttf" crossOrigin="anonymous" />
       </head>
       <body style={{ margin: '0px', padding: '0px', left: '0px', right: '0px', position: 'relative' }}>
-        <NextIntlClientProvider>
+        {/* ✅ BEST PRACTICE: Passa solo i messaggi necessari per i componenti del layout
+            Questo riduce il bundle JS client e migliora le performance.
+            Include 'loading' per LoadingScreen e 'HomePage' per la pagina principale.
+            Altre pagine dovrebbero avvolgere il contenuto in NextIntlClientProvider
+            con i loro namespace specifici se necessario. */}
+        <NextIntlClientProvider messages={pick(messages, ['loading', 'HomePage'])}>
           <LayoutClient navItems={navItems}>
             {props.children}
           </LayoutClient>
