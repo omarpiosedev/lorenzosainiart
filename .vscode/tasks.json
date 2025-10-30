@@ -1,20 +1,162 @@
 {
-  // See https://go.microsoft.com/fwlink/?LinkId=733558
-  // for the documentation about the tasks.json format
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Project wide type checking with TypeScript",
+      "label": "🚀 Fix All (Recommended)",
       "type": "npm",
-      "script": "check:types",
-      "problemMatcher": ["$tsc"],
+      "script": "fix-all",
       "group": {
         "kind": "build",
         "isDefault": true
       },
       "presentation": {
-        "clear": true,
-        "reveal": "never"
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": ["$eslint-stylish", "$tsc"]
+    },
+    {
+      "label": "🔧 ESLint Fix",
+      "type": "npm",
+      "script": "lint:fix",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "💅 Prettier Fix",
+      "type": "npm",
+      "script": "prettier:fix",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "📝 Format Code",
+      "type": "npm",
+      "script": "format",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "✅ Check All",
+      "type": "npm",
+      "script": "check-all",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$eslint-stylish", "$tsc"]
+    },
+    {
+      "label": "🔍 TypeScript Check",
+      "type": "npm",
+      "script": "type-check",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "👀 TypeScript Watch",
+      "type": "npm",
+      "script": "type-check:watch",
+      "group": "test",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated"
+      },
+      "problemMatcher": ["$tsc-watch"]
+    },
+    {
+      "label": "🏗️ Build Project",
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "🧪 Run Tests",
+      "type": "npm",
+      "script": "test",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🔐 Security Audit",
+      "type": "npm",
+      "script": "security:full",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "💀 Kill Port 3000",
+      "type": "shell",
+      "command": "lsof -ti:3000 | xargs kill -9 || echo 'No process found on port 3000'",
+      "group": "none",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "⚡ Complete Workflow",
+      "dependsOrder": "sequence",
+      "dependsOn": ["🚀 Fix All (Recommended)", "✅ Check All"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
       }
     }
   ]

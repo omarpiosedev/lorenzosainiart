@@ -4,7 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { Focus } from '@/components/ui/focus';
+import { FocusFrame } from '@/components/ui/focus';
 
 // Register GSAP plugins
 gsap.registerPlugin(useGSAP);
@@ -162,14 +162,11 @@ export default function HeroHome() {
     });
 
     // === TITOLO ===
-    // Imposta stato iniziale del titolo
+    // Imposta stato iniziale del titolo (il blur è gestito dal componente Focus)
     const activeTitle = titleDesktopRef.current || titleMobileRef.current;
     if (activeTitle) {
       gsap.set(activeTitle, {
         opacity: 0,
-        scale: 0.6,
-        filter: 'blur(10px)',
-        y: 50, // Parte leggermente dal basso
       });
     }
 
@@ -201,15 +198,12 @@ export default function HeroHome() {
         ease: 'power4.out',
       }, '<') // Iniziano insieme alle immagini
 
-    // === TITOLO - Appare dopo con effetto cinematografico ===
+    // === TITOLO - Fade in (il blur è gestito dal componente Focus) ===
       .to(activeTitle, {
         opacity: 1,
-        scale: 1,
-        filter: 'blur(0px)',
-        y: 0,
-        duration: 1.8, // Durata più lunga per effetto drammatico
-        ease: 'power3.out',
-      }, '-=1.2'); // Inizia 1.2s prima che finiscano nuvola e sposi (più presto)
+        duration: 1.5,
+        ease: 'power2.out',
+      }, '-=1.2'); // Inizia durante l'animazione delle immagini
   }, {
     dependencies: [isReady, breakpoint],
     scope: containerRef,
@@ -445,27 +439,23 @@ export default function HeroHome() {
             }}
           >
             <div ref={titleMobileRef} style={{ opacity: 0 }}>
-              <Focus
-                sentence="LORENZO SAINI'S ART"
-                manualMode={false}
-                blurAmount={10}
+              <FocusFrame
                 borderColor="white"
-                animationDuration={0.8}
-                pauseBetweenAnimations={1.5}
-                wordStyle={{
-                  fontFamily: 'Lavener',
-                  fontSize: '60px',
-                  fontWeight: 'bold',
-                  color: 'white',
-                  lineHeight: '0.9',
-                  cursor: 'default',
-                }}
-                containerStyle={{
-                  justifyContent: 'center',
-                  gap: '0.3em',
-                  flexWrap: 'nowrap',
-                }}
-              />
+                blurAmount={20}
+                animationDuration={2.5}
+                delay={1.5}
+              >
+                <h1
+                  className="font-bold text-white leading-none text-center tracking-wider"
+                  style={{
+                    fontFamily: 'Lavener',
+                    fontSize: '60px',
+                    lineHeight: '0.9',
+                  }}
+                >
+                  LORENZO SAINI'S ART
+                </h1>
+              </FocusFrame>
             </div>
           </div>
         )}
@@ -608,7 +598,6 @@ export default function HeroHome() {
       {/* Titolo desktop e tablet - fisso nella sezione hero */}
       {(breakpoint === 'desktop' || breakpoint === 'tablet') && (
         <div
-          ref={titleDesktopRef}
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
           style={{
             left: '3px',
@@ -621,37 +610,30 @@ export default function HeroHome() {
               : breakpoint === 'tablet'
                 ? 'translateY(-25vh)'
                 : 'translateY(-15vh)',
-            opacity: 0, // Nascosto inizialmente
           }}
         >
-          <Focus
-            sentence="LORENZO SAINI'S ART"
-            manualMode={false}
-            blurAmount={15}
-            borderColor="white"
-            animationDuration={0.8}
-            pauseBetweenAnimations={1.5}
-            wordStyle={{
-              fontFamily: 'Lavener',
-              fontSize: breakpoint === 'desktop'
-                ? 'min(calc((100vw - 32px) / 10), calc(100vh * 0.45))'
-                : 'min(calc((100vw - 6px) / (19 * 0.52)), calc(100vh * 0.15))',
-              fontWeight: 'bold',
-              color: 'white',
-              lineHeight: 1,
-              cursor: 'default',
-            }}
-            containerStyle={{
-              justifyContent: 'center',
-              gap: '0.3em',
-              flexWrap: 'nowrap',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              maxWidth: '100vw',
-              padding: '0 16px',
-              boxSizing: 'border-box',
-            }}
-          />
+          <div ref={titleDesktopRef} style={{ opacity: 0 }}>
+            <FocusFrame
+              borderColor="white"
+              blurAmount={25}
+              animationDuration={2.5}
+              delay={1.5}
+            >
+              <h1
+                className="font-bold text-white leading-none tracking-wider text-center"
+                style={{
+                  fontFamily: 'Lavener',
+                  fontSize: breakpoint === 'desktop'
+                    ? 'min(calc((100vw - 32px) / 10), calc(100vh * 0.45))'
+                    : 'min(calc((100vw - 6px) / (19 * 0.52)), calc(100vh * 0.15))',
+                  whiteSpace: 'nowrap',
+                  lineHeight: 1,
+                }}
+              >
+                LORENZO SAINI'S ART
+              </h1>
+            </FocusFrame>
+          </div>
         </div>
       )}
     </section>
