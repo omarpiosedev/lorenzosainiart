@@ -1,7 +1,9 @@
 'use client';
 
+import type { CameraIrisHandle } from '@/components/ui/CameraIris';
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { CameraIris } from '@/components/ui/CameraIris';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import SettingsModal from '@/components/ui/SettingsModal';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
@@ -21,6 +23,7 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
+  const irisRef = useRef<CameraIrisHandle>(null);
 
   // Assicurati che siamo lato client prima di mostrare il loading
   useEffect(() => {
@@ -67,8 +70,18 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
 
   return (
     <>
+      {/* Camera Iris Transition - Rendered at root level to persist during LoadingScreen unmount */}
+      <CameraIris
+        ref={irisRef}
+        color="#060010"
+        duration={0.5}
+        onHalfway={handleLoadingComplete}
+      />
+
       {/* Loading Screen - mostra solo lato client e solo per nuovi visitatori */}
-      {isClient && isLoading && !hasVisitedBefore && <LoadingScreen onComplete={handleLoadingComplete} />}
+      {isClient && isLoading && !hasVisitedBefore && (
+        <LoadingScreen onComplete={handleLoadingComplete} irisRef={irisRef} />
+      )}
 
       {/* Main Content - renderizzato solo dopo il loading e lato client */}
       {isClient && !isLoading && (

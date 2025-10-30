@@ -1,5 +1,7 @@
 'use client';
 
+import type { RefObject } from 'react';
+import type { CameraIrisHandle } from './CameraIris';
 import { gsap } from 'gsap';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef } from 'react';
@@ -9,9 +11,10 @@ import VideoLogo from './VideoLogo';
 
 type LoadingScreenProps = {
   onComplete: () => void;
+  irisRef: RefObject<CameraIrisHandle | null>;
 };
 
-export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
+export default function LoadingScreen({ onComplete, irisRef }: LoadingScreenProps) {
   const t = useTranslations('loading');
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -66,17 +69,24 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
   // Animazione di uscita quando caricamento completo
   useEffect(() => {
-    if (isComplete && containerRef.current) {
-      gsap.to(containerRef.current, {
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power2.inOut',
-        onComplete: () => {
-          onComplete();
-        },
-      });
+    if (isComplete && irisRef.current && contentRef.current) {
+      // Fai partire l'iris IMMEDIATAMENTE
+      const runTransition = async () => {
+        // Fade del contenuto mentre l'iris si chiude
+        gsap.to(contentRef.current, {
+          opacity: 0,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+
+        // Avvia l'animazione dell'iris (chiudi + riapri)
+        // L'onHalfway callback rimuoverà il LoadingScreen quando l'iris è completamente chiuso
+        await irisRef.current?.open();
+      };
+
+      runTransition();
     }
-  }, [isComplete, onComplete]);
+  }, [isComplete]);
 
   return (
     <div

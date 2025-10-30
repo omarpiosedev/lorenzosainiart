@@ -8,13 +8,55 @@ import { useEffect, useRef } from 'react';
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * Detects if the user is on macOS or iOS
+ * Best practice 2025: Use navigator.platform (not spoofed) + userAgent fallback
+ *
+ * Why disable Lenis on macOS?
+ * - macOS has excellent native smooth scrolling with trackpad
+ * - Lenis creates a "double smoothing" effect that feels laggy
+ * - Official Lenis issue #237: "Optionally disable smooth scrolling on trackpads"
+ *
+ * @returns {boolean} true if macOS/iOS, false otherwise
+ */
+const isMacOS = (): boolean => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  // Primary check: navigator.platform (more reliable, not spoofed)
+  // Modern Macs return "MacIntel", future-proof with includes()
+  const platform = navigator.platform.toLowerCase();
+  if (platform.includes('mac')) {
+    return true;
+  }
+
+  // Secondary check: userAgent for iOS devices (iPhone, iPad, iPod)
+  // iOS also has native smooth scrolling
+  const userAgent = navigator.userAgent.toLowerCase();
+  if (/iphone|ipad|ipod/.test(userAgent)) {
+    return true;
+  }
+
+  return false;
+};
+
 export const useSmoothScroll = (enabled: boolean = true) => {
   const lenisRef = useRef<Lenis | null>(null);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Solo inizializza se enabled è true e siamo lato client
+    // Check if we should enable Lenis:
+    // 1. enabled flag must be true
+    // 2. Must be client-side
+    // 3. Must NOT be macOS/iOS (they have native smooth scrolling)
     if (!enabled || typeof window === 'undefined') {
+      return;
+    }
+
+    // Disable Lenis on macOS/iOS - they already have excellent native smooth scrolling
+    if (isMacOS()) {
+      // Lenis disabled on macOS/iOS - using native smooth scrolling
       return;
     }
 
@@ -58,17 +100,30 @@ export const useSmoothScroll = (enabled: boolean = true) => {
   }, [enabled]);
 
   // Funzione per scrollare verso una sezione specifica
+  // Funziona sia con Lenis (se disponibile) che con scroll nativo
   const scrollToSection = (target: string | HTMLElement, offset: number = 0) => {
     if (lenisRef.current) {
+      // Use Lenis smooth scroll (Windows/Linux)
       lenisRef.current.scrollTo(target, {
         offset,
         duration: 1.5,
         easing: (t: number) => 1 - (1 - t) ** 3, // easeOutCubic
       });
+    } else {
+      // Fallback to native smooth scroll (macOS/iOS)
+      const element = typeof target === 'string' ? document.querySelector(target) : target;
+      if (element) {
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({
+          top: elementPosition + offset,
+          behavior: 'smooth', // Use native smooth scroll
+        });
+      }
     }
   };
 
   // Funzione per ottenere l'istanza Lenis (utile per controlli avanzati)
+  // Returns null on macOS/iOS where Lenis is disabled
   const getLenis = () => lenisRef.current;
 
   return {
