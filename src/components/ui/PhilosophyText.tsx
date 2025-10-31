@@ -73,7 +73,7 @@ export default function PhilosophyText() {
           staggerDelay={0.08}
           duration={1.5}
           ease="power1.out"
-          scrubDuration={3}
+          scrubDuration={1.5}
         >
           Every frame is a canvas, and every moment holds infinite stories waiting to be told. I seek the beauty hidden in the ordinary, weaving creativity, design, and emotion into visuals that breathe life and meaning. My work is about touching hearts, sparking imagination, and turning fleeting instants into timeless art.
         </GSAPScrollReveal>

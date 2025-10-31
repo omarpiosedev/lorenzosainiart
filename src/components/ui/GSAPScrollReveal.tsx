@@ -62,7 +62,7 @@ export default function GSAPScrollReveal({
       gsap.timeline({
         scrollTrigger: {
           trigger: section || container,
-          start: 'top bottom',
+          start: 'top top', // Inizia quando il testo è pinnato al centro
           end: 'bottom top',
           scrub: scrubDuration,
           invalidateOnRefresh: true,
@@ -75,9 +75,9 @@ export default function GSAPScrollReveal({
             // Use gsap.set() instead of gsap.to() in onUpdate for better performance
             // gsap.set() applies changes immediately without creating new tweens
             wordElements.forEach((word, index) => {
-            // Distribuzione che finisce prima (70% del progress totale)
-              const wordRevealStart = (index / totalWords) * 0.4;
-              const wordRevealEnd = (index / totalWords) * 0.4 + 0.3;
+            // Distribuzione che finisce prima (50% del progress totale)
+              const wordRevealStart = (index / totalWords) * 0.3;
+              const wordRevealEnd = (index / totalWords) * 0.3 + 0.2;
 
               let wordProgress = 0;
 

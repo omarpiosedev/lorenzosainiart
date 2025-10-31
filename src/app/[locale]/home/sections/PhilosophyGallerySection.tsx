@@ -174,7 +174,7 @@ export default function PhilosophyGallerySection(): ReactElement {
               className="absolute rounded-3xl overflow-hidden will-change-transform
                 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_0_10px_30px_-5px_rgba(0,0,0,0.3)]
                 hidden
-                lg:block lg:w-[70vw] lg:h-[50vh] lg:left-[15vw] lg:bottom-[18.52vh]"
+                lg:block lg:w-[70vw] lg:h-[50vh] lg:left-[15vw] lg:bottom-[23.52vh]"
             >
               <Image
                 src="/assets/images/1d996cf4-ca34-428c-bf3b-b5b9a30bfa82_rw_1920e651.webp"
