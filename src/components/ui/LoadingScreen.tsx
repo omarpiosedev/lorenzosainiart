@@ -2,11 +2,15 @@
 
 import type { RefObject } from 'react';
 import type { CameraIrisHandle } from './CameraIris';
+import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { useEffect, useRef } from 'react';
 import { useResourceLoader } from '@/hooks/useResourceLoader';
 import ProgressBar from './ProgressBar';
 import VideoLogo from './VideoLogo';
+
+// Register GSAP plugins at module level (best practice)
+gsap.registerPlugin(useGSAP);
 
 type LoadingScreenProps = {
   onComplete: () => void;
@@ -36,26 +40,42 @@ export default function LoadingScreen({ onComplete: _onComplete, irisRef }: Load
     }
   };
 
-  // Animazione di entrata
-  useEffect(() => {
-    if (containerRef.current && contentRef.current) {
-      gsap.fromTo(containerRef.current, { opacity: 0 }, {
-        opacity: 1,
-        duration: 0.5,
-        ease: 'power2.out',
-      });
+  // ✅ BEST PRACTICE: Use useGSAP hook instead of useEffect for React 19 compatibility
+  // Automatic cleanup, prevents double-mount issues in Strict Mode
+  useGSAP(
+    () => {
+      if (!containerRef.current || !contentRef.current) {
+        return;
+      }
 
-      gsap.fromTo(contentRef.current, { y: 20, opacity: 0 }, {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        delay: 0.2,
-        ease: 'power2.out',
-      });
-    }
-  }, []);
+      // Entrance animations
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.5,
+          ease: 'power2.out',
+        },
+      );
+
+      gsap.fromTo(
+        contentRef.current,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          delay: 0.2,
+          ease: 'power2.out',
+        },
+      );
+    },
+    { scope: containerRef }, // Scoped queries for better performance
+  );
 
   // Animazione di uscita quando caricamento completato
+
   useEffect(() => {
     // Far partire l'iris quando il caricamento è completo (solo una volta)
     if (isComplete && irisRef.current && !hasStartedTransition.current) {
