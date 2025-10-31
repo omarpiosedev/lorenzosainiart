@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
-import { routing } from './libs/I18nRouting';
+import { routing } from './lib/i18n/routing';
 
 // MIGRATED: Renamed from createMiddleware -> still using the same function
 // The function name from next-intl remains the same; only our export name changed

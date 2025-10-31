@@ -1,6 +1,6 @@
 import { hasLocale } from 'next-intl';
 import { getRequestConfig } from 'next-intl/server';
-import { routing } from './I18nRouting';
+import { routing } from './routing';
 
 // Portfolio site internationalization configuration
 // Supports English and French locales with automatic locale negotiation
@@ -14,6 +14,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    messages: (await import(`../locales/${locale}.json`)).default,
+    messages: (await import(`../../locales/${locale}.json`)).default,
   };
 });

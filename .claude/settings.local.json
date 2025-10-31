@@ -4,5 +4,10 @@
     "shadcn",
     "DeepGraph Next.js MCP",
     "DeepGraph React MCP"
-  ]
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)"
+    ]
+  }
 }

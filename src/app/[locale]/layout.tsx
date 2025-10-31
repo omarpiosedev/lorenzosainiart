@@ -3,8 +3,9 @@ import pick from 'lodash/pick';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { preload } from 'react-dom';
 import { PersonJsonLd, WebsiteJsonLd } from '@/components/seo/JsonLd';
-import { routing } from '@/libs/I18nRouting';
+import { routing } from '@/lib/i18n/routing';
 import { getBaseUrl } from '@/utils/AppConfig';
 import LayoutClient from './LayoutClient';
 import '@/styles/global.css';
@@ -90,6 +91,19 @@ export default async function RootLayout(props: {
   // ✅ BEST PRACTICE: Ottieni tutti i messaggi dal server
   const messages = await getMessages();
 
+  // ✅ React 19: Preload critical resources for optimal performance
+  // Fonts - browser will prioritize these for FOUT prevention
+  preload('/assets/fonts/LAVENER.ttf', { as: 'font', type: 'font/ttf', crossOrigin: 'anonymous' });
+  preload('/assets/fonts/WILLG___.TTF', { as: 'font', type: 'font/ttf', crossOrigin: 'anonymous' });
+  preload('/assets/fonts/Effloresce It.otf', { as: 'font', type: 'font/opentype', crossOrigin: 'anonymous' });
+
+  // Critical images for LCP
+  preload('/assets/images/backgropund.webp', { as: 'image', fetchPriority: 'high' });
+  preload('/assets/images/sposi.webp', { as: 'image', fetchPriority: 'high' });
+
+  // Loading screen video - critical for initial experience
+  preload('/videos/Logoanimated.mp4', { as: 'video', type: 'video/mp4' });
+
   const navItems = [
     { label: 'HOME', href: `/${locale}` },
     { label: 'PORTFOLIO', href: `/${locale}/portfolio` },
@@ -101,13 +115,6 @@ export default async function RootLayout(props: {
   return (
     <html lang={locale}>
       <head>
-        {/* Critical images preload - LCP first */}
-        <link rel="preload" as="image" href="/assets/images/backgropund.webp" fetchPriority="high" />
-        <link rel="preload" as="image" href="/assets/images/sposi.webp" fetchPriority="high" />
-        {/* Loading video preload - critical for loading screen */}
-        <link rel="preload" as="video" href="/videos/Logoanimated.mp4" type="video/mp4" />
-        {/* Font preload for performance */}
-        <link rel="preload" as="font" href="/assets/fonts/LAVENER.ttf" type="font/ttf" crossOrigin="anonymous" />
         {/* JSON-LD Structured Data for SEO */}
         <WebsiteJsonLd locale={locale} />
         <PersonJsonLd locale={locale} />

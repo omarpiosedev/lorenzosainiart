@@ -28,6 +28,82 @@
 
 ---
 
+## 🎯 MANDATORY WORKFLOW: Plan → Code → Review
+
+**YOU MUST follow this workflow for EVERY task:**
+
+### Phase 1: PLANNING (Investigate First - Zero Hallucinations)
+**Command**: *"Create implementation plan. DO NOT write code yet."*
+- ✅ Read relevant files BEFORE answering questions
+- ✅ Verify claims by examining actual code
+- ✅ List ALL files that will be modified
+- ✅ Identify edge cases and potential issues
+- ✅ Create step-by-step implementation checklist
+- ❌ NEVER make claims about code without verification
+
+### Phase 2: IMPLEMENTATION (Complete Code Only)
+- ✅ Production-ready implementations
+- ✅ Comprehensive error handling
+- ✅ Security validation embedded
+- ❌ ZERO placeholders or TODO comments
+- ❌ ZERO mock implementations
+- ❌ ZERO incomplete code
+
+### Phase 3: QUALITY REVIEW (Before Completion)
+```bash
+npm run lint:fix          # Fix linting issues
+npm run check:types       # TypeScript validation
+npm run check:i18n        # Translation validation
+```
+
+## 🚫 ANTI-PATTERNS (ABSOLUTELY FORBIDDEN)
+
+**Implementation Failures:**
+- ❌ TODO comments or "implement later" notes
+- ❌ Placeholder functions or mock data
+- ❌ Incomplete error handling
+- ❌ Hardcoded values that should be configurable
+- ❌ console.log statements in production code
+
+**Communication Waste:**
+- ❌ Restating requirements unnecessarily
+- ❌ Generic advice without specifics
+- ❌ Agreement phrases consuming tokens ("You're absolutely right...")
+- ❌ Explaining obvious concepts
+
+**Quality Violations:**
+- ❌ Bypassing linter rules
+- ❌ Ignoring TypeScript errors
+- ❌ Skipping code review
+
+## 🔒 QUALITY GATES (ALL Must Pass)
+
+Before considering ANY task complete:
+1. ✅ No linter errors (`npm run lint:fix`)
+2. ✅ No TypeScript errors (`npm run check:types`)
+3. ✅ Translations validated (`npm run check:i18n`)
+4. ✅ Code reviewed against project patterns
+5. ✅ Production-ready error handling present
+6. ✅ No security vulnerabilities introduced
+7. ✅ iOS Safari compatibility verified (for UI changes)
+
+## 🧠 CONTEXT MANAGEMENT (Prevent Hallucinations)
+
+**File References:**
+- Use explicit paths: `@src/components/ui/NavBar.tsx`
+- Reference documentation URLs when available
+- Include visual context (design mocks, diagrams) if relevant
+
+**Context Cleanup:**
+- Use `/clear` between unrelated tasks to prevent context bleed
+- For parallel work, consider Git worktrees with isolated Claude instances
+
+**Specific over Generic:**
+- ✅ "Do not use mocks" (specific constraint)
+- ❌ "Avoid mocks" (vague, easily ignored)
+
+---
+
 ## Project Overview
 
 Portfolio website for creative work (photography, video, art) with multi-language support and sophisticated GSAP animations.
@@ -138,10 +214,10 @@ useGSAP(() => {
 3. Run `npm run check:i18n` BEFORE every commit
 4. Navigation components auto-strip locale for path comparison
 
-## Testing
+## Testing (Optional)
 
-- **Unit Tests**: `*.test.ts[x]` alongside source, run `npm run test` (Vitest + V8 coverage)
-- **E2E Tests**: `tests/e2e/*.e2e.ts`, run `npm run test:e2e` (Playwright - install first)
+- **Unit Tests**: `npm run test` (Vitest + V8 coverage)
+- **E2E Tests**: `npm run test:e2e` (Playwright)
 - **Storybook**: `npm run storybook` on port 6006 for isolated component dev
 
 ## Next.js Config
@@ -152,51 +228,44 @@ useGSAP(() => {
 - Bundle analyzer: `npm run build-stats`
 - Env: `NEXT_PUBLIC_SITE_URL` for production
 
-## Code Standards
+## Code Standards & Git Workflow
 
-**TypeScript:**
-- Strict mode enabled
-- Interfaces for all component props
-- Run `npm run check:types` before commits
+**Before ANY commit:**
+- ✅ Query Context7 for latest library best practices
+- ✅ Follow MANDATORY WORKFLOW (Plan → Code → Review)
+- ✅ Pass ALL quality gates (lint, types, i18n)
+- ✅ Conventional Commits format (use `npm run commit`)
+- ✅ New branch per feature/fix
+- ✅ Preview in Storybook before integration (UI components)
 
-**Commits:**
-- Conventional Commits required - use `npm run commit` for CLI helper
-- Run `npm run check:i18n` before every commit
+**Always:**
+- TypeScript strict mode - interfaces for all props
+- GSAP patterns from `NavBar.tsx` as reference
+- Fluid design tokens, NEVER hardcoded pixels
+- iOS Safari compatibility verified for UI changes
 
-**Component Dev:**
-- Test in Storybook before integration
-- Follow GSAP patterns from `NavBar.tsx`
-- Use fluid design tokens, not hardcoded pixels
-- iOS Safari testing is critical
+## Security & Performance
 
-## Quick Workflows
+**Security:**
+- SQL injection prevention (validate inputs)
+- XSS/CSRF protection (sanitize user data)
+- Auth/authz validation
+- Never commit: credentials, API keys, debug logs exposing data
 
-**⚠️ FIRST STEP for ALL workflows: Query Context7 for latest best practices!**
+**Performance:**
+- GSAP: `transform`/`opacity` only (GPU-accelerated)
+- Bundle: monitor with `npm run build-stats`
+- Test on iOS Safari (critical for this project)
 
-**Add New Page:**
-1. **Check Context7** for Next.js 16 page patterns first
-2. Create `src/app/[locale]/your-page/page.tsx`
-3. Add translations to `en.json` + `it.json`
-4. Add link to NavBar items
-5. Test `/it/your-page` and `/en/your-page`
+## Continuous Improvement
 
-**Add GSAP Animation:**
-1. **Check Context7** for GSAP + React 19 latest patterns first
-2. Apply modern pattern:
-```tsx
-import { useGSAP } from '@gsap/react';
-const tlRef = useRef<gsap.core.Timeline>();
-useGSAP(() => {
-  tlRef.current = gsap.timeline();
-  // your animations
-}, { dependencies: [] });
-```
+**After each feature:**
+1. Pattern Recognition: What worked? Document it
+2. Decoherence Check: Where did we deviate from plan?
+3. Optimization: Can we reduce complexity?
+4. Update CLAUDE.md with proven patterns monthly
 
-**Add Translation:**
-1. **Check Context7** for next-intl latest API first
-2. Add to `locales/en.json` + `locales/it.json`
-3. Use: `const t = useTranslations('namespace')` → `{t('key')}`
-4. Validate: `npm run check:i18n`
+---
 
 ## Key Files
 

@@ -1,36 +1,53 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRef } from 'react';
 import GSAPScrollReveal from '@/components/ui/GSAPScrollReveal';
 
+// Register GSAP plugins (best practice: register once at module level)
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
 export default function PhilosophyText() {
-  const [isFixed, setIsFixed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (containerRef.current) {
-        const section = containerRef.current.closest('[data-section="sez2"]');
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          const shouldBeFixed = rect.top <= 0 && rect.bottom > window.innerHeight;
-          setIsFixed(shouldBeFixed);
-        }
+  // GSAP/React best practice: useGSAP hook with ScrollTrigger
+  // Pin text at viewport center when section reaches top, unpin when section exits
+  // This recreates original working logic: fixed while section is in viewport
+  useGSAP(
+    () => {
+      if (!containerRef.current) {
+        return;
       }
-    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+      // Find parent section (data-section="sez2" from PhilosophyGallerySection)
+      const section = containerRef.current.closest('[data-section="philosophy-gallery"]');
+      if (!section) {
+        return;
+      }
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+      // Pin text when section enters viewport, unpin when it exits
+      // Original logic: rect.top <= 0 && rect.bottom > window.innerHeight
+      // ScrollTrigger equivalent: pin from section top to section bottom
+      ScrollTrigger.create({
+        trigger: section, // Trigger based on section position
+        start: 'top top', // Pin when section top reaches viewport top
+        end: 'bottom bottom', // Unpin when section bottom exits viewport
+        pin: containerRef.current, // Pin this text element
+        pinSpacing: false, // Don't add spacing (section handles layout)
+        invalidateOnRefresh: true,
+      });
+    },
+    { scope: containerRef },
+  );
 
   return (
     <div
       ref={containerRef}
       className="flex flex-col items-center justify-center px-4 gap-8 z-10"
       style={{
-        position: isFixed ? 'fixed' : 'absolute',
+        position: 'absolute',
         top: 0,
         left: 0,
         width: '100vw',
@@ -42,7 +59,10 @@ export default function PhilosophyText() {
       }}
     >
       {/* Philosophy badge */}
-      <div className="bg-black/5 backdrop-blur-sm text-black rounded-full border border-black/10 inline-flex items-center justify-center" style={{ padding: '8px 16px' }}>
+      <div
+        className="bg-black/5 backdrop-blur-sm text-black rounded-full border border-black/10 inline-flex items-center justify-center"
+        style={{ padding: '8px 16px' }}
+      >
         <span className="text-base font-medium">Philosophy</span>
       </div>
 

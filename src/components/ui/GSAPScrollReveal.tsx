@@ -1,10 +1,12 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
-gsap.registerPlugin(ScrollTrigger);
+// Register GSAP plugins at module level (best practice)
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 type GSAPScrollRevealProps = {
   children: string;
@@ -25,83 +27,78 @@ export default function GSAPScrollReveal({
 }: GSAPScrollRevealProps) {
   const containerRef = useRef<HTMLParagraphElement>(null);
 
-  useEffect(() => {
-    if (!containerRef.current) {
-      return;
-    }
-
-    const container = containerRef.current;
-
-    // Split text into words and wrap each in a span
-    const words = children.split(' ');
-    container.innerHTML = words
-      .map((word, index) => `<span class="word" data-index="${index}">${word}</span>`)
-      .join(' ');
-
-    const wordElements = container.querySelectorAll('.word');
-
-    // Set initial state - words are blurred and low opacity
-    gsap.set(wordElements, {
-      opacity: 0.15,
-      filter: 'blur(4px)',
-      y: 30,
-    });
-
-    // Create scroll trigger animation basato sulla sezione, non sul testo
-    const section = container.closest('[data-section="sez2"]');
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section || container,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: scrubDuration,
-        invalidateOnRefresh: true, // Riaggiorna quando cambiano le dimensioni
-        refreshPriority: -1, // Bassa priorità per evitare conflitti
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const totalWords = wordElements.length;
-
-          wordElements.forEach((word, index) => {
-            // Distribuzione che finisce prima (70% del progress totale)
-            const wordRevealStart = index / totalWords * 0.4; // Punto di inizio per questa parola
-            const wordRevealEnd = (index / totalWords * 0.4) + 0.3; // Punto di fine per questa parola
-
-            let wordProgress = 0;
-
-            if (progress < wordRevealStart) {
-              // Non ancora iniziata
-              wordProgress = 0;
-            } else if (progress > wordRevealEnd) {
-              // Completamente rivelata
-              wordProgress = 1;
-            } else {
-              // In fase di rivelazione
-              wordProgress = (progress - wordRevealStart) / (wordRevealEnd - wordRevealStart);
-            }
-
-            gsap.to(word, {
-              opacity: 0.15 + (0.85 * wordProgress),
-              filter: `blur(${4 * (1 - wordProgress)}px)`,
-              y: 30 * (1 - wordProgress),
-              duration: 0.3,
-              ease,
-            });
-          });
-        },
-      },
-    });
-
-    return () => {
-      if (tl) {
-        tl.kill();
+  // React 19.2 + GSAP best practice: useGSAP hook instead of useEffect
+  // Automatic cleanup, scoped queries, React Compiler compatible
+  useGSAP(
+    () => {
+      if (!containerRef.current) {
+        return;
       }
-      ScrollTrigger.getAll().forEach((trigger) => {
-        if (trigger.trigger === (section || container)) {
-          trigger.kill();
-        }
+
+      const container = containerRef.current;
+
+      // Split text into words and wrap each in a span
+      const words = children.split(' ');
+      container.innerHTML = words
+        .map((word, index) => `<span class="word" data-index="${index}">${word}</span>`)
+        .join(' ');
+
+      const wordElements = container.querySelectorAll('.word');
+
+      // Set initial state - words are blurred and low opacity
+      gsap.set(wordElements, {
+        opacity: 0.15,
+        filter: 'blur(4px)',
+        y: 30,
       });
-    };
-  }, [children, staggerDelay, duration, ease, scrubDuration]);
+
+      // Create scroll trigger animation basato sulla sezione, non sul testo
+      const section = container.closest('[data-section="philosophy-gallery"]');
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: section || container,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: scrubDuration,
+          invalidateOnRefresh: true,
+          refreshPriority: -1, // Bassa priorità per evitare conflitti con pin
+          onUpdate: (self) => {
+            const progress = self.progress;
+            const totalWords = wordElements.length;
+
+            wordElements.forEach((word, index) => {
+            // Distribuzione che finisce prima (70% del progress totale)
+              const wordRevealStart = (index / totalWords) * 0.4;
+              const wordRevealEnd = (index / totalWords) * 0.4 + 0.3;
+
+              let wordProgress = 0;
+
+              if (progress < wordRevealStart) {
+                wordProgress = 0;
+              } else if (progress > wordRevealEnd) {
+                wordProgress = 1;
+              } else {
+                wordProgress = (progress - wordRevealStart) / (wordRevealEnd - wordRevealStart);
+              }
+
+              gsap.to(word, {
+                opacity: 0.15 + 0.85 * wordProgress,
+                filter: `blur(${4 * (1 - wordProgress)}px)`,
+                y: 30 * (1 - wordProgress),
+                duration: 0.3,
+                ease,
+              });
+            });
+          },
+        },
+      });
+    // No cleanup needed - useGSAP handles it automatically
+    },
+    {
+      dependencies: [children, staggerDelay, duration, ease, scrubDuration],
+      scope: containerRef,
+    },
+  );
 
   return (
     <p

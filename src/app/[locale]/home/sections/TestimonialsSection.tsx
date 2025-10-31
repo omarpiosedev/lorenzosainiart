@@ -74,7 +74,7 @@ function TestimonialCard({
   );
 }
 
-export default function Sez5() {
+export default function TestimonialsSection() {
   const t = useTranslations('HomePage.sez5');
 
   // Refs per marquee containers
@@ -153,7 +153,7 @@ export default function Sez5() {
 
   return (
     <>
-      <div data-section="sez5" className="relative bg-white min-h-screen">
+      <div data-section="testimonials" className="relative bg-white min-h-screen">
         {/* Desktop Layout */}
         <div className="hidden xl:block">
           {/* Testimonials Button - Proportional scaling */}

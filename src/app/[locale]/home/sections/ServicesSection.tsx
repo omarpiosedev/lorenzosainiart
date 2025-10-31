@@ -11,7 +11,7 @@ import { useRef, useState } from 'react';
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-export default function Sez3() {
+export default function ServicesSection() {
   // Main container ref for GSAP scope
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -262,7 +262,7 @@ export default function Sez3() {
   });
 
   return (
-    <div ref={containerRef} data-section="sez3" className="relative bg-white mb-[10vh]">
+    <div ref={containerRef} data-section="services" className="relative bg-white mb-[10vh]">
       {/* Horizontal Scrolling Container */}
       <div
         ref={horizontalContainerRef}

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { BreadcrumbJsonLd, PortfolioCollectionJsonLd } from '@/components/seo/JsonLd';
 import { getBaseUrl } from '@/utils/AppConfig';
 
 type Props = {
@@ -54,9 +54,13 @@ export default async function PortfolioPage(props: Props) {
     { name: 'Portfolio', url: `${baseUrl}/${locale}/portfolio` },
   ];
 
+  // TODO: When you have actual portfolio items, pass them to PortfolioCollectionJsonLd
+  // Example: const portfolioItems = await getPortfolioItems();
+
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbItems} />
+      <PortfolioCollectionJsonLd locale={locale} />
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">PORTFOLIO</h1>

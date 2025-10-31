@@ -1,7 +1,7 @@
 'use client';
 
 import NextError from 'next/error';
-import { routing } from '@/libs/I18nRouting';
+import { routing } from '@/lib/i18n/routing';
 
 export default function GlobalError(props: {
   error: Error & { digest?: string };

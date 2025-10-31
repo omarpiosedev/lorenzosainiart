@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
 import { getBaseUrl } from '@/utils/AppConfig';
+import BenefitsSection from './sections/BenefitsSection';
 import HeroHome from './sections/herohome';
-import Sez2 from './sections/sez2';
-import Sez3 from './sections/sez3';
-import Sez4 from './sections/sez4';
-import Sez5 from './sections/sez5';
+import PhilosophyGallerySection from './sections/PhilosophyGallerySection';
+import ServicesSection from './sections/ServicesSection';
+import TestimonialsSection from './sections/TestimonialsSection';
 
 // Loading skeleton component for sections
 function SectionSkeleton() {
@@ -87,19 +87,19 @@ export default async function HomePage({ params }: HomePageProps) {
 
       {/* Below-the-fold sections use Suspense for progressive rendering */}
       <Suspense fallback={<SectionSkeleton />}>
-        <Sez2 />
+        <PhilosophyGallerySection />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
-        <Sez3 />
+        <ServicesSection />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
-        <Sez4 />
+        <BenefitsSection />
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
-        <Sez5 />
+        <TestimonialsSection />
       </Suspense>
     </main>
   );

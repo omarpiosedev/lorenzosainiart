@@ -13,7 +13,7 @@ import clockAnimation from '../../../../../public/assets/animations/12-hr-clock.
 // Register GSAP plugins
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-export default function Sez4() {
+export default function BenefitsSection() {
   // Container ref for GSAP scope - enables proper cleanup
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -352,7 +352,7 @@ export default function Sez4() {
   });
 
   return (
-    <div ref={sectionRef} data-section="sez4" className="relative bg-white" style={{ minHeight: '160vh' }}>
+    <div ref={sectionRef} data-section="benefits" className="relative bg-white" style={{ minHeight: '160vh' }}>
       {/* Desktop Layout - Scales proportionally based on 1920x1080 design */}
       <div className="hidden xl:block">
         {/* Benefits Button - Proportional scaling */}
