@@ -2,7 +2,7 @@
 
 ## 🚨 CRITICAL: Context7 MCP First
 
-**Always use context7 when I need code generation, setup or configuration steps, or
+**Always use context7 (minimun 15000 token) when I need code generation, setup or configuration steps, or
 library/API documentation. This means you should automatically use the Context7 MCP
 tools to resolve library id and get library docs without me having to explicitly ask.
 
