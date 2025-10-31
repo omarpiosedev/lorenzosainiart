@@ -60,7 +60,7 @@ export default function PhilosophyText() {
     >
       {/* Philosophy badge */}
       <div
-        className="bg-black/5 backdrop-blur-sm text-black rounded-full border border-black/10 inline-flex items-center justify-center"
+        className="bg-white/90 text-black rounded-full border border-black/10 inline-flex items-center justify-center"
         style={{ padding: '8px 16px' }}
       >
         <span className="text-base font-medium">Philosophy</span>

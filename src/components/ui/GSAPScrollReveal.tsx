@@ -45,11 +45,16 @@ export default function GSAPScrollReveal({
 
       const wordElements = container.querySelectorAll('.word');
 
-      // Set initial state - words are blurred and low opacity
+      // PERFORMANCE OPTIMIZATION (Context7 best practices):
+      // 1. Add will-change hint to browser BEFORE animation
+      // 2. Use force3D for GPU acceleration
+      // 3. Set initial state with optimized properties
       gsap.set(wordElements, {
         opacity: 0.15,
         filter: 'blur(4px)',
         y: 30,
+        force3D: true, // GPU acceleration
+        willChange: 'transform, opacity, filter', // Browser optimization hint
       });
 
       // Create scroll trigger animation basato sulla sezione, non sul testo
@@ -66,6 +71,9 @@ export default function GSAPScrollReveal({
             const progress = self.progress;
             const totalWords = wordElements.length;
 
+            // PERFORMANCE OPTIMIZATION (Context7 best practice):
+            // Use gsap.set() instead of gsap.to() in onUpdate for better performance
+            // gsap.set() applies changes immediately without creating new tweens
             wordElements.forEach((word, index) => {
             // Distribuzione che finisce prima (70% del progress totale)
               const wordRevealStart = (index / totalWords) * 0.4;
@@ -81,15 +89,19 @@ export default function GSAPScrollReveal({
                 wordProgress = (progress - wordRevealStart) / (wordRevealEnd - wordRevealStart);
               }
 
-              gsap.to(word, {
+              // Use gsap.set() for instant updates (no tween creation overhead)
+              gsap.set(word, {
                 opacity: 0.15 + 0.85 * wordProgress,
                 filter: `blur(${4 * (1 - wordProgress)}px)`,
                 y: 30 * (1 - wordProgress),
-                duration: 0.3,
-                ease,
+                force3D: true, // Maintain GPU acceleration
               });
             });
           },
+        },
+        onComplete: () => {
+          // Remove will-change after animation completes to free resources
+          gsap.set(wordElements, { willChange: 'auto' });
         },
       });
     // No cleanup needed - useGSAP handles it automatically

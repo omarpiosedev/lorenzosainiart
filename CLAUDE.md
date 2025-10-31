@@ -2,14 +2,9 @@
 
 ## 🚨 CRITICAL: Context7 MCP First
 
-**YOU MUST use Context7 MCP for EVERY coding request before implementation:**
-
-**When to use Context7 (ALWAYS):**
-- ✅ Before implementing ANY feature, component, or fix
-- ✅ When working with ANY library (Next.js, GSAP, Tailwind, next-intl, etc.)
-- ✅ When debugging or troubleshooting issues
-- ✅ When considering new dependencies
-- ✅ For modern best practices (October 2025)
+**Always use context7 when I need code generation, setup or configuration steps, or
+library/API documentation. This means you should automatically use the Context7 MCP
+tools to resolve library id and get library docs without me having to explicitly ask.
 
 **How to use:**
 1. `mcp__context7__resolve-library-id` - Find the library (e.g., "next.js", "gsap")

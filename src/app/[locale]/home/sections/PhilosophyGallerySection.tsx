@@ -51,8 +51,8 @@ export default function PhilosophyGallerySection(): ReactElement {
 
             {/* Image 1: Square format - top left composition */}
             <div
-              className="absolute rounded-3xl overflow-hidden
-                shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6),_0_30px_60px_-10px_rgba(0,0,0,0.4),_0_15px_30px_-5px_rgba(0,0,0,0.3),_0_5px_15px_0px_rgba(0,0,0,0.2)]
+              className="absolute rounded-3xl overflow-hidden will-change-transform
+                shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_0_10px_30px_-5px_rgba(0,0,0,0.3)]
                 w-[45vw] h-[22.93vh] top-[13.375vh] left-[3.25vw]
                 lg:w-[19.17vw] lg:h-[34.07vh] lg:top-[10.83vh] lg:left-[17.29vw]"
             >
@@ -63,14 +63,15 @@ export default function PhilosophyGallerySection(): ReactElement {
                 sizes="(max-width: 768px) 45vw, (max-width: 1024px) 25vw, 19vw"
                 className="object-cover"
                 quality={80}
-                loading="lazy"
+                loading="eager"
+                priority={true}
               />
             </div>
 
             {/* Image 2: Vertical rectangle - top right composition */}
             <div
-              className="absolute rounded-3xl overflow-hidden
-                shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6),_0_30px_60px_-10px_rgba(0,0,0,0.4),_0_15px_30px_-5px_rgba(0,0,0,0.3),_0_5px_15px_0px_rgba(0,0,0,0.2)]
+              className="absolute rounded-3xl overflow-hidden will-change-transform
+                shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_0_10px_30px_-5px_rgba(0,0,0,0.3)]
                 w-[43.75vw] h-[33.375vh] top-[2.93vh] right-[3.25vw]
                 lg:w-[10.31vw] lg:h-[27.5vh] lg:top-[17.41vh] lg:right-[23.23vw]"
             >
@@ -81,14 +82,15 @@ export default function PhilosophyGallerySection(): ReactElement {
                 sizes="(max-width: 768px) 44vw, (max-width: 1024px) 15vw, 10vw"
                 className="object-cover"
                 quality={80}
-                loading="lazy"
+                loading="eager"
+                priority={true}
               />
             </div>
 
             {/* Image 3: Horizontal panoramic - center bottom composition */}
             <div
-              className="absolute rounded-3xl overflow-hidden
-                shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6),_0_30px_60px_-10px_rgba(0,0,0,0.4),_0_15px_30px_-5px_rgba(0,0,0,0.3),_0_5px_15px_0px_rgba(0,0,0,0.2)]
+              className="absolute rounded-3xl overflow-hidden will-change-transform
+                shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_0_10px_30px_-5px_rgba(0,0,0,0.3)]
                 w-[93.75vw] h-[31.85vh] left-[3.25vw] top-[66.6vh]
                 lg:w-[30vw] lg:h-[35.56vh] lg:left-[29.58vw] lg:top-[62.3vh]"
             >
@@ -99,7 +101,7 @@ export default function PhilosophyGallerySection(): ReactElement {
                 sizes="(max-width: 768px) 94vw, (max-width: 1024px) 50vw, 30vw"
                 className="object-cover"
                 quality={80}
-                loading="lazy"
+                loading="eager"
               />
             </div>
           </div>
@@ -114,8 +116,8 @@ export default function PhilosophyGallerySection(): ReactElement {
 
             {/* Image 4: Small rectangle - bottom left accent */}
             <div
-              className="absolute rounded-3xl overflow-hidden
-                shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6),_0_30px_60px_-10px_rgba(0,0,0,0.4),_0_15px_30px_-5px_rgba(0,0,0,0.3),_0_5px_15px_0px_rgba(0,0,0,0.2)]
+              className="absolute rounded-3xl overflow-hidden will-change-transform
+                shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_0_10px_30px_-5px_rgba(0,0,0,0.3)]
                 w-[45vw] h-[16.18vh] left-[2.75vw] bottom-[109.9vh]
                 lg:w-[16.61vw] lg:h-[20vh] lg:left-[21.67vw] lg:bottom-[90.74vh]"
             >
@@ -132,8 +134,8 @@ export default function PhilosophyGallerySection(): ReactElement {
 
             {/* Image 5: Medium rectangle - bottom right accent */}
             <div
-              className="absolute rounded-3xl overflow-hidden
-                shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6),_0_30px_60px_-10px_rgba(0,0,0,0.4),_0_15px_30px_-5px_rgba(0,0,0,0.3),_0_5px_15px_0px_rgba(0,0,0,0.2)]
+              className="absolute rounded-3xl overflow-hidden will-change-transform
+                shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_0_10px_30px_-5px_rgba(0,0,0,0.3)]
                 w-[45vw] h-[16.18vh] right-[2.75vw] bottom-[109.9vh]
                 lg:w-[21.2vw] lg:h-[28.15vh] lg:right-[17.71vw] lg:bottom-[90.74vh]"
             >
@@ -150,8 +152,8 @@ export default function PhilosophyGallerySection(): ReactElement {
 
             {/* Image 6: Hero image - Large format showcase (mobile version) */}
             <div
-              className="absolute rounded-3xl overflow-hidden
-                shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6),_0_30px_60px_-10px_rgba(0,0,0,0.4),_0_15px_30px_-5px_rgba(0,0,0,0.3),_0_5px_15px_0px_rgba(0,0,0,0.2)]
+              className="absolute rounded-3xl overflow-hidden will-change-transform
+                shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_0_10px_30px_-5px_rgba(0,0,0,0.3)]
                 w-[94.5vw] h-[72.1vh] left-[2.75vw] bottom-[1.4vh]
                 lg:hidden"
             >
@@ -169,8 +171,8 @@ export default function PhilosophyGallerySection(): ReactElement {
 
             {/* Image 6: Hero image - Large format showcase (desktop version) */}
             <div
-              className="absolute rounded-3xl overflow-hidden
-                shadow-[0_60px_120px_-20px_rgba(0,0,0,0.6),_0_30px_60px_-10px_rgba(0,0,0,0.4),_0_15px_30px_-5px_rgba(0,0,0,0.3),_0_5px_15px_0px_rgba(0,0,0,0.2)]
+              className="absolute rounded-3xl overflow-hidden will-change-transform
+                shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5),_0_10px_30px_-5px_rgba(0,0,0,0.3)]
                 hidden
                 lg:block lg:w-[70vw] lg:h-[50vh] lg:left-[15vw] lg:bottom-[18.52vh]"
             >
