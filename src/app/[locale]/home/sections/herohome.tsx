@@ -562,57 +562,52 @@ export default function HeroHome() {
             }}
           />
 
-          {/* Layer 4 */}
+          {/* Layer 4 - PERFORMANCE: backdrop-filter removed, opacity-only gradient */}
           <div
             className="absolute bottom-0 inset-x-0"
             style={{
               height: '180px',
               background: 'linear-gradient(to top, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.04) 65%, rgba(255,255,255,0.015) 85%, rgba(255,255,255,0.005) 95%, transparent 100%)',
-              backdropFilter: 'blur(9px)',
             }}
           />
 
-          {/* Layer 5 */}
+          {/* Layer 5 - PERFORMANCE: backdrop-filter removed, opacity-only gradient */}
           <div
             className="absolute bottom-0 inset-x-0"
             style={{
               height: '220px',
               background: 'linear-gradient(to top, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.055) 30%, rgba(255,255,255,0.03) 60%, rgba(255,255,255,0.012) 80%, rgba(255,255,255,0.004) 92%, transparent 100%)',
-              backdropFilter: 'blur(6px)',
             }}
           />
 
-          {/* Layer 6 */}
+          {/* Layer 6 - PERFORMANCE: backdrop-filter removed, opacity-only gradient */}
           <div
             className="absolute bottom-0 inset-x-0"
             style={{
               height: '260px',
               background: 'linear-gradient(to top, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.035) 25%, rgba(255,255,255,0.02) 55%, rgba(255,255,255,0.008) 75%, rgba(255,255,255,0.003) 88%, rgba(255,255,255,0.001) 96%, transparent 100%)',
-              backdropFilter: 'blur(4px)',
             }}
           />
 
-          {/* Layer 7 */}
+          {/* Layer 7 - PERFORMANCE: backdrop-filter removed, opacity-only gradient */}
           <div
             className="absolute bottom-0 inset-x-0"
             style={{
               height: '300px',
               background: 'linear-gradient(to top, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.02) 20%, rgba(255,255,255,0.012) 50%, rgba(255,255,255,0.005) 70%, rgba(255,255,255,0.002) 85%, rgba(255,255,255,0.0008) 94%, transparent 100%)',
-              backdropFilter: 'blur(2.5px)',
             }}
           />
 
-          {/* Layer 8 */}
+          {/* Layer 8 - PERFORMANCE: backdrop-filter removed, opacity-only gradient */}
           <div
             className="absolute bottom-0 inset-x-0"
             style={{
               height: '340px',
               background: 'linear-gradient(to top, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.012) 15%, rgba(255,255,255,0.007) 45%, rgba(255,255,255,0.003) 65%, rgba(255,255,255,0.001) 80%, rgba(255,255,255,0.0004) 92%, transparent 100%)',
-              backdropFilter: 'blur(1.5px)',
             }}
           />
 
-          {/* Layer 9 - finale molto sottile */}
+          {/* Layer 9 - PERFORMANCE: backdrop-filter removed, opacity-only gradient */}
           <div
             className="absolute bottom-0 inset-x-0"
             style={{
@@ -620,7 +615,6 @@ export default function HeroHome() {
               background: breakpoint === 'desktop'
                 ? 'linear-gradient(to top, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.015) 10%, rgba(255,255,255,0.008) 40%, rgba(255,255,255,0.004) 60%, rgba(255,255,255,0.0015) 75%, rgba(255,255,255,0.0005) 88%, rgba(255,255,255,0.0002) 96%, transparent 100%)'
                 : 'linear-gradient(to top, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.006) 10%, rgba(255,255,255,0.003) 40%, rgba(255,255,255,0.0015) 60%, rgba(255,255,255,0.0006) 75%, rgba(255,255,255,0.0002) 88%, rgba(255,255,255,0.0001) 96%, transparent 100%)',
-              backdropFilter: breakpoint === 'desktop' ? 'blur(1.5px)' : 'blur(0.8px)',
             }}
           />
         </div>
