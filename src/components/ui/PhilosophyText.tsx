@@ -37,6 +37,20 @@ export default function PhilosophyText() {
         pin: containerRef.current, // Pin this text element
         pinSpacing: false, // Don't add spacing (section handles layout)
         invalidateOnRefresh: true,
+        // ✅ OPTIMIZED: Dynamic will-change management (Context7 best practice)
+        // Add will-change only during animation, remove after to free GPU resources
+        onEnter: () => {
+          gsap.set(containerRef.current, { willChange: 'transform' });
+        },
+        onLeave: () => {
+          gsap.set(containerRef.current, { willChange: 'auto' });
+        },
+        onEnterBack: () => {
+          gsap.set(containerRef.current, { willChange: 'transform' });
+        },
+        onLeaveBack: () => {
+          gsap.set(containerRef.current, { willChange: 'auto' });
+        },
       });
     },
     { scope: containerRef },
@@ -55,7 +69,7 @@ export default function PhilosophyText() {
         transform: 'translate3d(0, 0, 0)',
         backfaceVisibility: 'hidden',
         WebkitBackfaceVisibility: 'hidden',
-        willChange: 'transform',
+        // ✅ will-change removed - now managed dynamically by ScrollTrigger callbacks
       }}
     >
       {/* Philosophy badge */}

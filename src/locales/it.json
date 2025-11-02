@@ -26,6 +26,18 @@
           "title": "PORTRAIT & STUDIO",
           "description": "RITRATTI PROFESSIONALI PROGETTATI PER RIFLETTERE LA TUA INDIVIDUALITÀ, VISIONE ED ESSENZA."
         }
+      },
+      "photography": {
+        "title": "Fotografia",
+        "description": "Servizi fotografici professionali per eventi, ritratti, prodotti e aziende. Ogni scatto è creato per raccontare una storia e valorizzare la tua immagine."
+      },
+      "videomaking": {
+        "title": "Videomaking",
+        "description": "Video dinamici e coinvolgenti, perfetti per promozioni, eventi, storytelling e contenuti social media."
+      },
+      "dronefootage": {
+        "title": "Riprese Aeree",
+        "description": "Riprese aeree mozzafiato in alta definizione: ideali per eventi, turismo, aziende e progetti creativi che necessitano di una prospettiva unica."
       }
     },
     "sez4": {

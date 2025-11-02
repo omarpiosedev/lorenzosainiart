@@ -44,66 +44,68 @@ export default function GSAPScrollReveal({
         .join(' ');
 
       const wordElements = container.querySelectorAll('.word');
+      const totalWords = wordElements.length;
 
       // PERFORMANCE OPTIMIZATION (Context7 best practices):
-      // 1. Add will-change hint to browser BEFORE animation
-      // 2. Use force3D for GPU acceleration
-      // 3. Set initial state with optimized properties
+      // Set initial state - will-change added only during animation
       gsap.set(wordElements, {
         opacity: 0.15,
         filter: 'blur(4px)',
         y: 30,
         force3D: true, // GPU acceleration
-        willChange: 'transform, opacity, filter', // Browser optimization hint
       });
 
       // Create scroll trigger animation basato sulla sezione, non sul testo
       const section = container.closest('[data-section="philosophy-gallery"]');
-      gsap.timeline({
+
+      // ✅ OPTIMIZED: Timeline with balanced timing
+      // Context7 best practice: Let GSAP handle interpolation automatically
+      // This eliminates 50+ gsap.set() calls per frame
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section || container,
-          start: 'top top', // Inizia quando il testo è pinnato al centro
-          end: 'bottom top',
-          scrub: scrubDuration,
+          start: 'top top',
+          end: 'top+=50%', // ✅ Animation completes in first 50% of section scroll (balanced)
+          scrub: 0.8, // ✅ Moderate smoothing for smooth but responsive feel
           invalidateOnRefresh: true,
-          refreshPriority: -1, // Bassa priorità per evitare conflitti con pin
-          onUpdate: (self) => {
-            const progress = self.progress;
-            const totalWords = wordElements.length;
-
-            // PERFORMANCE OPTIMIZATION (Context7 best practice):
-            // Use gsap.set() instead of gsap.to() in onUpdate for better performance
-            // gsap.set() applies changes immediately without creating new tweens
-            wordElements.forEach((word, index) => {
-            // Distribuzione che finisce prima (50% del progress totale)
-              const wordRevealStart = (index / totalWords) * 0.3;
-              const wordRevealEnd = (index / totalWords) * 0.3 + 0.2;
-
-              let wordProgress = 0;
-
-              if (progress < wordRevealStart) {
-                wordProgress = 0;
-              } else if (progress > wordRevealEnd) {
-                wordProgress = 1;
-              } else {
-                wordProgress = (progress - wordRevealStart) / (wordRevealEnd - wordRevealStart);
-              }
-
-              // Use gsap.set() for instant updates (no tween creation overhead)
-              gsap.set(word, {
-                opacity: 0.15 + 0.85 * wordProgress,
-                filter: `blur(${4 * (1 - wordProgress)}px)`,
-                y: 30 * (1 - wordProgress),
-                force3D: true, // Maintain GPU acceleration
-              });
-            });
+          refreshPriority: -1,
+          onEnter: () => {
+            // Add will-change only when animation starts
+            gsap.set(wordElements, { willChange: 'transform, opacity, filter' });
+          },
+          onLeave: () => {
+            // Remove will-change when animation completes to free resources
+            gsap.set(wordElements, { willChange: 'auto' });
+          },
+          onEnterBack: () => {
+            gsap.set(wordElements, { willChange: 'transform, opacity, filter' });
+          },
+          onLeaveBack: () => {
+            gsap.set(wordElements, { willChange: 'auto' });
           },
         },
-        onComplete: () => {
-          // Remove will-change after animation completes to free resources
-          gsap.set(wordElements, { willChange: 'auto' });
-        },
       });
+
+      // ✅ TIMING BALANCED: Smooth progressive reveal
+      // Words reveal progressively: complete by ~35% of the 50% scroll range
+      // Each word duration: 12% of timeline (0.12 in timeline units)
+      // Stagger: spread across 23% of timeline (0.23 in timeline units)
+      const staggerAmount = totalWords > 1 ? 0.23 / (totalWords - 1) : 0;
+
+      tl.to(
+        wordElements,
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          y: 0,
+          duration: 0.12, // Balanced duration for smooth reveal
+          ease,
+          stagger: staggerAmount, // Progressive reveal completes around 35%
+          force3D: true,
+        },
+        0, // Start at timeline position 0
+      );
+
     // No cleanup needed - useGSAP handles it automatically
     },
     {

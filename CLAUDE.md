@@ -107,7 +107,7 @@ Portfolio website for creative work (photography, video, art) with multi-languag
 
 - Next.js 16 (App Router) + React 19 + TypeScript (strict mode)
 - Tailwind CSS 4 with custom fluid design tokens
-- GSAP + Lenis smooth scrolling
+- GSAP animations
 - next-intl (Italian primary, English secondary)
 - Vitest + Playwright + Storybook
 

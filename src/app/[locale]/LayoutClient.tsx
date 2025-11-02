@@ -1,12 +1,18 @@
 'use client';
 
 import type { CameraIrisHandle } from '@/components/ui/CameraIris';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import { CameraIris } from '@/components/ui/CameraIris';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 import SettingsModal from '@/components/ui/SettingsModal';
-import { useSmoothScroll } from '@/hooks/useSmoothScroll';
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP);
 
 // Lazy load NavBar since it's not critical for first paint
 const NavBar = dynamic(() => import('@/components/ui/NavBar'), {
@@ -24,6 +30,10 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   const [isClient, setIsClient] = useState(false);
   const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
   const irisRef = useRef<CameraIrisHandle>(null);
+
+  // ScrollSmoother refs
+  const smoothWrapperRef = useRef<HTMLDivElement>(null);
+  const smoothContentRef = useRef<HTMLDivElement>(null);
 
   // Assicurati che siamo lato client prima di mostrare il loading
   useEffect(() => {
@@ -47,26 +57,30 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
     setIsLoading(false);
   };
 
-  // Inizializza smooth scroll solo dopo che il loading è completato
-  const smoothScrollEnabled = !isLoading && isClient;
-  const { getLenis } = useSmoothScroll(smoothScrollEnabled);
+  // Initialize ScrollSmoother only when content is loaded and client-side
+  useGSAP(
+    () => {
+      if (!isClient || isLoading) {
+        return;
+      }
 
-  // Forza un refresh di Lenis quando viene attivato
-  useEffect(() => {
-    if (smoothScrollEnabled) {
-      // Piccolo delay per assicurarsi che il DOM sia completamente renderizzato
-      const timer = setTimeout(() => {
-        const lenis = getLenis();
-        if (lenis) {
-          // Forza un refresh di Lenis
-          lenis.resize();
-        }
-      }, 200);
+      const smoother = ScrollSmoother.create({
+        wrapper: smoothWrapperRef.current!,
+        content: smoothContentRef.current!,
+        smooth: 1.5, // Smoothness (1-3 recommended)
+        effects: true, // Enable data-speed and data-lag effects
+        normalizeScroll: true, // Prevent momentum scrolling conflicts
+      });
 
-      return () => clearTimeout(timer);
-    }
-    return undefined;
-  }, [smoothScrollEnabled, getLenis]);
+      return () => {
+        smoother?.kill();
+      };
+    },
+    {
+      dependencies: [isClient, isLoading],
+      scope: smoothWrapperRef,
+    },
+  );
 
   return (
     <>
@@ -85,28 +99,30 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
 
       {/* Main Content - renderizzato solo dopo il loading e lato client */}
       {isClient && !isLoading && (
-        <div>
-          {/* Page Content */}
-          {children}
+        <div id="smooth-wrapper" ref={smoothWrapperRef}>
+          <div id="smooth-content" ref={smoothContentRef}>
+            {/* Page Content */}
+            {children}
 
-          {/* NavBar */}
-          <NavBar
-            logo="/assets/images/LogoBianco.webp"
-            logoAlt="Lorenzo Saini Art"
-            items={navItems}
-            baseColor="#060010"
-            pillColor="#fff"
-            hoveredPillTextColor="#fff"
-            pillTextColor="#060010"
-            initialLoadAnimation={true}
-            onSettingsClick={() => setIsSettingsOpen(true)}
-          />
+            {/* NavBar */}
+            <NavBar
+              logo="/assets/images/LogoBianco.webp"
+              logoAlt="Lorenzo Saini Art"
+              items={navItems}
+              baseColor="#060010"
+              pillColor="#fff"
+              hoveredPillTextColor="#fff"
+              pillTextColor="#060010"
+              initialLoadAnimation={true}
+              onSettingsClick={() => setIsSettingsOpen(true)}
+            />
 
-          {/* Settings Modal - Rendered at document level for proper centering */}
-          <SettingsModal
-            isOpen={isSettingsOpen}
-            onClose={() => setIsSettingsOpen(false)}
-          />
+            {/* Settings Modal - Rendered at document level for proper centering */}
+            <SettingsModal
+              isOpen={isSettingsOpen}
+              onClose={() => setIsSettingsOpen(false)}
+            />
+          </div>
         </div>
       )}
 

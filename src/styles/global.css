@@ -22,20 +22,6 @@ body {
   right: 0 !important;
 }
 
-/* Lenis smooth scrolling optimization */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
 /* Reset any browser defaults */
 * {
   box-sizing: border-box;
@@ -374,4 +360,22 @@ section.w-screen {
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+}
+
+/* ========== GSAP ScrollSmoother ========== */
+#smooth-wrapper {
+  overflow: hidden;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#smooth-content {
+  overflow: visible;
+  width: 100%;
+  will-change: transform;
 }

@@ -26,6 +26,18 @@
           "title": "PORTRAIT & STUDIO",
           "description": "PROFESSIONAL PORTRAITS DESIGNED TO REFLECT YOUR INDIVIDUALITY, VISION, AND ESSENCE."
         }
+      },
+      "photography": {
+        "title": "Photography",
+        "description": "Professional photo shoots for events, portraits, products, and businesses. Every shot is crafted to tell a story and highlight your best image."
+      },
+      "videomaking": {
+        "title": "Videomaking",
+        "description": "Dynamic and engaging videos, perfect for promotions, events, storytelling, and social media content."
+      },
+      "dronefootage": {
+        "title": "Drone Footage",
+        "description": "Stunning aerial shots in high definition: ideal for events, tourism, businesses, and creative projects that need a unique perspective."
       }
     },
     "sez4": {

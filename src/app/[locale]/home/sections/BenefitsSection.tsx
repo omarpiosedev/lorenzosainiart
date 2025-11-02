@@ -35,247 +35,136 @@ export default function BenefitsSection() {
   const trustedUsersMobileRef = useRef<HTMLDivElement>(null);
   const polaroidMobileRef = useRef<HTMLDivElement>(null);
 
-  // State for TrustedUsers animation restart
+  // ✅ OPTIMIZED: Use ref instead of state to avoid re-renders during scroll
+  // Context7 best practice: State updates in ScrollTrigger callbacks can cause unwanted re-renders
+  const restartTriggerRef = useRef(0);
   const [restartTrigger, setRestartTrigger] = useState(0);
   const t = useTranslations('HomePage.sez4');
 
   // Modern useGSAP hook replaces useEffect for automatic cleanup
   // All tweens and ScrollTriggers created here are automatically killed on unmount
   useGSAP(() => {
-    // Desktop animation
-    if (cameraImageDesktopRef.current) {
-      // Imposta posizione iniziale
-      gsap.set(cameraImageDesktopRef.current, { top: '35vh' });
+    // ✅ OPTIMIZED: Helper function to reduce code duplication
+    // Context7 best practice: DRY principle for maintainable animations
+    const createScrollAnimation = (
+      ref: React.RefObject<HTMLDivElement | null>,
+      fromValue: string,
+      toValue: string,
+      property: 'top' | 'left' | 'right' | 'width' | 'height' = 'top',
+    ) => {
+      if (!ref.current) {
+        return;
+      }
 
-      gsap.to(cameraImageDesktopRef.current, {
-        top: '18vh',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: cameraImageDesktopRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
+      gsap.fromTo(
+        ref.current,
+        { [property]: fromValue },
+        {
+          [property]: toValue,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top 120%',
+            end: 'top 60%',
+            scrub: 2,
+            toggleActions: 'play none none reverse',
+            invalidateOnRefresh: true, // ✅ Added: Recalculate on resize
+          },
         },
-      });
-    }
+      );
+    };
 
-    // Mobile animation
-    if (cameraImageMobileRef.current) {
-      // Imposta posizione iniziale
-      gsap.set(cameraImageMobileRef.current, { top: '50%' });
+    // ✅ OPTIMIZED: Camera animations (desktop & mobile) - using helper
+    createScrollAnimation(cameraImageDesktopRef, '35vh', '18vh', 'top');
+    createScrollAnimation(cameraImageMobileRef, '50%', '30%', 'top');
 
-      gsap.to(cameraImageMobileRef.current, {
-        top: '30%',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: cameraImageMobileRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
+    // ✅ OPTIMIZED: Hand animations (desktop & mobile) - using helper
+    createScrollAnimation(leftHandRef, '13.23vw', '11vw', 'right');
+    createScrollAnimation(rightHandRef, '13.54vw', '11vw', 'left');
+    createScrollAnimation(leftHandMobileRef, '57.39%', '47%', 'right');
+    createScrollAnimation(rightHandMobileRef, '65.34%', '55%', 'left');
+
+    // ✅ OPTIMIZED: Clock animations (desktop & mobile) - using helper
+    createScrollAnimation(clockDesktopRef, '150px', '80px', 'top');
+    createScrollAnimation(clockMobileRef, '150px', '80px', 'top');
+
+    // ✅ OPTIMIZED: Helper for size animations (width + height)
+    const createSizeAnimation = (
+      ref: React.RefObject<HTMLDivElement | null>,
+      fromSize: string,
+      toSize: string,
+    ) => {
+      if (!ref.current) {
+        return;
+      }
+
+      gsap.fromTo(
+        ref.current,
+        { width: fromSize, height: fromSize },
+        {
+          width: toSize,
+          height: toSize,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top 120%',
+            end: 'top 60%',
+            scrub: 2,
+            toggleActions: 'play none none reverse',
+            invalidateOnRefresh: true, // ✅ Added: Recalculate on resize
+          },
         },
-      });
-    }
+      );
+    };
 
-    // Left hand animation (moves to the right)
-    if (leftHandRef.current) {
-      // Imposta posizione iniziale
-      gsap.set(leftHandRef.current, { right: '13.23vw' });
+    // ✅ OPTIMIZED: Quinta image size animations - using helper
+    createSizeAnimation(quintaImageDesktopRef, 'calc(80% + 100px)', '80%');
+    createSizeAnimation(quintaImageMobileRef, 'calc(160% + 200px)', '160%');
 
-      gsap.to(leftHandRef.current, {
-        right: '11vw', // Movimento ridotto
-        ease: 'none',
-        scrollTrigger: {
-          trigger: leftHandRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
-
-    // Right hand animation (moves to the left)
-    if (rightHandRef.current) {
-      // Imposta posizione iniziale
-      gsap.set(rightHandRef.current, { left: '13.54vw' });
-
-      gsap.to(rightHandRef.current, {
-        left: '11vw', // Movimento ridotto
-        ease: 'none',
-        scrollTrigger: {
-          trigger: rightHandRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
-
-    // Mobile left hand animation (moves to the right)
-    if (leftHandMobileRef.current) {
-      // Imposta posizione iniziale
-      gsap.set(leftHandMobileRef.current, { right: '57.39%' });
-
-      gsap.to(leftHandMobileRef.current, {
-        right: '47%', // Movimento aumentato per mobile
-        ease: 'none',
-        scrollTrigger: {
-          trigger: leftHandMobileRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
-
-    // Mobile right hand animation (moves to the left)
-    if (rightHandMobileRef.current) {
-      // Imposta posizione iniziale
-      gsap.set(rightHandMobileRef.current, { left: '65.34%' });
-
-      gsap.to(rightHandMobileRef.current, {
-        left: '55%', // Movimento aumentato per mobile
-        ease: 'none',
-        scrollTrigger: {
-          trigger: rightHandMobileRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
-
-    // Clock Desktop animation
-    if (clockDesktopRef.current) {
-      // Imposta posizione iniziale
-      gsap.set(clockDesktopRef.current, { top: '150px' });
-
-      gsap.to(clockDesktopRef.current, {
-        top: '80px',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: clockDesktopRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
-
-    // Clock Mobile animation
-    if (clockMobileRef.current) {
-      // Imposta posizione iniziale
-      gsap.set(clockMobileRef.current, { top: '150px' });
-
-      gsap.to(clockMobileRef.current, {
-        top: '80px',
-        ease: 'none',
-        scrollTrigger: {
-          trigger: clockMobileRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
-
-    // Quinta Image Desktop animation - reduce size
-    if (quintaImageDesktopRef.current) {
-      // Imposta dimensioni iniziali (size aumentata)
-      gsap.set(quintaImageDesktopRef.current, {
-        width: 'calc(80% + 100px)',
-        height: 'calc(80% + 100px)',
-      });
-
-      gsap.to(quintaImageDesktopRef.current, {
-        width: '80%', // Riduce a dimensioni normali (-100px)
-        height: '80%', // Riduce a dimensioni normali (-100px)
-        ease: 'none',
-        scrollTrigger: {
-          trigger: quintaImageDesktopRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
-
-    // Quinta Image Mobile animation - reduce size (preciso)
-    if (quintaImageMobileRef.current) {
-      // Imposta dimensioni iniziali (size aumentata)
-      gsap.set(quintaImageMobileRef.current, {
-        width: 'calc(160% + 200px)', // Partenza aumentata
-        height: 'calc(160% + 200px)', // Partenza aumentata
-      });
-
-      gsap.to(quintaImageMobileRef.current, {
-        width: '160%', // Ritorna alle dimensioni originali precise
-        height: '160%', // Ritorna alle dimensioni originali precise
-        ease: 'none',
-        scrollTrigger: {
-          trigger: quintaImageMobileRef.current,
-          start: 'top 120%',
-          end: 'top 60%',
-          scrub: 2,
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
-
-    // TrustedUsers restart trigger (Card 6 - Desktop)
-    // Note: setRestartTrigger is safe here because it's a simple state update
-    // and doesn't cause re-renders that would affect GSAP animations
+    // ✅ OPTIMIZED: TrustedUsers restart trigger (Card 6 - Desktop)
+    // Use ref for tracking, setState only once for React re-render
+    // Context7 best practice: Avoid setState in scroll callbacks to prevent re-render storms
     if (trustedUsersDesktopRef.current) {
       ScrollTrigger.create({
         trigger: trustedUsersDesktopRef.current,
-        start: 'top 80%', // Quando Card 6 entra in viewport
+        start: 'top 80%',
         onEnter: () => {
-          // Incrementa restartTrigger per forzare il restart del CountUp
-          setRestartTrigger(prev => prev + 1);
+          restartTriggerRef.current += 1;
+          setRestartTrigger(restartTriggerRef.current); // Trigger re-render for TrustedUsers
         },
         onEnterBack: () => {
-          // Restart anche quando si scrolla indietro verso la card
-          setRestartTrigger(prev => prev + 1);
+          restartTriggerRef.current += 1;
+          setRestartTrigger(restartTriggerRef.current);
         },
       });
     }
 
-    // TrustedUsers restart trigger (Card 6 - Mobile)
+    // ✅ OPTIMIZED: TrustedUsers restart trigger (Card 6 - Mobile)
     if (trustedUsersMobileRef.current) {
       ScrollTrigger.create({
         trigger: trustedUsersMobileRef.current,
-        start: 'top 80%', // Quando Card 6 entra in viewport
+        start: 'top 80%',
         onEnter: () => {
-          // Incrementa restartTrigger per forzare il restart del CountUp
-          setRestartTrigger(prev => prev + 1);
+          restartTriggerRef.current += 1;
+          setRestartTrigger(restartTriggerRef.current);
         },
         onEnterBack: () => {
-          // Restart anche quando si scrolla indietro verso la card
-          setRestartTrigger(prev => prev + 1);
+          restartTriggerRef.current += 1;
+          setRestartTrigger(restartTriggerRef.current);
         },
       });
     }
 
-    // Polaroid scattered animation - Desktop
-    if (polaroidDesktopRef.current) {
-      const polaroids = polaroidDesktopRef.current.querySelectorAll('.polaroid');
+    // ✅ OPTIMIZED: Helper for polaroid scatter animations
+    const createPolaroidScatter = (
+      ref: React.RefObject<HTMLDivElement | null>,
+      positions: Array<{ x: number; y: number; rotation: number }>,
+    ) => {
+      if (!ref.current) {
+        return;
+      }
 
-      // Predefined scattered positions and rotations for each polaroid (more spread out)
-      const scatteredPositions = [
-        { x: -80, y: -60, rotation: -20 }, // Far top left
-        { x: 100, y: -40, rotation: 15 }, // Far top right
-        { x: 10, y: 10, rotation: 3 }, // Center (slightly rotated)
-        { x: -90, y: 80, rotation: -12 }, // Far bottom left
-        { x: 85, y: 90, rotation: 18 }, // Far bottom right
-      ];
+      const polaroids = ref.current.querySelectorAll('.polaroid');
 
       // Set initial state - all stacked on top of each other
       gsap.set(polaroids, {
@@ -283,62 +172,41 @@ export default function BenefitsSection() {
         x: 0,
         y: 0,
         scale: 1,
-        zIndex: i => polaroids.length - i, // First polaroid on top
+        zIndex: i => polaroids.length - i,
       });
 
       gsap.to(polaroids, {
-        rotation: i => scatteredPositions[i]?.rotation || 0,
-        x: i => scatteredPositions[i]?.x || 0,
-        y: i => scatteredPositions[i]?.y || 0,
+        rotation: i => positions[i]?.rotation || 0,
+        x: i => positions[i]?.x || 0,
+        y: i => positions[i]?.y || 0,
         scale: 1,
         duration: 1.2,
         ease: 'back.out(1.4)',
         stagger: 0.1,
         scrollTrigger: {
-          trigger: polaroidDesktopRef.current,
+          trigger: ref.current,
           start: 'top 80%',
           toggleActions: 'play none none reverse',
         },
       });
-    }
+    };
 
-    // Polaroid scattered animation - Mobile
-    if (polaroidMobileRef.current) {
-      const polaroids = polaroidMobileRef.current.querySelectorAll('.polaroid');
+    // ✅ OPTIMIZED: Polaroid animations - using helper
+    createPolaroidScatter(polaroidDesktopRef, [
+      { x: -80, y: -60, rotation: -20 },
+      { x: 100, y: -40, rotation: 15 },
+      { x: 10, y: 10, rotation: 3 },
+      { x: -90, y: 80, rotation: -12 },
+      { x: 85, y: 90, rotation: 18 },
+    ]);
 
-      // Predefined scattered positions and rotations for mobile (more spread out)
-      const scatteredPositionsMobile = [
-        { x: -50, y: -40, rotation: -18 }, // Far top left
-        { x: 60, y: -30, rotation: 12 }, // Far top right
-        { x: 5, y: 5, rotation: 2 }, // Center (slightly rotated)
-        { x: -55, y: 50, rotation: -10 }, // Far bottom left
-        { x: 50, y: 60, rotation: 16 }, // Far bottom right
-      ];
-
-      // Set initial state - all stacked on top of each other
-      gsap.set(polaroids, {
-        rotation: 0,
-        x: 0,
-        y: 0,
-        scale: 1,
-        zIndex: i => polaroids.length - i, // First polaroid on top
-      });
-
-      gsap.to(polaroids, {
-        rotation: i => scatteredPositionsMobile[i]?.rotation || 0,
-        x: i => scatteredPositionsMobile[i]?.x || 0,
-        y: i => scatteredPositionsMobile[i]?.y || 0,
-        scale: 1,
-        duration: 1.2,
-        ease: 'back.out(1.4)',
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: polaroidMobileRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-      });
-    }
+    createPolaroidScatter(polaroidMobileRef, [
+      { x: -50, y: -40, rotation: -18 },
+      { x: 60, y: -30, rotation: 12 },
+      { x: 5, y: 5, rotation: 2 },
+      { x: -55, y: 50, rotation: -10 },
+      { x: 50, y: 60, rotation: 16 },
+    ]);
 
     // No manual cleanup needed! useGSAP automatically kills all tweens and ScrollTriggers
     // when the component unmounts or dependencies change. This prevents memory leaks.
