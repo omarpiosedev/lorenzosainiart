@@ -103,26 +103,27 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
           <div id="smooth-content" ref={smoothContentRef}>
             {/* Page Content */}
             {children}
-
-            {/* NavBar */}
-            <NavBar
-              logo="/assets/images/LogoBianco.webp"
-              logoAlt="Lorenzo Saini Art"
-              items={navItems}
-              baseColor="#060010"
-              pillColor="#fff"
-              hoveredPillTextColor="#fff"
-              pillTextColor="#060010"
-              initialLoadAnimation={true}
-              onSettingsClick={() => setIsSettingsOpen(true)}
-            />
-
-            {/* Settings Modal - Rendered at document level for proper centering */}
-            <SettingsModal
-              isOpen={isSettingsOpen}
-              onClose={() => setIsSettingsOpen(false)}
-            />
           </div>
+
+          {/* NavBar - OUTSIDE smooth-content so fixed positioning works */}
+          {/* GSAP ScrollSmoother best practice: fixed elements must be siblings to smooth-content, not children */}
+          <NavBar
+            logo="/assets/images/LogoBianco.webp"
+            logoAlt="Lorenzo Saini Art"
+            items={navItems}
+            baseColor="#060010"
+            pillColor="#fff"
+            hoveredPillTextColor="#fff"
+            pillTextColor="#060010"
+            initialLoadAnimation={true}
+            onSettingsClick={() => setIsSettingsOpen(true)}
+          />
+
+          {/* Settings Modal - Also outside smooth-content for proper fixed positioning */}
+          <SettingsModal
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+          />
         </div>
       )}
 
