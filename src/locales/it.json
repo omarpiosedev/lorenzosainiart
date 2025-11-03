@@ -196,5 +196,21 @@
   },
   "loading": {
     "message": "Caricamento in corso..."
+  },
+  "Footer": {
+    "description": "Fotografo professionista specializzato in fotografia fashion, commerciale e ritrattistica. Catturando momenti autentici che raccontano la tua storia unica.",
+    "copyright": "© {year} Lorenzo Saini. Tutti i diritti riservati.",
+    "developer": "Design & Development by",
+    "pages": "Pagine",
+    "information": "Informazioni",
+    "nav": {
+      "home": "Home",
+      "portfolio": "Portfolio",
+      "blog": "Blog",
+      "about": "Chi Sono",
+      "contact": "Contatti",
+      "privacy": "Privacy Policy",
+      "terms": "Termini di Servizio"
+    }
   }
 }

@@ -196,5 +196,21 @@
   },
   "loading": {
     "message": "Loading..."
+  },
+  "Footer": {
+    "description": "Professional photographer specializing in fashion, commercial, and portrait photography. Capturing authentic moments that tell your unique story.",
+    "copyright": "© {year} Lorenzo Saini. All rights reserved.",
+    "developer": "Design & Development by",
+    "pages": "Pages",
+    "information": "Information",
+    "nav": {
+      "home": "Home",
+      "portfolio": "Portfolio",
+      "blog": "Blog",
+      "about": "About Me",
+      "contact": "Contact",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
   }
 }

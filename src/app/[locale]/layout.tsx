@@ -125,7 +125,7 @@ export default async function RootLayout(props: {
             Include 'loading' per LoadingScreen e 'HomePage' per la pagina principale.
             Altre pagine dovrebbero avvolgere il contenuto in NextIntlClientProvider
             con i loro namespace specifici se necessario. */}
-        <NextIntlClientProvider messages={pick(messages, ['loading', 'HomePage'])}>
+        <NextIntlClientProvider messages={pick(messages, ['loading', 'HomePage', 'Footer'])}>
           <LayoutClient navItems={navItems}>
             {props.children}
           </LayoutClient>

@@ -2,12 +2,13 @@
 
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { FocusFrame } from '@/components/ui/focus';
 
 // Register GSAP plugins
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function HeroHome() {
   const [scale, setScale] = useState(1);
@@ -117,42 +118,27 @@ export default function HeroHome() {
     if (!sposiRef.current || !cloudRef.current || (!titleDesktopRef.current && !titleMobileRef.current) || !signatureRef.current || !contactRef.current) {
       return;
     }
-    // === NUVOLA ===
-    // Trasformazione originale della nuvola per breakpoint
+
+    // === NUVOLA E SPOSI ===
+    // Appaiono immediatamente nelle posizioni finali (nessuna animazione)
     const cloudOriginalTransform = breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)';
-
-    // Posizione iniziale nuvola (dall'alto)
-    const cloudStartTransform = breakpoint === 'desktop'
-      ? 'scale(0.5) translateY(-200px)'
+    const sposiOriginalTransform = breakpoint === 'mobile'
+      ? 'translate(15px, 60px)'
       : breakpoint === 'tablet'
-        ? 'scale(0.6) translateY(-200px)'
-        : 'scale(1.25) translateY(-200px)';
+        ? 'translate(10px, 70px)'
+        : 'translate(20px, 100px)';
 
-    gsap.set(cloudRef.current, {
-      transform: cloudStartTransform,
-      filter: 'blur(8px)', // Blur iniziale
-      willChange: 'transform, filter', // Hardware acceleration
+    gsap.set([cloudRef.current, sposiRef.current], {
+      opacity: 1,
+      filter: 'blur(0px)',
     });
 
-    // === SPOSI ===
-    // Trasformazione originale degli sposi per breakpoint
-    const sposiOriginalTransform = breakpoint === 'mobile'
-      ? 'translate(15px, 20px)'
-      : breakpoint === 'tablet'
-        ? 'translate(10px, 30px)'
-        : 'translate(20px, 60px)';
-
-    // Posizione iniziale sposi (dal basso)
-    const sposiStartTransform = breakpoint === 'mobile'
-      ? 'translate(15px, 220px)' // 20px + 200px
-      : breakpoint === 'tablet'
-        ? 'translate(10px, 230px)' // 30px + 200px
-        : 'translate(20px, 260px)'; // 60px + 200px
+    gsap.set(cloudRef.current, {
+      transform: cloudOriginalTransform,
+    });
 
     gsap.set(sposiRef.current, {
-      transform: sposiStartTransform,
-      filter: 'blur(8px)', // Blur iniziale
-      willChange: 'transform, filter', // Hardware acceleration
+      transform: sposiOriginalTransform,
     });
 
     // === SIGNATURE E CONTACT ===
@@ -170,7 +156,8 @@ export default function HeroHome() {
     if (activeTitle) {
       gsap.set(activeTitle, {
         opacity: 0,
-        willChange: 'opacity', // Hardware acceleration
+        y: '40vh', // Parte più in basso per movimento visibile
+        willChange: 'opacity, transform', // Hardware acceleration
       });
     }
 
@@ -179,47 +166,59 @@ export default function HeroHome() {
       delay: 0.2,
       onComplete: () => {
         // Rimuovi will-change dopo le animazioni per liberare risorse
-        gsap.set([cloudRef.current, sposiRef.current, signatureRef.current, contactRef.current, activeTitle], {
+        gsap.set([signatureRef.current, contactRef.current, activeTitle], {
           willChange: 'auto',
         });
       },
     });
 
-    // Nuvola, sposi, signature e contact appaiono insieme
-    tl.current.set([cloudRef.current, sposiRef.current, signatureRef.current, contactRef.current], {
-      opacity: 1, // Appaiono istantaneamente insieme
+    // Signature e contact appaiono insieme
+    tl.current.set([signatureRef.current, contactRef.current], {
+      opacity: 1,
     })
-      .to(cloudRef.current, {
-        transform: cloudOriginalTransform,
-        filter: 'blur(0px)', // Blur si dissolve
-        duration: 2.0,
-        ease: 'power4.out',
-      }, '+=0')
-      .to(sposiRef.current, {
-        transform: sposiOriginalTransform,
-        filter: 'blur(0px)', // Blur si dissolve
-        duration: 2.0, // Stessa durata per sincronizzazione perfetta
-        ease: 'power4.out',
-      }, '<') // "<" significa che inizia esattamente insieme al precedente
-
-    // Signature e contact si animano insieme alle immagini
       .to([signatureRef.current, contactRef.current], {
         scale: 1,
         filter: 'blur(0px)',
         duration: 2.0,
         ease: 'power4.out',
-      }, '<') // Iniziano insieme alle immagini
+      }, '+=0') // Ends at 2.2s (0.2s delay + 2.0s duration)
 
-    // === TITOLO - Fade in (il blur è gestito dal componente Focus) ===
+    // === TITOLO - Parallax effect sincronizzato con loading screen exit ===
+    // Loading screen exit inizia a ~2.8s e dura 1.2s (finisce a 4.0s)
+    // Parallax deve essere visibile DURANTE l'exit
       .to(activeTitle, {
-        opacity: 1,
-        duration: 1.5,
-        ease: 'power2.out',
-      }, '-=1.2'); // Inizia durante l'animazione delle immagini
+        y: 0, // Sale dalla posizione 40vh a 0
+        opacity: 1, // Fade in insieme al movimento per effetto "scoperta"
+        duration: 1.8, // Movimento più veloce (2.8s + 1.8s = 4.6s)
+        ease: 'power1.out', // Easing più graduale
+      }, '+=0.5'); // 2.2s + 0.5s = 2.7s timeline = 2.9s reale (inizia poco dopo loading screen)
   }, {
     dependencies: [isReady, breakpoint],
     scope: containerRef,
     revertOnUpdate: true, // Cleanup automatico quando breakpoint cambia
+  });
+
+  // Parallax effect - sposi si muovono verso l'alto quando si scrolla giù
+  useGSAP(() => {
+    if (!isReady || !sposiRef.current || !containerRef.current) {
+      return;
+    }
+
+    // Parallax semplice: muove l'immagine verso l'alto mentre si scrolla giù
+    gsap.to(sposiRef.current, {
+      y: -150, // movimento verso l'alto in pixel
+      ease: 'none', // movimento lineare per effetto parallax naturale
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top top', // inizia quando la sezione hero entra in viewport
+        end: 'bottom top', // finisce quando la sezione hero esce dalla viewport
+        scrub: true, // sincronizza con lo scroll
+      },
+    });
+  }, {
+    dependencies: [isReady, breakpoint],
+    scope: containerRef,
+    revertOnUpdate: true,
   });
 
   // Ottieni dimensioni base del breakpoint corrente
@@ -405,7 +404,6 @@ export default function HeroHome() {
             style={{
               zIndex: 1,
               transform: breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)',
-              opacity: 0, // Nascosta inizialmente
             }}
           />
 
@@ -426,19 +424,18 @@ export default function HeroHome() {
               }
             }}
             style={{
-              width: breakpoint === 'mobile' ? '375px' : breakpoint === 'tablet' ? '450px' : '650px',
+              width: breakpoint === 'mobile' ? '450px' : breakpoint === 'tablet' ? '550px' : '800px',
               height: 'auto',
               transform: breakpoint === 'mobile'
-                ? 'translate(15px, 20px)'
+                ? 'translate(15px, 60px)'
                 : breakpoint === 'tablet'
-                  ? 'translate(10px, 30px)'
-                  : 'translate(20px, 60px)',
+                  ? 'translate(10px, 70px)'
+                  : 'translate(20px, 100px)',
               maxWidth: '100%',
               maxHeight: '100%',
               objectFit: 'contain',
               zIndex: 10,
               position: 'relative',
-              opacity: 0, // Nascosti inizialmente
             }}
           />
         </div>
@@ -473,8 +470,8 @@ export default function HeroHome() {
               <FocusFrame
                 borderColor="white"
                 blurAmount={20}
-                animationDuration={2.5}
-                delay={1.5}
+                animationDuration={1.8}
+                delay={2.9}
               >
                 <h1
                   className="font-bold text-white leading-none text-center tracking-wider"
@@ -647,8 +644,8 @@ export default function HeroHome() {
             <FocusFrame
               borderColor="white"
               blurAmount={25}
-              animationDuration={2.5}
-              delay={1.5}
+              animationDuration={1.8}
+              delay={2.9}
             >
               <h1
                 className="font-bold text-white leading-none tracking-wider text-center"

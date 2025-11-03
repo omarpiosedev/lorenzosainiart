@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import { CameraIris, LoadingScreen } from '@/components/ui';
+import Footer from '@/components/ui/Footer';
 import SettingsModal from '@/components/ui/SettingsModal';
 import { usePageTransition } from '@/hooks/usePageTransition';
 
@@ -95,6 +96,9 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
         <div id="smooth-content" ref={smoothContentRef}>
           {/* Page Content */}
           {children}
+
+          {/* Footer - Inside smooth-content so it scrolls with the page */}
+          <Footer />
         </div>
 
         {/* NavBar - OUTSIDE smooth-content so fixed positioning works */}
