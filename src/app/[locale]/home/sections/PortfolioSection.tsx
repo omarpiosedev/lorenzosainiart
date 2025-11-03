@@ -219,101 +219,127 @@ export default function PortfolioSection() {
     },
   ];
 
-  // GSAP scroll reveal animations
+  // GSAP scroll reveal animations - Compatible with ScrollSmoother
   useGSAP(
     () => {
-      // Header animation
+      // Set initial states immediately to prevent flash
       if (headerRef.current) {
-        gsap.from(headerRef.current.children, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%',
-            toggleActions: 'play none none reverse',
-          },
-          opacity: 0,
-          y: 50,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power3.out',
-        });
+        gsap.set(headerRef.current.children, { opacity: 0, y: 50 });
       }
-
-      // Featured logos animation
       if (featuredRef.current) {
-        gsap.from(featuredRef.current.children, {
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
-          },
-          opacity: 0,
-          y: 30,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power3.out',
-        });
+        gsap.set(featuredRef.current.children, { opacity: 0, y: 30 });
       }
-
-      // Pin first row (cards 0 and 1) - stays in place while second row scrolls over
-      if (cardRowRefs.current[0] && cardRowRefs.current[1]) {
-        ScrollTrigger.create({
-          trigger: cardRowRefs.current[0],
-          start: 'top top',
-          end: () => `+=${cardRowRefs.current[1]!.offsetHeight}`,
-          pin: true,
-          pinSpacing: false,
-        });
-      }
-
-      // Initial reveal for first row
       if (cardRowRefs.current[0]) {
-        gsap.from(cardRowRefs.current[0], {
-          scrollTrigger: {
-            trigger: gridContainerRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
-          },
-          opacity: 0,
-          y: 60,
-          scale: 0.95,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
+        gsap.set(cardRowRefs.current[0], { opacity: 0, y: 40, scale: 0.98 });
       }
-
-      // Initial reveal for second row
       if (cardRowRefs.current[1]) {
-        gsap.from(cardRowRefs.current[1], {
-          scrollTrigger: {
-            trigger: cardRowRefs.current[1],
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-          opacity: 0,
-          y: 60,
-          scale: 0.95,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
+        gsap.set(cardRowRefs.current[1], { opacity: 0, y: 40, scale: 0.98 });
       }
 
-      // Hide first row project info when second row scrolls over
-      if (cardRowRefs.current[1] && firstRowInfoRefs.current.length > 0) {
-        firstRowInfoRefs.current.forEach((infoEl) => {
-          if (infoEl) {
-            gsap.to(infoEl, {
-              opacity: 0,
-              y: -20,
-              scrollTrigger: {
-                trigger: cardRowRefs.current[1],
-                start: 'top bottom',
-                end: 'top center',
-                scrub: 1,
-              },
-            });
-          }
-        });
-      }
+      // Delay setup to ensure ScrollSmoother is initialized first
+      gsap.delayedCall(0.3, () => {
+        // Header animation
+        if (headerRef.current) {
+          gsap.to(headerRef.current.children, {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              toggleActions: 'play none none reverse',
+              invalidateOnRefresh: true,
+            },
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: 'power3.out',
+          });
+        }
+
+        // Featured logos animation
+        if (featuredRef.current) {
+          gsap.to(featuredRef.current.children, {
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 70%',
+              toggleActions: 'play none none reverse',
+              invalidateOnRefresh: true,
+            },
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: 'power3.out',
+          });
+        }
+
+        // Pin first row (cards 0 and 1) - stays in place while second row scrolls over
+        if (cardRowRefs.current[0] && cardRowRefs.current[1]) {
+          ScrollTrigger.create({
+            trigger: cardRowRefs.current[0],
+            start: 'top top',
+            end: () => `+=${cardRowRefs.current[1]!.offsetHeight}`,
+            pin: true,
+            pinSpacing: false,
+            invalidateOnRefresh: true,
+          });
+        }
+
+        // Initial reveal for first row
+        if (cardRowRefs.current[0]) {
+          gsap.to(cardRowRefs.current[0], {
+            scrollTrigger: {
+              trigger: cardRowRefs.current[0],
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+              invalidateOnRefresh: true,
+            },
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.7,
+            ease: 'power3.out',
+          });
+        }
+
+        // Initial reveal for second row
+        if (cardRowRefs.current[1]) {
+          gsap.to(cardRowRefs.current[1], {
+            scrollTrigger: {
+              trigger: cardRowRefs.current[1],
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+              invalidateOnRefresh: true,
+            },
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.7,
+            ease: 'power3.out',
+          });
+        }
+
+        // Hide first row project info when second row scrolls over
+        if (cardRowRefs.current[1] && firstRowInfoRefs.current.length > 0) {
+          firstRowInfoRefs.current.forEach((infoEl) => {
+            if (infoEl) {
+              gsap.to(infoEl, {
+                opacity: 0,
+                y: -20,
+                scrollTrigger: {
+                  trigger: cardRowRefs.current[1],
+                  start: 'top bottom',
+                  end: 'top center',
+                  scrub: 1,
+                  invalidateOnRefresh: true,
+                },
+              });
+            }
+          });
+        }
+
+        // Refresh ScrollTrigger after all animations are set up
+        ScrollTrigger.refresh();
+      });
     },
     { dependencies: [] },
   );
@@ -354,9 +380,9 @@ export default function PortfolioSection() {
           </div>
 
           {/* Featured On Section */}
-          <div ref={featuredRef} className="mb-6 md:mb-8 text-center">
+          <div ref={featuredRef} className="mb-0 text-center">
             <p
-              className="text-sm text-gray-500 mb-4"
+              className="text-sm text-gray-500 mb-3"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('featuredOn')}
@@ -375,7 +401,7 @@ export default function PortfolioSection() {
       </section>
 
       {/* Projects Container - Single White Background */}
-      <div ref={gridContainerRef} className="relative bg-white py-16 md:py-20">
+      <div ref={gridContainerRef} className="relative bg-white py-6 md:py-8">
         {/* First Row Grid - Pinned */}
         <div
           ref={setCardRowRef(0)}

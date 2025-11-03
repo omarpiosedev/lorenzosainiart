@@ -156,7 +156,7 @@ export default function ServicesSection() {
     { dependencies: [] },
   );
 
-  // ✅ Progressive blur effect - each section blurs when next one enters (desktop only)
+  // ✅ Progressive blur + fade effect - each section blurs and fades when next one enters (desktop only)
   useGSAP(
     () => {
       // Only enable blur on desktop (width >= 1024px) for better performance
@@ -178,9 +178,12 @@ export default function ServicesSection() {
           return;
         }
 
-        // Apply progressive blur as the next section enters (including first screen)
+        // Apply progressive blur AND fade to 0 opacity as the next section enters
+        // This ensures previous sections become completely invisible, preventing them from
+        // showing through the stack (especially important with ScrollSmoother)
         gsap.to(section, {
           filter: 'blur(8px)',
+          opacity: 0,
           scrollTrigger: {
             trigger: nextSection,
             start: 'top bottom',

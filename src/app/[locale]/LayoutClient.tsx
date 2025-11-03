@@ -71,6 +71,7 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
         wrapper: smoothWrapperRef.current!,
         content: smoothContentRef.current!,
         smooth: isMobile ? 0.5 : 1.5, // Reduced smoothness on mobile for better performance
+        smoothTouch: 0.1, // VERY short smoothing on touch devices (GSAP best practice)
         effects: !isMobile, // Disable parallax effects on mobile for performance
         normalizeScroll: true, // Prevent momentum scrolling conflicts
       });
