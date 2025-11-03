@@ -4,8 +4,6 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { useRef } from 'react';
 
 // Register GSAP plugins
@@ -13,19 +11,36 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function ServicesSection() {
   const t = useTranslations('HomePage.sez3');
-  const params = useParams();
-  const locale = params.locale as string;
 
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+
+  // Refs for GSAP animations on first screen
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const labelRef = useRef<HTMLDivElement>(null);
+  const servicesListRef = useRef<HTMLDivElement>(null);
+  const serviceItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const scrollArrowRef = useRef<SVGSVGElement>(null);
 
   // Helper per assegnare ref
   const setSectionRef = (index: number) => (el: HTMLElement | null) => {
     sectionRefs.current[index] = el;
   };
 
-  // ✅ Effetto "stacked cards" - ogni sezione pinnata, successiva scorre sopra
+  const setServiceItemRef = (index: number) => (el: HTMLDivElement | null) => {
+    serviceItemsRef.current[index] = el;
+  };
+
+  // ✅ Effetto "stacked cards" - ogni sezione pinnata, successiva scorre sopra (solo desktop)
   useGSAP(
     () => {
+      // Only enable pinning on desktop (width >= 1024px)
+      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+
+      if (!isDesktop) {
+        return; // Skip pinning on mobile/tablet
+      }
+
       sectionRefs.current.forEach((section, index) => {
         if (!section) {
           return;
@@ -46,85 +61,266 @@ export default function ServicesSection() {
     { dependencies: [] },
   );
 
+  // ✅ Reveal animation for first screen elements
+  useGSAP(
+    () => {
+      // Stati iniziali
+      gsap.set(labelRef.current, {
+        opacity: 0,
+        y: 20,
+      });
+
+      gsap.set(titleRef.current, {
+        opacity: 0,
+        y: 30,
+      });
+
+      gsap.set(subtitleRef.current, {
+        opacity: 0,
+        y: 20,
+      });
+
+      gsap.set(servicesListRef.current, {
+        opacity: 0,
+      });
+
+      gsap.set(serviceItemsRef.current, {
+        opacity: 0,
+        y: 20,
+      });
+
+      const tl = gsap.timeline({
+        defaults: {
+          ease: 'power3.out',
+        },
+        scrollTrigger: {
+          trigger: sectionRefs.current[0],
+          start: 'top bottom',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+      });
+
+      // Sequenza animazione
+      tl.to(labelRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+      })
+        .to(
+          titleRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+          },
+          '-=0.3',
+        )
+        .to(
+          subtitleRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+          },
+          '-=0.5',
+        )
+        .to(
+          servicesListRef.current,
+          {
+            opacity: 1,
+            duration: 0.6,
+          },
+          '-=0.3',
+        )
+        .to(
+          serviceItemsRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.1,
+            duration: 0.7,
+          },
+          '-=0.4',
+        );
+
+      // Animazione continua per la freccia scroll
+      gsap.to(scrollArrowRef.current, {
+        y: 5,
+        duration: 0.8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut',
+      });
+    },
+    { dependencies: [] },
+  );
+
+  // ✅ Progressive blur effect - each section blurs when next one enters (desktop only)
+  useGSAP(
+    () => {
+      // Only enable blur on desktop (width >= 1024px) for better performance
+      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+
+      if (!isDesktop) {
+        return; // Skip blur effect on mobile/tablet
+      }
+
+      // For each section except the last one
+      sectionRefs.current.forEach((section, index) => {
+        // Skip last screen only
+        if (!section || index >= sectionRefs.current.length - 1) {
+          return;
+        }
+
+        const nextSection = sectionRefs.current[index + 1];
+        if (!nextSection) {
+          return;
+        }
+
+        // Apply progressive blur as the next section enters (including first screen)
+        gsap.to(section, {
+          filter: 'blur(8px)',
+          scrollTrigger: {
+            trigger: nextSection,
+            start: 'top bottom',
+            end: 'top top',
+            scrub: 1,
+          },
+        });
+      });
+    },
+    { dependencies: [] },
+  );
+
   return (
     <div data-section="services" className="relative">
-      {/* ========== SCREEN 1: SERVICES INTRO ========== */}
+      {/* ========== SCREEN 1: SERVICES INTRO - LEFT RIGHT SPLIT ========== */}
       <section
         ref={setSectionRef(0)}
-        className="relative flex items-center justify-center h-screen bg-white"
+        className="relative h-screen overflow-hidden bg-white"
         style={{ zIndex: 1 }}
         aria-label="Services Introduction"
       >
-        <div className="w-full max-w-4xl mx-auto text-center px-4 md:px-8 lg:px-16">
-          <div className="space-y-8 lg:space-y-10">
-            {/* Services Label */}
-            <div className="inline-flex items-center justify-center px-4 py-2 bg-gray-100 border border-gray-200 rounded-full text-sm font-medium text-gray-700 tracking-wide">
-              {t('servicesLabel')}
-            </div>
+        {/* Main Content - Split Layout */}
+        <div className="relative h-full flex items-center">
+          <div className="w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+              {/* Left Column - Hero Content */}
+              <div className="space-y-10">
+                {/* Label */}
+                <div ref={labelRef}>
+                  <span
+                    className="text-xs font-medium tracking-[0.3em] uppercase text-black/50"
+                    style={{
+                      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                    }}
+                  >
+                    {t('servicesLabel')}
+                  </span>
+                </div>
 
-            {/* Main Title */}
-            <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight tracking-wide"
-              style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
-            >
-              {t('title')}
-            </h2>
+                {/* Title - Large */}
+                <h1
+                  ref={titleRef}
+                  className="text-4xl md:text-5xl lg:text-6xl font-light text-black leading-[1.1]"
+                  style={{
+                    fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif',
+                    letterSpacing: '-0.01em',
+                  }}
+                >
+                  {t('title')}
+                </h1>
 
-            {/* Subtitle */}
-            <p
-              className="text-base md:text-lg text-gray-800 leading-relaxed max-w-2xl mx-auto"
-              style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
-            >
-              "
-              {t('subtitle')}
-              "
-            </p>
+                {/* Subtitle */}
+                <p
+                  ref={subtitleRef}
+                  className="text-base md:text-lg text-black/60 leading-relaxed max-w-lg"
+                  style={{
+                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                    fontWeight: 300,
+                  }}
+                >
+                  {t('subtitle')}
+                </p>
 
-            {/* Services List */}
-            <div className="space-y-6">
-              <h3
-                className="text-lg font-normal text-black"
-                style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
-              >
-                {t('servicesTitle')}
-              </h3>
+                {/* Scroll Hint */}
+                <div className="flex items-center gap-3 pt-4">
+                  <div className="w-8 h-px bg-black/20" aria-hidden="true" />
+                  <span
+                    className="text-xs tracking-wide uppercase text-black/40"
+                    style={{
+                      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                    }}
+                  >
+                    Scroll to see all my services
+                  </span>
+                  {/* Animated Down Arrow */}
+                  <svg
+                    ref={scrollArrowRef}
+                    className="w-4 h-4 text-black/30"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </div>
+              </div>
 
-              <ul className="space-y-4 max-w-md mx-auto">
-                {[
-                  'Professional Editing',
-                  'Edited & Unedited (RAW) Images',
-                  'Personal and Commercial Licensing',
-                ].map((_, index) => (
-                  <li key={`service-${index}`} className="flex items-center space-x-4 justify-center">
-                    <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center" aria-hidden="true">
-                      <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+              {/* Right Column - Services List */}
+              <div className="flex flex-col justify-center">
+                {/* Divider Line */}
+                <div
+                  ref={servicesListRef}
+                  className="w-16 h-px bg-black/20 mb-8"
+                  aria-hidden="true"
+                />
+
+                {/* Services Title */}
+                <h2
+                  className="text-sm font-medium tracking-wide uppercase text-black/70 mb-10"
+                  style={{
+                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                  }}
+                >
+                  {t('servicesTitle')}
+                </h2>
+
+                {/* Services List - Numbered */}
+                <div className="space-y-8">
+                  {[0, 1, 2].map(index => (
+                    <div key={index} ref={setServiceItemRef(index)} className="flex items-start gap-6">
+                      {/* Number */}
+                      <span
+                        className="text-sm font-medium text-black/30 tabular-nums min-w-[3ch] pt-1"
+                        style={{
+                          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                        }}
+                      >
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+
+                      {/* Vertical Line */}
+                      <div className="w-px h-full min-h-[3rem] bg-black/10" aria-hidden="true" />
+
+                      {/* Service Text */}
+                      <div className="flex-1 pt-0.5">
+                        <span
+                          className="text-lg md:text-xl text-black/80 font-light leading-relaxed"
+                          style={{
+                            fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                          }}
+                        >
+                          {t(`services.${index}`)}
+                        </span>
+                      </div>
                     </div>
-                    <span
-                      className="text-black font-normal"
-                      style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
-                    >
-                      {t(`services.${index}`)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* View Portfolio Button */}
-            <div className="pt-6">
-              <Link
-                href={`/${locale}/portfolio`}
-                className="inline-flex items-center justify-center px-12 py-4 bg-black text-white font-normal rounded-full hover:bg-gray-800 transition-colors duration-200 text-base"
-                style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
-              >
-                {t('viewPortfolio')}
-              </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -137,7 +333,6 @@ export default function ServicesSection() {
         style={{ zIndex: 2 }}
         aria-label="Photography Services"
       >
-        {/* Blob organico bianco - scorre dallo sfondo ed entra nell'immagine */}
         <div
           className="absolute top-0 left-0 z-10"
           style={{
@@ -163,7 +358,6 @@ export default function ServicesSection() {
           </div>
         </div>
 
-        {/* Immagine con curve liquide agli angoli */}
         <div
           className="absolute inset-0 w-full h-full"
           style={{
@@ -188,7 +382,6 @@ export default function ServicesSection() {
         style={{ zIndex: 3 }}
         aria-label="Videomaking Services"
       >
-        {/* Blob organico bianco - scorre dallo sfondo ed entra nell'immagine */}
         <div
           className="absolute top-0 right-0 z-10"
           style={{
@@ -214,7 +407,6 @@ export default function ServicesSection() {
           </div>
         </div>
 
-        {/* Video container con curve liquide agli angoli */}
         <div
           className="absolute inset-0 w-full h-full overflow-hidden"
           style={{
@@ -225,7 +417,6 @@ export default function ServicesSection() {
             zIndex: 5,
           }}
         >
-          {/* Background Video - Desktop */}
           <video
             className="absolute inset-0 w-full h-full object-cover hidden md:block"
             autoPlay
@@ -238,7 +429,6 @@ export default function ServicesSection() {
             <source src="/assets/videos/videomdesktop.webm" type="video/webm" />
           </video>
 
-          {/* Background Video - Mobile */}
           <video
             className="absolute inset-0 w-full h-full object-cover block md:hidden"
             autoPlay
@@ -260,7 +450,6 @@ export default function ServicesSection() {
         style={{ zIndex: 4 }}
         aria-label="Drone Footage Services"
       >
-        {/* Blob organico bianco - scorre dallo sfondo ed entra nell'immagine */}
         <div
           className="absolute bottom-0 left-0 z-10"
           style={{
@@ -286,7 +475,6 @@ export default function ServicesSection() {
           </div>
         </div>
 
-        {/* Video container con curve liquide agli angoli */}
         <div
           className="absolute inset-0 w-full h-full overflow-hidden"
           style={{
@@ -297,7 +485,6 @@ export default function ServicesSection() {
             zIndex: 5,
           }}
         >
-          {/* Background Video - Desktop */}
           <video
             className="absolute inset-0 w-full h-full object-cover hidden md:block"
             autoPlay
@@ -310,7 +497,6 @@ export default function ServicesSection() {
             <source src="/assets/videos/dronedesktop.webm" type="video/webm" />
           </video>
 
-          {/* Background Video - Mobile */}
           <video
             className="absolute inset-0 w-full h-full object-cover block md:hidden"
             autoPlay

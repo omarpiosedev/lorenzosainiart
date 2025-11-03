@@ -2,6 +2,34 @@
   "HomePage": {
     "title": "Benvenuto",
     "description": "Il tuo sito web è pronto",
+    "sez2": {
+      "portfolioLabel": "Portfolio",
+      "title": "Uno sguardo attraverso il mio obiettivo",
+      "subtitle": "Ogni scatto racconta una storia, catturando momenti autentici che mostrano il mio stile e la mia visione. Esplora i miei progetti preferiti.",
+      "featuredOn": "In evidenza su:",
+      "projects": {
+        "wildBloom": {
+          "title": "Wild Bloom",
+          "date": "12 Mar, 2025",
+          "category": "Fashion & Editorial"
+        },
+        "softMetals": {
+          "title": "Soft Metals",
+          "date": "10 Lug, 2025",
+          "category": "Brand & Commercial"
+        },
+        "urbanEssence": {
+          "title": "Urban Essence",
+          "date": "8 Feb, 2025",
+          "category": "Ritratto & Studio"
+        },
+        "lightForms": {
+          "title": "Light Forms",
+          "date": "15 Gen, 2025",
+          "category": "Fashion & Editorial"
+        }
+      }
+    },
     "sez3": {
       "servicesLabel": "Servizi",
       "title": "Come posso dare vita alla tua visione?",
@@ -112,6 +140,35 @@
           "name": "Luca Ferrari",
           "company": "Agente Immobiliare, Torino",
           "text": "Collaboro con Lorenzo da anni per i miei progetti immobiliari. Le sue foto valorizzano ogni spazio con una luce naturale che fa la differenza nelle vendite."
+        }
+      }
+    },
+    "sez6": {
+      "faqLabel": "FAQ",
+      "title": "Hai domande?",
+      "subtitle": "Ecco le domande più frequenti che i clienti mi fanno prima di prenotare. Se hai bisogno di sapere altro, contattami direttamente.",
+      "imageAlt": "Attrezzatura fotografica professionale",
+      "imageCopyright": "© August Renner",
+      "questions": {
+        "equipment": {
+          "question": "Quale attrezzatura usi per i tuoi servizi fotografici?",
+          "answer": "Lavoro con fotocamere e obiettivi professionali Canon e Sony, tra cui Canon R5 e Sony A7R IV. Il mio setup di illuminazione include flash Profoto e Godox per il lavoro in studio, e porto sempre attrezzatura di backup ad ogni servizio per garantire che nulla interrompa la tua sessione."
+        },
+        "delivery": {
+          "question": "Quanto tempo ci vorrà per ricevere le mie foto?",
+          "answer": "Per le sessioni standard, riceverai una galleria di anteprima entro 48 ore e le tue immagini finali completamente editate entro 2-3 settimane. La consegna rapida è disponibile con un costo aggiuntivo se hai bisogno delle tue foto prima per una scadenza o evento specifico."
+        },
+        "travel": {
+          "question": "Ti sposti per i servizi fotografici?",
+          "answer": "Assolutamente! Sono basato in Italia ma disponibile per servizi in tutto il mondo. I costi di viaggio sono calcolati separatamente e dipendono dalla location e dalla durata del servizio. Ho lavorato con clienti in tutta Europa e sono sempre entusiasta di esplorare nuove location."
+        },
+        "pricing": {
+          "question": "Quanto costa?",
+          "answer": "I prezzi variano in base al tipo di servizio, durata, location e requisiti specifici. Le sessioni ritratto partono da €300, mentre i progetti commerciali e fashion sono quotati individualmente. Contattami per un preventivo dettagliato su misura per le tue esigenze."
+        },
+        "services": {
+          "question": "Ho bisogno di servizi di hair e makeup per il mio servizio?",
+          "answer": "Anche se non obbligatori, hair e makeup professionali possono migliorare significativamente le tue foto. Lavoro con makeup artist di talento e posso organizzare questi servizi per te, oppure puoi portare il tuo stylist. La scelta è completamente tua."
         }
       }
     }

@@ -64,11 +64,14 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
         return;
       }
 
+      // Detect mobile/tablet for optimized smooth scrolling
+      const isMobile = window.matchMedia('(max-width: 1023px)').matches;
+
       const smoother = ScrollSmoother.create({
         wrapper: smoothWrapperRef.current!,
         content: smoothContentRef.current!,
-        smooth: 1.5, // Smoothness (1-3 recommended)
-        effects: true, // Enable data-speed and data-lag effects
+        smooth: isMobile ? 0.5 : 1.5, // Reduced smoothness on mobile for better performance
+        effects: !isMobile, // Disable parallax effects on mobile for performance
         normalizeScroll: true, // Prevent momentum scrolling conflicts
       });
 

@@ -2,6 +2,34 @@
   "HomePage": {
     "title": "Welcome",
     "description": "Your website is ready",
+    "sez2": {
+      "portfolioLabel": "Portfolio",
+      "title": "A look through my lens",
+      "subtitle": "Each frame tells a story, capturing genuine moments that showcase my style and vision. Browse through my favorite projects.",
+      "featuredOn": "Featured on:",
+      "projects": {
+        "wildBloom": {
+          "title": "Wild Bloom",
+          "date": "Mar 12, 2025",
+          "category": "Fashion & Editorial"
+        },
+        "softMetals": {
+          "title": "Soft Metals",
+          "date": "Jul 10, 2025",
+          "category": "Brand & Commercial"
+        },
+        "urbanEssence": {
+          "title": "Urban Essence",
+          "date": "Feb 8, 2025",
+          "category": "Portrait & Studio"
+        },
+        "lightForms": {
+          "title": "Light Forms",
+          "date": "Jan 15, 2025",
+          "category": "Fashion & Editorial"
+        }
+      }
+    },
     "sez3": {
       "servicesLabel": "Services",
       "title": "How can I bring your vision to life?",
@@ -112,6 +140,35 @@
           "name": "Luca Ferrari",
           "company": "Real Estate Agent, Turin",
           "text": "I've worked with Lorenzo for years on my real estate projects. His photos enhance every space with natural light that makes the difference in sales."
+        }
+      }
+    },
+    "sez6": {
+      "faqLabel": "FAQ",
+      "title": "Got questions?",
+      "subtitle": "Here are the most common things clients ask before booking. If you need to know anything else, just reach out directly.",
+      "imageAlt": "Professional camera equipment",
+      "imageCopyright": "© August Renner",
+      "questions": {
+        "equipment": {
+          "question": "What equipment do you use for your photoshoots?",
+          "answer": "I work with professional-grade cameras and lenses from Canon and Sony, including the Canon R5 and Sony A7R IV. My lighting setup includes Profoto and Godox strobes for studio work, and I always carry backup equipment to every shoot to ensure nothing interrupts your session."
+        },
+        "delivery": {
+          "question": "How long will it take to receive my photos?",
+          "answer": "For standard sessions, you'll receive a preview gallery within 48 hours and your fully edited final images within 2-3 weeks. Rush delivery is available for an additional fee if you need your photos sooner for a specific deadline or event."
+        },
+        "travel": {
+          "question": "Do you travel for photoshoots?",
+          "answer": "Absolutely! I'm based in Italy but available for shoots worldwide. Travel costs are calculated separately and depend on the location and duration of the shoot. I've worked with clients across Europe and am always excited to explore new locations."
+        },
+        "pricing": {
+          "question": "How much does it cost?",
+          "answer": "Pricing varies based on the type of shoot, duration, location, and specific requirements. Portrait sessions start from €300, while commercial and fashion projects are quoted individually. Contact me for a detailed quote tailored to your needs."
+        },
+        "services": {
+          "question": "Do I need hair and makeup services for my shoot?",
+          "answer": "While not mandatory, professional hair and makeup can elevate your photos significantly. I work with talented makeup artists and can arrange these services for you, or you're welcome to bring your own stylist. The choice is entirely yours."
         }
       }
     }
