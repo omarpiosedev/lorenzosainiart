@@ -1,33 +1,57 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { useImperativeHandle, useRef } from 'react';
+
+// Register GSAP plugins at module level (best practice)
+gsap.registerPlugin(useGSAP);
 
 type CameraIrisProps = {
   color?: string;
   duration?: number;
-  onHalfway?: () => void;
+  onTransitionComplete?: () => void;
 };
 
 export type CameraIrisHandle = {
-  open: () => Promise<void>;
+  transition: () => Promise<void>;
 };
 
-export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway }: CameraIrisProps & { ref?: React.RefObject<CameraIrisHandle | null> }) => {
+/**
+ * CameraIris - Cinematic page transition component
+ *
+ * Provides a professional camera iris wipe effect for page transitions.
+ * The iris closes, triggers the route change at midpoint, then reopens.
+ *
+ * @example
+ * const irisRef = useRef<CameraIrisHandle>(null)
+ *
+ * // Trigger transition
+ * await irisRef.current?.transition()
+ */
+export const CameraIris = ({ ref, color = '#060010', duration = 0.6, onTransitionComplete }: CameraIrisProps & { ref?: React.RefObject<CameraIrisHandle | null> }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const shuttersRef = useRef<SVGGElement>(null);
+  const isAnimatingRef = useRef(false);
 
   useImperativeHandle(ref, () => ({
-    open: () => {
+    transition: () => {
       return new Promise((resolve) => {
+        // Prevent multiple simultaneous transitions
+        if (isAnimatingRef.current) {
+          resolve();
+          return;
+        }
+
         if (!shuttersRef.current || !containerRef.current) {
           resolve();
           return;
         }
 
+        isAnimatingRef.current = true;
         const shutters = shuttersRef.current.querySelectorAll('path');
 
-        // Transform origins per ogni lama (identici all'esempio)
+        // Transform origins for each blade (camera iris effect)
         const transformOrigins = [
           '39% 87%',
           '14% 78%',
@@ -39,31 +63,28 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
           '72% 86%',
         ];
 
-        // Mostra il container all'inizio dell'animazione
+        // Show container at start
         gsap.set(containerRef.current, { display: 'block' });
 
-        // Crea timeline con yoyo (chiudi e riapri) come nell'esempio originale
+        // Create timeline: close → reopen (yoyo effect)
         const timeline = gsap.timeline({
           yoyo: true,
           repeat: 1,
           onRepeat: () => {
-            // Chiamato quando l'iris è completamente chiuso e sta per riaprirsi
-            if (onHalfway) {
-              onHalfway();
-            }
+            // Midpoint: iris fully closed, trigger route change
+            onTransitionComplete?.();
           },
           onComplete: () => {
-            // Nascondi il container alla fine dell'animazione
+            // Hide container when animation completes
             if (containerRef.current) {
               gsap.set(containerRef.current, { display: 'none' });
             }
-            // Risolvi la promise alla fine completa dell'animazione
+            isAnimatingRef.current = false;
             resolve();
           },
         });
 
-        // Parte da aperto (rotation 60) e va a chiuso (rotation 0)
-        // Poi con yoyo torna automaticamente ad aperto
+        // Animate all blades simultaneously from open (60) to closed (0)
         shutters.forEach((shutter, index) => {
           timeline.from(
             shutter,
@@ -73,8 +94,8 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
               ease: 'expo.inOut',
               duration,
             },
-            0,
-          ); // tutti partono allo stesso tempo (position 0)
+            0, // All start at the same time
+          );
         });
       });
     },
@@ -85,9 +106,9 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
       ref={containerRef}
       className="fixed inset-0 pointer-events-none"
       style={{ zIndex: 10000, overflow: 'hidden', display: 'none' }}
+      aria-hidden="true"
     >
       <svg
-        id="shutters_svg"
         xmlns="http://www.w3.org/2000/svg"
         width="1001.5"
         height="996.5"
@@ -101,9 +122,8 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
           height: '200vmax',
         }}
       >
-        <g id="shutters" ref={shuttersRef}>
+        <g ref={shuttersRef}>
           <path
-            id="shutter1"
             d="M495.6,509C466.2,673.8,390.8,839,296,1000H707C704,784.9,608.2,584.6,495.6,509Z"
             transform="translate(0 -3.5)"
             fill={color}
@@ -111,7 +131,6 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
             stroke="#000"
           />
           <path
-            id="shutter2"
             d="M296,1000c90.9-137,167-319,203-499C368,593,201.3,655.6,0,707Z"
             transform="translate(0 -3.5)"
             fill={color}
@@ -119,7 +138,6 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
             stroke="#000"
           />
           <path
-            id="shutter3"
             d="M0,707V295c142.6,85.4,302.9,158.8,499,208C363.2,592.2,198.6,661.4,0,707Z"
             transform="translate(0 -3.5)"
             fill={color}
@@ -127,7 +145,6 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
             stroke="#000"
           />
           <path
-            id="shutter4"
             d="M290,4,0,295.8C180.2,401.6,334.3,464.8,498,501,396,354.6,310,60.8,290,4Z"
             transform="translate(0 -3.5)"
             fill={color}
@@ -135,7 +152,6 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
             stroke="#000"
           />
           <path
-            id="shutter5"
             d="M290,4H709C622.7,137.4,560.5,310.4,498,499,400.1,346.2,335.5,170.8,290,4Z"
             transform="translate(0 -3.5)"
             fill={color}
@@ -143,7 +159,6 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
             stroke="#000"
           />
           <path
-            id="shutter6"
             d="M1001.5,292.5,705.8,3.5C619.9,146.2,563.7,301.6,498,500,646.3,398.3,944,312.5,1001.5,292.5Z"
             transform="translate(0 -3.5)"
             fill={color}
@@ -151,7 +166,6 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
             stroke="#000"
           />
           <path
-            id="shutter7"
             d="M999,294.9l.2,422.9C854.5,630.2,691.9,554.9,492.9,504.5,593.7,433,779.3,358.7,999,294.9Z"
             transform="translate(0 -3.5)"
             fill={color}
@@ -159,7 +173,6 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.35, onHalfway 
             stroke="#000"
           />
           <path
-            id="shutter8"
             d="M499,509c169.3,38.9,335.9,109.1,500,209L707,1000c-6-259-117-423-208-491"
             transform="translate(0 -3.5)"
             fill={color}

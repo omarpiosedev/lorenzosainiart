@@ -48,7 +48,8 @@ function ProjectCard({ title, date, category, imageSrc, onHover, onLeave, infoRe
 
   return (
     <div
-      className="group relative cursor-pointer"
+      className="group relative cursor-pointer bg-white rounded-2xl border border-gray-200"
+      style={{ padding: '1.5rem' }}
       onMouseEnter={() => {
         setIsHovered(true);
         onHover();
@@ -59,7 +60,7 @@ function ProjectCard({ title, date, category, imageSrc, onHover, onLeave, infoRe
       }}
     >
       {/* Image Container with Corner Decorations */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl bg-gray-200">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-200">
         {/* Placeholder image - replace with actual image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -222,17 +223,32 @@ export default function PortfolioSection() {
   // GSAP scroll reveal animations - Compatible with ScrollSmoother
   useGSAP(
     () => {
+      // Set initial states to prevent flash
+      if (headerRef.current) {
+        gsap.set(headerRef.current.children, {
+          opacity: 0,
+          y: 50,
+        });
+      }
+
+      if (featuredRef.current) {
+        gsap.set(featuredRef.current.children, {
+          opacity: 0,
+          y: 30,
+        });
+      }
+
       // Header animation
       if (headerRef.current) {
-        gsap.from(headerRef.current.children, {
+        gsap.to(headerRef.current.children, {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top 75%',
             toggleActions: 'play none none reverse',
             invalidateOnRefresh: true,
           },
-          opacity: 0,
-          y: 50,
+          opacity: 1,
+          y: 0,
           duration: 0.8,
           stagger: 0.15,
           ease: 'power3.out',
@@ -241,15 +257,15 @@ export default function PortfolioSection() {
 
       // Featured logos animation
       if (featuredRef.current) {
-        gsap.from(featuredRef.current.children, {
+        gsap.to(featuredRef.current.children, {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top 70%',
             toggleActions: 'play none none reverse',
             invalidateOnRefresh: true,
           },
-          opacity: 0,
-          y: 30,
+          opacity: 1,
+          y: 0,
           duration: 0.6,
           stagger: 0.1,
           ease: 'power3.out',
@@ -257,6 +273,7 @@ export default function PortfolioSection() {
       }
 
       // Pin first row (cards 0 and 1) - stays in place while second row scrolls over
+      // Works on both desktop (with ScrollSmoother) and mobile (native scroll)
       if (cardRowRefs.current[0] && cardRowRefs.current[1]) {
         ScrollTrigger.create({
           trigger: cardRowRefs.current[0],
@@ -264,43 +281,7 @@ export default function PortfolioSection() {
           end: () => `+=${cardRowRefs.current[1]!.offsetHeight}`,
           pin: true,
           pinSpacing: false,
-          pinType: 'transform', // Better compatibility with ScrollSmoother
-          anticipatePin: 1, // Prevents flickering during smooth scroll momentum
           invalidateOnRefresh: true,
-        });
-      }
-
-      // Initial reveal for first row
-      if (cardRowRefs.current[0]) {
-        gsap.from(cardRowRefs.current[0], {
-          scrollTrigger: {
-            trigger: cardRowRefs.current[0],
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
-            invalidateOnRefresh: true,
-          },
-          opacity: 0,
-          y: 40,
-          scale: 0.98,
-          duration: 0.7,
-          ease: 'power3.out',
-        });
-      }
-
-      // Initial reveal for second row
-      if (cardRowRefs.current[1]) {
-        gsap.from(cardRowRefs.current[1], {
-          scrollTrigger: {
-            trigger: cardRowRefs.current[1],
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
-            invalidateOnRefresh: true,
-          },
-          opacity: 0,
-          y: 40,
-          scale: 0.98,
-          duration: 0.7,
-          ease: 'power3.out',
         });
       }
 
@@ -382,13 +363,13 @@ export default function PortfolioSection() {
         </div>
       </section>
 
-      {/* Projects Container - Single White Background */}
-      <div ref={gridContainerRef} className="relative bg-white py-6 md:py-8">
-        {/* First Row Grid - Pinned */}
+      {/* Projects Container */}
+      <div ref={gridContainerRef} className="relative">
+        {/* First Row Grid - Pinned when second row scrolls over */}
         <div
           ref={setCardRowRef(0)}
           className="relative px-4 md:px-8 lg:px-16 py-16"
-          style={{ zIndex: 1 }}
+          style={{ zIndex: 1, willChange: 'transform' }}
         >
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-12 w-full">
@@ -414,7 +395,7 @@ export default function PortfolioSection() {
           </div>
         </div>
 
-        {/* Second Row Grid - Scrolls Over */}
+        {/* Second Row Grid - Scrolls naturally over pinned first row */}
         <div
           ref={setCardRowRef(1)}
           className="relative px-4 md:px-8 lg:px-16 py-16"

@@ -1,15 +1,16 @@
 'use client';
 
 import type { CameraIrisHandle } from '@/components/ui/CameraIris';
+import type { LoadingScreenHandle } from '@/components/ui/LoadingScreen';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
-import { CameraIris } from '@/components/ui/CameraIris';
-import LoadingScreen from '@/components/ui/LoadingScreen';
+import { CameraIris, LoadingScreen } from '@/components/ui';
 import SettingsModal from '@/components/ui/SettingsModal';
+import { usePageTransition } from '@/hooks/usePageTransition';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP);
@@ -26,54 +27,50 @@ type LayoutClientProps = {
 
 const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false);
-  const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
   const irisRef = useRef<CameraIrisHandle>(null);
+  const loadingScreenRef = useRef<LoadingScreenHandle>(null);
 
   // ScrollSmoother refs
   const smoothWrapperRef = useRef<HTMLDivElement>(null);
   const smoothContentRef = useRef<HTMLDivElement>(null);
 
-  // Assicurati che siamo lato client prima di mostrare il loading
-  useEffect(() => {
-    setIsClient(true);
+  // Enable page transitions with Camera Iris
+  usePageTransition(irisRef);
 
-    // Check if user has visited before (session storage)
-    // Skip loading screen for returning visitors in the same session
-    if (typeof window !== 'undefined' && sessionStorage) {
-      const visited = sessionStorage.getItem('portfolio_visited');
-      if (visited === 'true') {
-        setHasVisitedBefore(true);
-        setIsLoading(false); // Skip loading for returning visitors
-      } else {
-        // Mark as visited for future page navigations in this session
-        sessionStorage.setItem('portfolio_visited', 'true');
-      }
-    }
+  // Hide loading screen after initial mount
+  useEffect(() => {
+    const hideLoadingScreen = async () => {
+      // Wait for entrance animation (~2.8s), then exit starts immediately
+      // Total animation: ~4 seconds (entrance + exit)
+      await new Promise(resolve => setTimeout(resolve, 2800));
+      await loadingScreenRef.current?.hide();
+    };
+
+    hideLoadingScreen();
   }, []);
 
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-  };
-
-  // Initialize ScrollSmoother only when content is loaded and client-side
+  // Initialize ScrollSmoother for smooth scrolling experience
   useGSAP(
     () => {
-      if (!isClient || isLoading) {
-        return;
-      }
-
       // Detect mobile/tablet for optimized smooth scrolling
       const isMobile = window.matchMedia('(max-width: 1023px)').matches;
 
+      // Disable ScrollSmoother on mobile - native touch scrolling performs better
+      // Mobile devices have optimized native scroll and ScrollSmoother causes:
+      // - iOS address bar glitching with normalizeScroll
+      // - Touch device freezes when normalizeScroll + smoothTouch are combined
+      // - Performance issues on older devices (iPhone 6s, Galaxy Tab A)
+      if (isMobile) {
+        return;
+      }
+
+      // Desktop only: create smooth scrolling experience
       const smoother = ScrollSmoother.create({
         wrapper: smoothWrapperRef.current!,
         content: smoothContentRef.current!,
-        smooth: isMobile ? 0.5 : 1.5, // Reduced smoothness on mobile for better performance
-        smoothTouch: 0.1, // VERY short smoothing on touch devices (GSAP best practice)
-        effects: !isMobile, // Disable parallax effects on mobile for performance
-        normalizeScroll: true, // Prevent momentum scrolling conflicts
+        smooth: 1.2,
+        effects: true, // Enable parallax effects on desktop
+        normalizeScroll: false, // Removed to prevent conflicts
       });
 
       return () => {
@@ -81,65 +78,45 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
       };
     },
     {
-      dependencies: [isClient, isLoading],
       scope: smoothWrapperRef,
     },
   );
 
   return (
     <>
-      {/* Camera Iris Transition - Rendered at root level to persist during LoadingScreen unmount */}
-      <CameraIris
-        ref={irisRef}
-        color="#060010"
-        duration={1.0}
-        onHalfway={handleLoadingComplete}
-      />
+      {/* Loading Screen - Shown on initial page load */}
+      <LoadingScreen ref={loadingScreenRef} />
 
-      {/* Loading Screen - mostra solo lato client e solo per nuovi visitatori */}
-      {isClient && isLoading && !hasVisitedBefore && (
-        <LoadingScreen onComplete={handleLoadingComplete} irisRef={irisRef} />
-      )}
+      {/* Camera Iris Transition - Rendered at root level for global page transitions */}
+      <CameraIris ref={irisRef} color="#060010" duration={0.6} />
 
-      {/* Main Content - renderizzato solo dopo il loading e lato client */}
-      {isClient && !isLoading && (
-        <div id="smooth-wrapper" ref={smoothWrapperRef}>
-          <div id="smooth-content" ref={smoothContentRef}>
-            {/* Page Content */}
-            {children}
-          </div>
-
-          {/* NavBar - OUTSIDE smooth-content so fixed positioning works */}
-          {/* GSAP ScrollSmoother best practice: fixed elements must be siblings to smooth-content, not children */}
-          <NavBar
-            logo="/assets/images/LogoBianco.webp"
-            logoAlt="Lorenzo Saini Art"
-            items={navItems}
-            baseColor="#060010"
-            pillColor="#fff"
-            hoveredPillTextColor="#fff"
-            pillTextColor="#060010"
-            initialLoadAnimation={true}
-            onSettingsClick={() => setIsSettingsOpen(true)}
-          />
-
-          {/* Settings Modal - Also outside smooth-content for proper fixed positioning */}
-          <SettingsModal
-            isOpen={isSettingsOpen}
-            onClose={() => setIsSettingsOpen(false)}
-          />
+      {/* Main Content Wrapper with Smooth Scrolling */}
+      <div id="smooth-wrapper" ref={smoothWrapperRef}>
+        <div id="smooth-content" ref={smoothContentRef}>
+          {/* Page Content */}
+          {children}
         </div>
-      )}
 
-      {/* Fallback durante l'hydration per evitare layout shift */}
-      {!isClient && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-black/20 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-black/60 font-lavener text-sm">Loading...</p>
-          </div>
-        </div>
-      )}
+        {/* NavBar - OUTSIDE smooth-content so fixed positioning works */}
+        {/* GSAP ScrollSmoother best practice: fixed elements must be siblings to smooth-content, not children */}
+        <NavBar
+          logo="/assets/images/LogoBianco.webp"
+          logoAlt="Lorenzo Saini Art"
+          items={navItems}
+          baseColor="#060010"
+          pillColor="#fff"
+          hoveredPillTextColor="#fff"
+          pillTextColor="#060010"
+          initialLoadAnimation={true}
+          onSettingsClick={() => setIsSettingsOpen(true)}
+        />
+
+        {/* Settings Modal - Also outside smooth-content for proper fixed positioning */}
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+        />
+      </div>
     </>
   );
 };

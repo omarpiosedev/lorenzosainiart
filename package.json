@@ -6,7 +6,7 @@
   },
   "scripts": {
     "dev:spotlight": "npx @spotlightjs/spotlight",
-    "dev:next": "next dev",
+    "dev:next": "next dev -H 0.0.0.0",
     "dev": "run-p dev:*",
     "build:next": "next build",
     "build": "npm run build:next",

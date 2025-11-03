@@ -31,16 +31,10 @@ export default function ServicesSection() {
     serviceItemsRef.current[index] = el;
   };
 
-  // ✅ Effetto "stacked cards" - ogni sezione pinnata, successiva scorre sopra (solo desktop)
+  // ✅ Effetto "stacked cards" - ogni sezione pinnata, successiva scorre sopra
+  // ScrollTrigger pinning works perfectly on mobile WITHOUT ScrollSmoother
   useGSAP(
     () => {
-      // Only enable pinning on desktop (width >= 1024px)
-      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-
-      if (!isDesktop) {
-        return; // Skip pinning on mobile/tablet
-      }
-
       sectionRefs.current.forEach((section, index) => {
         if (!section) {
           return;
@@ -156,16 +150,10 @@ export default function ServicesSection() {
     { dependencies: [] },
   );
 
-  // ✅ Progressive blur + fade effect - each section blurs and fades when next one enters (desktop only)
+  // ✅ Progressive blur + fade effect - each section blurs and fades when next one enters
+  // Works on both desktop (with ScrollSmoother) and mobile (native scroll)
   useGSAP(
     () => {
-      // Only enable blur on desktop (width >= 1024px) for better performance
-      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
-
-      if (!isDesktop) {
-        return; // Skip blur effect on mobile/tablet
-      }
-
       // For each section except the last one
       sectionRefs.current.forEach((section, index) => {
         // Skip last screen only
@@ -178,9 +166,8 @@ export default function ServicesSection() {
           return;
         }
 
-        // Apply progressive blur AND fade to 0 opacity as the next section enters
-        // This ensures previous sections become completely invisible, preventing them from
-        // showing through the stack (especially important with ScrollSmoother)
+        // Progressive blur + fade as next section enters viewport
+        // This creates the smooth "stacked cards" effect on all devices
         gsap.to(section, {
           filter: 'blur(8px)',
           opacity: 0,

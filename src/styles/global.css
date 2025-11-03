@@ -363,19 +363,34 @@ section.w-screen {
 }
 
 /* ========== GSAP ScrollSmoother ========== */
+/* Only apply ScrollSmoother styles on desktop (>= 1024px) */
+/* On mobile, these elements behave as normal divs to allow native scroll */
+
+/* Mobile: normal flow, no fixed positioning */
 #smooth-wrapper {
-  overflow: hidden;
-  position: fixed;
-  height: 100%;
   width: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 }
 
 #smooth-content {
-  overflow: visible;
   width: 100%;
-  will-change: transform;
+}
+
+/* Desktop: ScrollSmoother active - fixed positioning required */
+@media (min-width: 1024px) {
+  #smooth-wrapper {
+    overflow: hidden;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  #smooth-content {
+    overflow: visible;
+    width: 100%;
+    will-change: transform;
+  }
 }

@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
 import { getBaseUrl } from '@/utils/AppConfig';
 import BenefitsSection from './sections/BenefitsSection';
+import ContactCTASection from './sections/ContactCTASection';
 import FAQSection from './sections/FAQSection';
 import HeroHome from './sections/herohome';
 import PhilosophyGallerySection from './sections/PhilosophyGallerySection';
@@ -110,6 +111,10 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <Suspense fallback={<SectionSkeleton />}>
         <FAQSection />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <ContactCTASection />
       </Suspense>
     </main>
   );

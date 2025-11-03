@@ -1,118 +1,255 @@
 'use client';
 
-import type { RefObject } from 'react';
-import type { CameraIrisHandle } from './CameraIris';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
-import { useEffect, useRef } from 'react';
-import { useResourceLoader } from '@/hooks/useResourceLoader';
-import ProgressBar from './ProgressBar';
-import VideoLogo from './VideoLogo';
+import Image from 'next/image';
+import { useImperativeHandle, useRef } from 'react';
 
-// Register GSAP plugins at module level (best practice)
+// Register GSAP plugins
 gsap.registerPlugin(useGSAP);
 
-type LoadingScreenProps = {
-  onComplete: () => void;
-  irisRef: RefObject<CameraIrisHandle | null>;
+export type LoadingScreenHandle = {
+  hide: () => Promise<void>;
 };
 
-export default function LoadingScreen({ onComplete: _onComplete, irisRef }: LoadingScreenProps) {
+/**
+ * LoadingScreen - Initial page load animation
+ *
+ * Displays animated Polaroid photos floating around a camera aperture icon.
+ * Automatically fades out when page content is ready.
+ */
+export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const hasStartedTransition = useRef(false);
+  const iconRef = useRef<HTMLDivElement>(null);
+  const photosRef = useRef<HTMLDivElement>(null);
+  const blurLayerRef = useRef<HTMLDivElement>(null);
 
-  const { progress, isComplete } = useResourceLoader();
-
-  // Handler per quando il video può essere riprodotto
-  const handleVideoCanPlay = () => {
-    if (typeof window !== 'undefined') {
-      // Retry logic per assicurarsi che la funzione sia disponibile
-      const tryMarkVideo = () => {
-        if ((window as any).markResourceLoaded) {
-          (window as any).markResourceLoaded('loading-video');
-        } else {
-          // Retry dopo un piccolo delay se la funzione non è ancora disponibile
-          setTimeout(tryMarkVideo, 100);
+  useImperativeHandle(ref, () => ({
+    hide: () => {
+      return new Promise<void>((resolve) => {
+        if (!containerRef.current || !iconRef.current || !photosRef.current) {
+          resolve();
+          return;
         }
-      };
-      tryMarkVideo();
-    }
-  };
 
-  // ✅ BEST PRACTICE: Use useGSAP hook instead of useEffect for React 19 compatibility
-  // Automatic cleanup, prevents double-mount issues in Strict Mode
+        // Kill all continuous animations before exit
+        const photos = photosRef.current.querySelectorAll('.polaroid-photo');
+        gsap.killTweensOf([iconRef.current, ...Array.from(photos)]);
+
+        // Create exit timeline
+        const exitTl = gsap.timeline({
+          onComplete: () => {
+            if (containerRef.current) {
+              containerRef.current.style.display = 'none';
+              containerRef.current.style.filter = 'none'; // Reset filter
+            }
+            resolve();
+          },
+        });
+
+        // Fade out bottom shadow layer first
+        if (blurLayerRef.current) {
+          exitTl.to(blurLayerRef.current, {
+            opacity: 0,
+            duration: 0.3,
+            ease: 'power1.inOut',
+          });
+        }
+
+        // Photos get pushed up with container (synchronized exit) - ~1.2s total
+        exitTl.to(
+          [...Array.from(photos), iconRef.current],
+          {
+            y: '-=50vh', // Push photos up relative to their position
+            opacity: 0.3, // Slight fade for depth
+            duration: 1.0,
+            ease: 'expo.in', // Accelerate as they move
+            stagger: 0.02, // Slight stagger for natural flow
+          },
+          '-=0.15',
+        );
+
+        // Slide entire screen up WITH progressive blur effect - faster
+        exitTl.to(
+          containerRef.current,
+          {
+            yPercent: -100,
+            filter: 'blur(20px)',
+            duration: 1.2, // Faster exit
+            ease: 'expo.inOut',
+          },
+          '-=1.0', // Start while photos are being pushed
+        );
+      });
+    },
+  }));
+
+  // Animate on mount
   useGSAP(
     () => {
-      if (!containerRef.current || !contentRef.current) {
+      if (!iconRef.current || !photosRef.current) {
         return;
       }
 
-      // Entrance animations
-      gsap.fromTo(
-        containerRef.current,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 0.5,
-          ease: 'power2.out',
-        },
-      );
+      const photos = photosRef.current.querySelectorAll('.polaroid-photo');
 
-      gsap.fromTo(
-        contentRef.current,
-        { y: 20, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          delay: 0.2,
-          ease: 'power2.out',
+      // Set initial state - everything starts completely off-screen below viewport
+      gsap.set([iconRef.current, ...Array.from(photos)], {
+        y: '100vh', // Start completely below viewport
+      });
+
+      // Entrance timeline - slow and smooth
+      const enterTl = gsap.timeline({
+        delay: 0.2,
+        onComplete: () => {
+          // No continuous animations - exit starts immediately via LayoutClient
         },
-      );
+      });
+
+      // Very smooth and gradual entrance
+      enterTl
+        .to(photosRef.current, {
+          opacity: 1,
+          duration: 0.6,
+          ease: 'power1.inOut',
+        })
+        .to(photos, {
+          y: 0, // Move to final CSS-defined position
+          duration: 2.5, // Much longer for smoother motion
+          stagger: 0.15, // More gradual stagger (5 photos × 0.15 = 0.75s total stagger)
+          ease: 'expo.out', // Very smooth exponential easing
+        }, '-=0.3')
+        .to(
+          iconRef.current,
+          {
+            y: 0, // Move to final CSS-defined position
+            opacity: 1,
+            duration: 2.0, // Longer, smoother entrance
+            ease: 'expo.out', // Very smooth exponential easing
+          },
+          '-=2.05', // Start when last 2 photos are entering
+        );
+
+      // Removed startContinuousAnimations - not needed for static loading screen
     },
-    { scope: containerRef }, // Scoped queries for better performance
+    {
+      scope: containerRef,
+    },
   );
-
-  // Animazione di uscita quando caricamento completato
-
-  useEffect(() => {
-    // Far partire l'iris quando il caricamento è completo (solo una volta)
-    if (isComplete && irisRef.current && !hasStartedTransition.current) {
-      hasStartedTransition.current = true;
-
-      const runTransition = async () => {
-        // Avvia l'animazione dell'iris (chiudi + riapri)
-        // L'onHalfway callback rimuoverà il LoadingScreen quando l'iris è completamente chiuso
-        // NO fade out del contenuto, resta visibile fino a che l'iris si chiude
-        await irisRef.current?.open();
-      };
-
-      runTransition();
-    }
-  }, [isComplete]);
 
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"
+      className="fixed inset-0 z-[10001] flex items-center justify-center bg-white"
+      aria-label="Loading"
+      style={{
+        boxShadow: '0 -20px 40px rgba(255, 255, 255, 0.8) inset',
+      }}
     >
+      {/* Bottom fade gradient - creates soft entrance effect */}
       <div
-        ref={contentRef}
-        className="flex flex-col items-center justify-center space-y-8 px-4"
-      >
-        {/* Video Logo */}
-        <VideoLogo
-          onCanPlay={handleVideoCanPlay}
-          onLoadedData={handleVideoCanPlay}
-        />
+        className="absolute bottom-0 left-0 right-0 h-[50vh] pointer-events-none z-[10002]"
+        style={{
+          background: 'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.95) 15%, rgba(255,255,255,0.7) 35%, rgba(255,255,255,0.3) 60%, rgba(255,255,255,0) 100%)',
+        }}
+      />
 
-        {/* Progress Bar */}
-        <ProgressBar
-          progress={progress}
-          className="w-full max-w-xs sm:max-w-sm"
+      {/* Bottom edge shadow - softens transition when sliding up */}
+      <div
+        ref={blurLayerRef}
+        className="absolute bottom-0 left-0 right-0 h-[20vh] pointer-events-none z-[10003]"
+        style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.03) 75%, rgba(0,0,0,0) 100%)',
+          filter: 'blur(20px)',
+          transform: 'translateZ(0)', // Force GPU acceleration
+        }}
+      />
+
+      {/* Polaroid photos container */}
+      <div ref={photosRef} className="relative w-full h-full" style={{ opacity: 0 }}>
+        {/* Photo 1 - Top Left (blonde woman) */}
+        <div className="polaroid-photo absolute left-[13%] top-[20%] w-[190px] h-[230px] bg-white rounded-lg shadow-2xl p-4 rotate-[-12deg]">
+          <div className="relative w-full h-[170px] bg-gray-100 mb-2">
+            <Image
+              src="/assets/images/image1.webp"
+              alt=""
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Photo 2 - Top Center (yellow turtleneck) */}
+        <div className="polaroid-photo absolute left-[50%] translate-x-[-50%] top-[15%] w-[200px] h-[240px] bg-white rounded-lg shadow-2xl p-4 rotate-[2deg]">
+          <div className="relative w-full h-[180px] bg-gray-100 mb-2">
+            <Image
+              src="/assets/images/image2.webp"
+              alt=""
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Photo 3 - Top Right (purple headphones) */}
+        <div className="polaroid-photo absolute right-[13%] top-[18%] w-[185px] h-[225px] bg-white rounded-lg shadow-2xl p-4 rotate-[8deg]">
+          <div className="relative w-full h-[165px] bg-gray-100 mb-2">
+            <Image
+              src="/assets/images/image3.webp"
+              alt=""
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Photo 4 - Bottom Left (white hat) */}
+        <div className="polaroid-photo absolute left-[20%] bottom-[18%] w-[190px] h-[230px] bg-white rounded-lg shadow-2xl p-4 rotate-[15deg]">
+          <div className="relative w-full h-[170px] bg-gray-100 mb-2">
+            <Image
+              src="/assets/images/backgropund.webp"
+              alt=""
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Photo 5 - Bottom Right (rooftop) */}
+        <div className="polaroid-photo absolute right-[15%] bottom-[25%] w-[210px] h-[250px] bg-white rounded-lg shadow-2xl p-4 rotate-[-8deg]">
+          <div className="relative w-full h-[190px] bg-gray-100 mb-2">
+            <Image
+              src="/assets/images/sposi.webp"
+              alt=""
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Lorenzo Saini Logo - Center */}
+      <div
+        ref={iconRef}
+        className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-10"
+        style={{ opacity: 0 }}
+      >
+        <Image
+          src="/assets/images/LogoNero.webp"
+          alt="Lorenzo Saini Art"
+          width={180}
+          height={180}
+          className="object-contain"
+          priority
         />
       </div>
     </div>
   );
-}
+};
+
+LoadingScreen.displayName = 'LoadingScreen';

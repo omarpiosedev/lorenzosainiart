@@ -5,15 +5,15 @@
 
 // Animations
 export { CameraIris } from './CameraIris';
-
 export { Compare } from './compare';
+
 // Focus
 export * from './focus';
-
 export { default as GSAPScrollReveal } from './GSAPScrollReveal';
-// Loading
-export { default as LoadingScreen } from './LoadingScreen';
 
+export { LoadingScreen } from './LoadingScreen';
+
+// Loading
 export {
   AboutSkeleton,
   BlogSkeleton,
@@ -24,8 +24,7 @@ export {
 
 // Navigation
 export { default as NavBar } from './NavBar';
+
 // Utilities
 export { default as PhilosophyText } from './PhilosophyText';
-export { default as ProgressBar } from './ProgressBar';
 export { default as SettingsModal } from './SettingsModal';
-export { default as VideoLogo } from './VideoLogo';

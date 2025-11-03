@@ -119,7 +119,7 @@ export default async function RootLayout(props: {
         <WebsiteJsonLd locale={locale} />
         <PersonJsonLd locale={locale} />
       </head>
-      <body style={{ margin: '0px', padding: '0px', left: '0px', right: '0px', position: 'relative' }}>
+      <body>
         {/* ✅ BEST PRACTICE: Passa solo i messaggi necessari per i componenti del layout
             Questo riduce il bundle JS client e migliora le performance.
             Include 'loading' per LoadingScreen e 'HomePage' per la pagina principale.
