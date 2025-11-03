@@ -137,25 +137,25 @@ export default function ServicesSection() {
         style={{ zIndex: 2 }}
         aria-label="Photography Services"
       >
-        {/* Blob organico bianco - forma fluida in alto a sinistra */}
+        {/* Blob organico bianco - scorre dallo sfondo ed entra nell'immagine */}
         <div
           className="absolute top-0 left-0 z-10"
           style={{
-            width: 'clamp(240px, 45vw, 550px)',
-            height: 'clamp(200px, 40vh, 450px)',
+            width: 'clamp(220px, 60vw, 420px)',
+            height: 'clamp(90px, 25vh, 350px)',
             background: '#ffffff',
-            borderRadius: '73% 27% 34% 66% / 65% 58% 42% 35%',
+            borderRadius: '0% 48% 85% 15% / 0% 62% 38% 0%',
           }}
         >
-          <div className="p-6 md:p-10 lg:p-12 h-full flex flex-col justify-start pt-8 md:pt-16">
+          <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-start pt-5 md:pt-12">
             <h2
-              className="text-2xl md:text-4xl lg:text-5xl font-light text-black tracking-tight leading-tight mb-3 md:mb-4"
+              className="text-[40px] md:text-3xl lg:text-4xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('photography.title')}
             </h2>
             <p
-              className="text-xs md:text-base lg:text-lg text-black/80 leading-relaxed font-light"
+              className="text-[16px] md:text-sm lg:text-base text-black/80 leading-snug md:leading-relaxed font-light"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('photography.description')}
@@ -188,25 +188,25 @@ export default function ServicesSection() {
         style={{ zIndex: 3 }}
         aria-label="Videomaking Services"
       >
-        {/* Blob organico bianco - forma fluida in alto a destra */}
+        {/* Blob organico bianco - scorre dallo sfondo ed entra nell'immagine */}
         <div
           className="absolute top-0 right-0 z-10"
           style={{
-            width: 'clamp(240px, 45vw, 550px)',
-            height: 'clamp(200px, 40vh, 450px)',
+            width: 'clamp(240px, 65vw, 460px)',
+            height: 'clamp(100px, 28vh, 380px)',
             background: '#ffffff',
-            borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
+            borderRadius: '52% 0% 18% 82% / 68% 0% 0% 32%',
           }}
         >
-          <div className="p-6 md:p-10 lg:p-12 h-full flex flex-col justify-start pt-8 md:pt-16">
+          <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-start items-end text-right pt-5 md:pt-12">
             <h2
-              className="text-2xl md:text-4xl lg:text-5xl font-light text-black tracking-tight leading-tight mb-3 md:mb-4"
+              className="text-[40px] text-sm md:text-3xl lg:text-4xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('videomaking.title')}
             </h2>
             <p
-              className="text-xs md:text-base lg:text-lg text-black/80 leading-relaxed font-light"
+              className="text-[16px] md:text-sm lg:text-base text-black/80 leading-snug md:leading-relaxed font-light"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('videomaking.description')}
@@ -260,25 +260,25 @@ export default function ServicesSection() {
         style={{ zIndex: 4 }}
         aria-label="Drone Footage Services"
       >
-        {/* Blob organico bianco - forma fluida in basso a sinistra */}
+        {/* Blob organico bianco - scorre dallo sfondo ed entra nell'immagine */}
         <div
           className="absolute bottom-0 left-0 z-10"
           style={{
-            width: 'clamp(240px, 45vw, 550px)',
-            height: 'clamp(200px, 40vh, 450px)',
+            width: 'clamp(220px, 60vw, 420px)',
+            height: 'clamp(90px, 25vh, 350px)',
             background: '#ffffff',
-            borderRadius: '65% 35% 72% 28% / 31% 69% 31% 69%',
+            borderRadius: '20% 80% 0% 0% / 42% 58% 0% 0%',
           }}
         >
-          <div className="p-6 md:p-10 lg:p-12 h-full flex flex-col justify-end pb-8 md:pb-16">
+          <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-end pb-5 md:pb-12">
             <h2
-              className="text-2xl md:text-4xl lg:text-5xl font-light text-black tracking-tight leading-tight mb-3 md:mb-4"
+              className="text-[40px] md:text-3xl lg:text-4xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('dronefootage.title')}
             </h2>
             <p
-              className="text-xs md:text-base lg:text-lg text-black/80 leading-relaxed font-light"
+              className="text-[16px] md:text-sm lg:text-base text-black/80 leading-snug md:leading-relaxed font-light"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('dronefootage.description')}
