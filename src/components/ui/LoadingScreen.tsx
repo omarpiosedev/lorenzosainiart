@@ -145,6 +145,15 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
       style={{
         boxShadow: '0 -20px 40px rgba(255, 255, 255, 0.8) inset',
         overflow: 'hidden', // ✅ Prevent polaroid photos from causing horizontal scroll on mobile
+        // CRITICAL iOS FIX: Respect safe areas (notch/Dynamic Island)
+        // This prevents content from showing through in the safe area regions
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)',
+        // Additional isolation to prevent content bleed-through
+        isolation: 'isolate',
+        willChange: 'transform, filter',
       }}
     >
       {/* Bottom fade gradient - creates soft entrance effect */}
@@ -177,7 +186,6 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               fill
               sizes="170px"
               className="object-cover"
-              priority
             />
           </div>
         </div>
@@ -191,7 +199,6 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               fill
               sizes="170px"
               className="object-cover"
-              priority
             />
           </div>
         </div>
@@ -205,7 +212,6 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               fill
               sizes="170px"
               className="object-cover"
-              priority
             />
           </div>
         </div>
@@ -219,7 +225,6 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               fill
               sizes="170px"
               className="object-cover"
-              priority
             />
           </div>
         </div>
@@ -233,7 +238,6 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               fill
               sizes="170px"
               className="object-cover"
-              priority
             />
           </div>
         </div>

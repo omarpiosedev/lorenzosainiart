@@ -48,10 +48,15 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
         return;
       }
 
+      // CRITICAL iOS FIX: Kill all ScrollTrigger instances before page transition
+      // This prevents ScrollTrigger from interfering with navigation animations
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+
       // Animate new page entering from bottom - VERY SMOOTH
       if (smoothContentRef.current) {
-        // Reset scroll position to top for new page
-        window.scrollTo(0, 0);
+        // CRITICAL: Reset scroll position to top BEFORE animation for new page
+        // This ensures consistent scroll state across page transitions
+        window.scrollTo({ top: 0, behavior: 'instant' });
 
         gsap.fromTo(
           smoothContentRef.current,
@@ -65,6 +70,13 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
             duration: 0.9, // Smooth, not too fast
             ease: 'expo.out', // Very smooth exponential easing
             overwrite: true, // Cancel any previous animations
+            onComplete: () => {
+              // CRITICAL iOS FIX: Refresh ScrollTrigger after page transition completes
+              // This allows new page's ScrollTrigger instances to recalculate with correct layout
+              setTimeout(() => {
+                ScrollTrigger.refresh();
+              }, 50);
+            },
           },
         );
       }
