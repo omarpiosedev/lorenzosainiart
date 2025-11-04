@@ -34,12 +34,22 @@ export default function HomeClient({ children }: HomeClientProps) {
   const loadingScreenRef = useRef<LoadingScreenHandle>(null);
   const [mounted, setMounted] = useState(false);
   const previousScrollY = useRef<number>(0);
-  const pathname = usePathname(); // Track route changes
+  const pathname = usePathname();
+
+  // CRITICAL: Navigation counter ensures unique key on EVERY navigation
+  // pathname alone doesn't work because returning to same route = same key
+  const [navigationKey, setNavigationKey] = useState(0);
 
   // Ensure we're on the client before using portal
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Increment navigation key whenever pathname changes
+  // This ensures component remounts EVERY time, even when returning to same route
+  useEffect(() => {
+    setNavigationKey(prev => prev + 1);
+  }, [pathname]);
 
   // Show loading screen on mount, then hide it after animation
   useEffect(() => {
@@ -111,10 +121,11 @@ export default function HomeClient({ children }: HomeClientProps) {
         <LoadingScreen ref={loadingScreenRef} />,
         document.body,
       )}
-      {/* CRITICAL: key={pathname} forces remount when navigating back to home
-          This ensures GSAP animations restart in production with React Compiler.
-          Without this, React Compiler memoizes the component and animations freeze. */}
-      <div key={pathname}>
+      {/* CRITICAL: key={navigationKey} forces remount on EVERY navigation
+          pathname alone doesn't work because returning to same route = same key.
+          navigationKey increments on every pathname change, ensuring remount.
+          This fixes GSAP animations not restarting in production. */}
+      <div key={navigationKey}>
         {children}
       </div>
     </>
