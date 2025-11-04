@@ -118,8 +118,8 @@ export const CameraIris = ({ ref, color = '#060010', duration = 0.6, onTransitio
           left: '50%',
           top: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '200vmax',
-          height: '200vmax',
+          width: '250vmin', // ✅ Changed from 200vmax - uses minimum viewport dimension to prevent overflow
+          height: '250vmin', // ✅ 250vmin covers full screen diagonal on any orientation without horizontal scroll
         }}
       >
         <g ref={shuttersRef}>

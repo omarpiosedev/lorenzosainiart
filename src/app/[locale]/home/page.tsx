@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
 import { getBaseUrl } from '@/utils/AppConfig';
+import HomeClient from './HomeClient';
 import BenefitsSection from './sections/BenefitsSection';
 import ContactCTASection from './sections/ContactCTASection';
 import FAQSection from './sections/FAQSection';
@@ -72,50 +73,53 @@ export default async function HomePage({ params }: HomePageProps) {
   setRequestLocale(locale);
 
   return (
-    <main
-      className="min-h-screen"
-      style={{
-        margin: 0,
-        padding: 0,
-        paddingLeft: 0,
-        paddingRight: 0,
-        width: '100vw',
-        position: 'relative',
-        left: 0,
-        right: 0,
-      }}
-    >
-      {/* Hero section loads immediately - critical for LCP */}
-      <HeroHome />
+    <HomeClient>
+      <main
+        className="min-h-screen"
+        style={{
+          margin: 0,
+          padding: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          width: '100%', // ✅ Changed from 100vw to fix mobile horizontal scroll
+          maxWidth: '100%',
+          position: 'relative',
+          left: 0,
+          right: 0,
+        }}
+      >
+        {/* Hero section loads immediately - critical for LCP */}
+        <HeroHome />
 
-      {/* Below-the-fold sections use Suspense for progressive rendering */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <PhilosophyGallerySection />
-      </Suspense>
+        {/* Below-the-fold sections use Suspense for progressive rendering */}
+        <Suspense fallback={<SectionSkeleton />}>
+          <PhilosophyGallerySection />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <ServicesSection />
-      </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <ServicesSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <BenefitsSection />
-      </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <BenefitsSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <PortfolioSection />
-      </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <PortfolioSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <TestimonialsSection />
-      </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <TestimonialsSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <FAQSection />
-      </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <FAQSection />
+        </Suspense>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <ContactCTASection />
-      </Suspense>
-    </main>
+        <Suspense fallback={<SectionSkeleton />}>
+          <ContactCTASection />
+        </Suspense>
+      </main>
+    </HomeClient>
   );
 }

@@ -58,13 +58,18 @@ export function FocusFrame({
     });
 
     // Animazione di espansione dell'obiettivo + messa a fuoco
+    // Margini responsivi: mobile attaccato al testo, desktop con spazio
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+    const margin = isMobile ? 0 : 16;
+    const offset = isMobile ? 0 : 8;
+
     const tl = gsap.timeline({ delay });
 
     tl.to(frameRef.current, {
-      width: finalWidth + 24, // +24 per i margini degli angoli
-      height: finalHeight + 24,
-      left: '-12px',
-      top: '-12px',
+      width: finalWidth + margin,
+      height: finalHeight + margin,
+      left: `-${offset}px`,
+      top: `-${offset}px`,
       x: 0,
       y: 0,
       duration: animationDuration,
@@ -105,63 +110,47 @@ export function FocusFrame({
         }}
       >
         <span
-          className="corner top-left"
+          className="corner top-0 left-4 md:-top-1 md:-left-1"
           style={{
             position: 'absolute',
-            width: '1.5rem',
-            height: '1.5rem',
-            border: `3px solid ${borderColor}`,
-            filter: `drop-shadow(0px 0px 6px ${borderColor})`,
-            borderRadius: '3px',
-            top: '-12px',
-            left: '-12px',
-            borderRight: 'none',
-            borderBottom: 'none',
+            width: '16px',
+            height: '16px',
+            borderLeft: `3px solid ${borderColor}`,
+            borderTop: `3px solid ${borderColor}`,
+            filter: `drop-shadow(0px 0px 10px ${borderColor})`,
           }}
         />
         <span
-          className="corner top-right"
+          className="corner top-0 right-5 md:-top-1 md:-right-1"
           style={{
             position: 'absolute',
-            width: '1.5rem',
-            height: '1.5rem',
-            border: `3px solid ${borderColor}`,
-            filter: `drop-shadow(0px 0px 6px ${borderColor})`,
-            borderRadius: '3px',
-            top: '-12px',
-            right: '-12px',
-            borderLeft: 'none',
-            borderBottom: 'none',
+            width: '16px',
+            height: '16px',
+            borderRight: `3px solid ${borderColor}`,
+            borderTop: `3px solid ${borderColor}`,
+            filter: `drop-shadow(0px 0px 10px ${borderColor})`,
           }}
         />
         <span
-          className="corner bottom-left"
+          className="corner bottom-0 left-4 md:-bottom-1 md:-left-1"
           style={{
             position: 'absolute',
-            width: '1.5rem',
-            height: '1.5rem',
-            border: `3px solid ${borderColor}`,
-            filter: `drop-shadow(0px 0px 6px ${borderColor})`,
-            borderRadius: '3px',
-            bottom: '-12px',
-            left: '-12px',
-            borderRight: 'none',
-            borderTop: 'none',
+            width: '16px',
+            height: '16px',
+            borderLeft: `3px solid ${borderColor}`,
+            borderBottom: `3px solid ${borderColor}`,
+            filter: `drop-shadow(0px 0px 10px ${borderColor})`,
           }}
         />
         <span
-          className="corner bottom-right"
+          className="corner bottom-0 right-5 md:-bottom-1 md:-right-1"
           style={{
             position: 'absolute',
-            width: '1.5rem',
-            height: '1.5rem',
-            border: `3px solid ${borderColor}`,
-            filter: `drop-shadow(0px 0px 6px ${borderColor})`,
-            borderRadius: '3px',
-            bottom: '-12px',
-            right: '-12px',
-            borderLeft: 'none',
-            borderTop: 'none',
+            width: '16px',
+            height: '16px',
+            borderRight: `3px solid ${borderColor}`,
+            borderBottom: `3px solid ${borderColor}`,
+            filter: `drop-shadow(0px 0px 10px ${borderColor})`,
           }}
         />
       </div>

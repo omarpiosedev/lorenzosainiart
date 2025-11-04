@@ -144,6 +144,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
       aria-label="Loading"
       style={{
         boxShadow: '0 -20px 40px rgba(255, 255, 255, 0.8) inset',
+        overflow: 'hidden', // ✅ Prevent polaroid photos from causing horizontal scroll on mobile
       }}
     >
       {/* Bottom fade gradient - creates soft entrance effect */}

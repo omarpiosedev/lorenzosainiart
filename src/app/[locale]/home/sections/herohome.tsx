@@ -204,9 +204,12 @@ export default function HeroHome() {
       return;
     }
 
+    // Parallax ridotto su mobile per miglior leggibilità
+    const parallaxAmount = breakpoint === 'mobile' ? -50 : -150;
+
     // Parallax semplice: muove l'immagine verso l'alto mentre si scrolla giù
     gsap.to(sposiRef.current, {
-      y: -150, // movimento verso l'alto in pixel
+      y: parallaxAmount, // -50px su mobile, -150px su tablet/desktop
       ease: 'none', // movimento lineare per effetto parallax naturale
       scrollTrigger: {
         trigger: containerRef.current,
@@ -648,14 +651,15 @@ export default function HeroHome() {
               delay={2.9}
             >
               <h1
-                className="font-bold text-white leading-none tracking-wider text-center"
+                className="font-bold text-white leading-tight tracking-wider text-center px-2"
                 style={{
                   fontFamily: 'Lavener',
                   fontSize: breakpoint === 'desktop'
                     ? 'min(calc((100vw - 32px) / 10), calc(100vh * 0.45))'
-                    : 'min(calc((100vw - 6px) / (19 * 0.52)), calc(100vh * 0.15))',
-                  whiteSpace: 'nowrap',
-                  lineHeight: 1,
+                    : 'min(calc((100vw - 40px) / 9), calc(100vh * 0.12))',
+                  whiteSpace: breakpoint === 'desktop' ? 'nowrap' : 'normal',
+                  lineHeight: breakpoint === 'desktop' ? 1 : 1.1,
+                  maxWidth: '100%',
                 }}
               >
                 LORENZO SAINI'S ART

@@ -64,7 +64,8 @@ export default function PhilosophyText() {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100vw',
+        width: '100%', // ✅ Changed from 100vw to fix mobile horizontal scroll
+        maxWidth: '100%',
         height: '100vh',
         transform: 'translate3d(0, 0, 0)',
         backfaceVisibility: 'hidden',

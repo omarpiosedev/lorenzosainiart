@@ -6,6 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 
+import { ShimmerLabel } from '@/components/ui';
+
 // Register GSAP plugins
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -85,7 +87,7 @@ export default function ServicesSection() {
 
       const tl = gsap.timeline({
         defaults: {
-          ease: 'power3.out',
+          ease: 'power2.out',
         },
         scrollTrigger: {
           trigger: sectionRefs.current[0],
@@ -99,41 +101,41 @@ export default function ServicesSection() {
       tl.to(labelRef.current, {
         opacity: 1,
         y: 0,
-        duration: 0.6,
+        duration: 0.4,
       })
         .to(
           titleRef.current,
           {
             opacity: 1,
             y: 0,
-            duration: 1,
+            duration: 0.6,
           },
-          '-=0.3',
+          '-=0.2',
         )
         .to(
           subtitleRef.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.5,
           },
-          '-=0.5',
+          '-=0.3',
         )
         .to(
           servicesListRef.current,
           {
             opacity: 1,
-            duration: 0.6,
+            duration: 0.4,
           },
-          '-=0.3',
+          '-=0.2',
         )
         .to(
           serviceItemsRef.current,
           {
             opacity: 1,
             y: 0,
-            stagger: 0.1,
-            duration: 0.7,
+            stagger: 0.08,
+            duration: 0.5,
           },
           '-=0.4',
         );
@@ -200,14 +202,9 @@ export default function ServicesSection() {
               <div className="space-y-10">
                 {/* Label */}
                 <div ref={labelRef}>
-                  <span
-                    className="text-xs font-medium tracking-[0.3em] uppercase text-black/50"
-                    style={{
-                      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                    }}
-                  >
+                  <ShimmerLabel className="text-xs font-medium tracking-wide uppercase">
                     {t('servicesLabel')}
-                  </span>
+                  </ShimmerLabel>
                 </div>
 
                 {/* Title - Large */}
@@ -261,17 +258,17 @@ export default function ServicesSection() {
               </div>
 
               {/* Right Column - Services List */}
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center -mt-8 lg:mt-0">
                 {/* Divider Line */}
                 <div
                   ref={servicesListRef}
-                  className="w-16 h-px bg-black/20 mb-8"
+                  className="w-16 h-px bg-black/20 mb-6 lg:mb-8"
                   aria-hidden="true"
                 />
 
                 {/* Services Title */}
                 <h2
-                  className="text-sm font-medium tracking-wide uppercase text-black/70 mb-10"
+                  className="text-sm font-medium tracking-wide uppercase text-black/70 mb-6 lg:mb-10"
                   style={{
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
@@ -280,7 +277,7 @@ export default function ServicesSection() {
                 </h2>
 
                 {/* Services List - Numbered */}
-                <div className="space-y-8">
+                <div className="space-y-4 lg:space-y-8">
                   {[0, 1, 2].map(index => (
                     <div key={index} ref={setServiceItemRef(index)} className="flex items-start gap-6">
                       {/* Number */}

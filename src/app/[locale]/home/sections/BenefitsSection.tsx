@@ -6,7 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lottie from 'lottie-react';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
+
 import { TrustedUsers } from '@/components/lightswind/trustedusers';
+import { ShimmerLabel } from '@/components/ui';
 import { Compare } from '@/components/ui/compare';
 import clockAnimation from '../../../../../public/assets/animations/12-hr-clock.json';
 
@@ -233,9 +235,9 @@ export default function BenefitsSection() {
             height: '3.98vh', // 43px / 1080px
           }}
         >
-          <div className="inline-flex items-center justify-center w-full h-full bg-gray-100 border border-gray-200 rounded-full text-sm font-medium text-gray-700 tracking-wide">
+          <ShimmerLabel className="w-full h-full text-sm font-medium tracking-wide">
             {t('benefitsLabel')}
-          </div>
+          </ShimmerLabel>
         </div>
 
         {/* Title - Proportional scaling */}
@@ -686,9 +688,9 @@ export default function BenefitsSection() {
         <div className="flex flex-col items-center justify-start pt-16 sm:pt-20 lg:pt-24">
 
           {/* Benefits Button - Mobile/Tablet */}
-          <div className="inline-flex items-center justify-center px-6 py-3 bg-gray-100 border border-gray-200 rounded-full text-sm font-medium text-gray-700 tracking-wide mb-8 sm:mb-12">
+          <ShimmerLabel className="px-6 py-3 text-sm font-medium tracking-wide mb-8 sm:mb-12">
             {t('benefitsLabel')}
-          </div>
+          </ShimmerLabel>
 
           {/* Title - Mobile/Tablet */}
           <h2

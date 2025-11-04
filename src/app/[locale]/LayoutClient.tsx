@@ -1,17 +1,14 @@
 'use client';
 
-import type { CameraIrisHandle } from '@/components/ui/CameraIris';
-import type { LoadingScreenHandle } from '@/components/ui/LoadingScreen';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState } from 'react';
-import { CameraIris, LoadingScreen } from '@/components/ui';
+import { usePathname } from 'next/navigation';
+import { useRef, useState } from 'react';
 import Footer from '@/components/ui/Footer';
 import SettingsModal from '@/components/ui/SettingsModal';
-import { usePageTransition } from '@/hooks/usePageTransition';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP);
@@ -28,27 +25,57 @@ type LayoutClientProps = {
 
 const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const irisRef = useRef<CameraIrisHandle>(null);
-  const loadingScreenRef = useRef<LoadingScreenHandle>(null);
+  const pathname = usePathname();
+  const previousPathnameRef = useRef<string | null>(null);
+  const isInitialMountRef = useRef(true);
 
   // ScrollSmoother refs
   const smoothWrapperRef = useRef<HTMLDivElement>(null);
   const smoothContentRef = useRef<HTMLDivElement>(null);
 
-  // Enable page transitions with Camera Iris
-  usePageTransition(irisRef);
+  // Page transition: animate content on route change
+  useGSAP(
+    () => {
+      // Skip animation on initial mount
+      if (isInitialMountRef.current) {
+        isInitialMountRef.current = false;
+        previousPathnameRef.current = pathname;
+        return;
+      }
 
-  // Hide loading screen after initial mount
-  useEffect(() => {
-    const hideLoadingScreen = async () => {
-      // Wait for entrance animation (~2.8s), then exit starts immediately
-      // Total animation: ~4 seconds (entrance + exit)
-      await new Promise(resolve => setTimeout(resolve, 2800));
-      await loadingScreenRef.current?.hide();
-    };
+      // Skip if pathname hasn't changed
+      if (pathname === previousPathnameRef.current) {
+        return;
+      }
 
-    hideLoadingScreen();
-  }, []);
+      // Animate new page entering from bottom - VERY SMOOTH
+      if (smoothContentRef.current) {
+        // Reset scroll position to top for new page
+        window.scrollTo(0, 0);
+
+        gsap.fromTo(
+          smoothContentRef.current,
+          {
+            yPercent: 100, // Start below viewport
+            opacity: 0.8,
+          },
+          {
+            yPercent: 0, // End at normal position
+            opacity: 1,
+            duration: 0.9, // Smooth, not too fast
+            ease: 'expo.out', // Very smooth exponential easing
+            overwrite: true, // Cancel any previous animations
+          },
+        );
+      }
+
+      previousPathnameRef.current = pathname;
+    },
+    {
+      dependencies: [pathname],
+      scope: smoothWrapperRef,
+    },
+  );
 
   // Initialize ScrollSmoother for smooth scrolling experience
   useGSAP(
@@ -85,16 +112,22 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
 
   return (
     <>
-      {/* Loading Screen - Shown on initial page load */}
-      <LoadingScreen ref={loadingScreenRef} />
-
-      {/* Camera Iris Transition - Rendered at root level for global page transitions */}
-      <CameraIris ref={irisRef} color="#060010" duration={0.6} />
-
       {/* Main Content Wrapper with Smooth Scrolling */}
-      <div id="smooth-wrapper" ref={smoothWrapperRef}>
-        <div id="smooth-content" ref={smoothContentRef}>
-          {/* Page Content */}
+      <div
+        id="smooth-wrapper"
+        ref={smoothWrapperRef}
+        style={{ overflow: 'hidden', position: 'relative' }}
+      >
+        <div
+          id="smooth-content"
+          ref={smoothContentRef}
+          style={{
+            backgroundColor: '#ffffff',
+            minHeight: '100vh',
+            position: 'relative',
+          }}
+        >
+          {/* Page Content - Animated on route change */}
           {children}
 
           {/* Footer - Inside smooth-content so it scrolls with the page */}

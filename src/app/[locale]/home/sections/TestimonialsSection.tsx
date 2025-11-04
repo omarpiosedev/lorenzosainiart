@@ -5,6 +5,8 @@ import { gsap } from 'gsap';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 
+import { ShimmerLabel } from '@/components/ui';
+
 // Register GSAP plugins
 gsap.registerPlugin(useGSAP);
 
@@ -153,7 +155,7 @@ export default function TestimonialsSection() {
 
   return (
     <>
-      <div data-section="testimonials" className="relative bg-white min-h-screen">
+      <div data-section="testimonials" className="relative bg-white xl:min-h-screen">
         {/* Desktop Layout */}
         <div className="hidden xl:block">
           {/* Testimonials Button - Proportional scaling */}
@@ -167,9 +169,9 @@ export default function TestimonialsSection() {
               height: '3.98vh', // 43px / 1080px (stessa dimensione del pulsante benefits)
             }}
           >
-            <div className="inline-flex items-center justify-center w-full h-full bg-gray-100 border border-gray-200 rounded-full text-sm font-medium text-gray-700 tracking-wide">
+            <ShimmerLabel className="w-full h-full text-sm font-medium tracking-wide">
               {t('testimonialsLabel')}
-            </div>
+            </ShimmerLabel>
           </div>
 
           {/* Title - Proportional scaling */}
@@ -222,7 +224,8 @@ export default function TestimonialsSection() {
             style={{
               top: '50vh',
               left: '0',
-              width: '100vw',
+              width: '100%', // ✅ Changed from 100vw to fix mobile horizontal scroll
+              maxWidth: '100%',
               height: '380px',
             }}
           >
@@ -270,13 +273,13 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Mobile/Tablet responsive layout */}
-        <div className="xl:hidden min-h-screen px-4 sm:px-6 lg:px-8">
+        <div className="xl:hidden px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 lg:pb-24">
           <div className="flex flex-col items-center justify-start pt-24 sm:pt-32 lg:pt-40">
 
             {/* Testimonials Button - Mobile/Tablet */}
-            <div className="inline-flex items-center justify-center px-6 py-3 bg-gray-100 border border-gray-200 rounded-full text-sm font-medium text-gray-700 tracking-wide mb-8 sm:mb-12">
+            <ShimmerLabel className="px-6 py-3 text-sm font-medium tracking-wide mb-8 sm:mb-12">
               {t('testimonialsLabel')}
-            </div>
+            </ShimmerLabel>
 
             {/* Title - Mobile/Tablet */}
             <h2

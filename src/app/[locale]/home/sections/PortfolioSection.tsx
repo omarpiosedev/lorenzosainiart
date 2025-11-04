@@ -6,6 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 
+import { ShimmerLabel } from '@/components/ui';
+
 // Register GSAP plugins
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -325,9 +327,9 @@ export default function PortfolioSection() {
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div ref={headerRef} className="mb-12 md:mb-16 text-center">
-            <div className="inline-flex items-center justify-center px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-medium text-gray-700 tracking-wide mb-6">
+            <ShimmerLabel className="text-xs font-medium tracking-wide mb-6">
               {t('portfolioLabel')}
-            </div>
+            </ShimmerLabel>
             <h2
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight mb-4"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
