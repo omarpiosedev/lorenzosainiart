@@ -95,13 +95,14 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
       // Detect mobile/tablet for optimized smooth scrolling
       const isMobile = window.matchMedia('(max-width: 1023px)').matches;
 
-      // Disable ScrollSmoother on mobile - native touch scrolling performs better
-      // Mobile devices have optimized native scroll and ScrollSmoother causes:
-      // - iOS address bar glitching with normalizeScroll
-      // - Touch device freezes when normalizeScroll + smoothTouch are combined
-      // - Performance issues on older devices (iPhone 6s, Galaxy Tab A)
+      // CRITICAL: Enable normalizeScroll on mobile to fix ScrollTrigger pin stuttering
+      // This fixes iOS Safari bugs that cause pinned elements to "jump" or "stutter"
+      // during scrolling. normalizeScroll() is GSAP's workaround for browser bugs.
       if (isMobile) {
-        return;
+        ScrollTrigger.normalizeScroll(true);
+        return () => {
+          ScrollTrigger.normalizeScroll(false);
+        };
       }
 
       // Desktop only: create smooth scrolling experience
@@ -110,7 +111,7 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
         content: smoothContentRef.current!,
         smooth: 1.2,
         effects: true, // Enable parallax effects on desktop
-        normalizeScroll: false, // Removed to prevent conflicts
+        normalizeScroll: false, // Keep disabled on desktop to prevent conflicts with ScrollSmoother
       });
 
       return () => {
