@@ -229,6 +229,32 @@ export default function HeroHome() {
     revertOnUpdate: true, // ✅ Revert e re-esegui quando mountKey/breakpoint cambiano
   });
 
+  // Parallax effect - nuvola si muove verso il basso quando si scrolla giù (opposto agli sposi)
+  useGSAP(() => {
+    if (!isReady || !cloudRef.current || !containerRef.current) {
+      return;
+    }
+
+    // Parallax inverso: movimento verso il basso (positivo)
+    const parallaxAmount = breakpoint === 'mobile' ? 50 : 150;
+
+    // Parallax inverso: muove la nuvola verso il basso mentre si scrolla giù
+    gsap.to(cloudRef.current, {
+      y: parallaxAmount, // +50px su mobile, +150px su tablet/desktop (opposto agli sposi)
+      ease: 'none', // movimento lineare per effetto parallax naturale
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top top', // inizia quando la sezione hero entra in viewport
+        end: 'bottom top', // finisce quando la sezione hero esce dalla viewport
+        scrub: true, // sincronizza con lo scroll
+      },
+    });
+  }, {
+    dependencies: [isReady, breakpoint, mountKey],
+    scope: containerRef,
+    revertOnUpdate: true, // ✅ Revert e re-esegui quando mountKey/breakpoint cambiano
+  });
+
   // Ottieni dimensioni base del breakpoint corrente
   const getBaseDimensions = () => {
     switch (breakpoint) {
@@ -357,7 +383,7 @@ export default function HeroHome() {
           fill
           priority
           fetchPriority="high"
-          quality={65}
+          quality={75}
           onLoad={() => {
             // Notifica il resource loader quando l'immagine è caricata
             if (typeof window !== 'undefined' && (window as any).markResourceLoaded) {
@@ -378,7 +404,7 @@ export default function HeroHome() {
           transform: `scale(${scale * 1.02})`,
           transformOrigin: 'center center',
           left: '50%',
-          top: '50%',
+          top: '54%',
           marginLeft: `-${baseWidth / 2}px`,
           marginTop: `-${baseHeight / 2}px`,
           overflow: 'visible',
@@ -398,20 +424,21 @@ export default function HeroHome() {
             src="/assets/images/cloud.webp"
             alt="Clouds"
             fill
-            sizes="(min-width: 1024px) 50vw, (min-width: 768px) 70vw, 150vw"
+            sizes="(min-width: 1024px) 50vw, (min-width: 760px) 70vw, 100vw"
             priority
             fetchPriority="high"
+            quality={85}
             onLoad={() => {
               // Notifica il resource loader quando l'immagine è caricata
               if (typeof window !== 'undefined' && (window as any).markResourceLoaded) {
                 (window as any).markResourceLoaded('hero-cloud');
               }
             }}
-            className="object-cover"
+            className="object-contain"
             style={{
               zIndex: 1,
-              // Scala diretta per breakpoint
-              transform: breakpoint === 'mobile' ? 'scale(0.8)' : breakpoint === 'tablet' ? 'scale(0.7)' : 'scale(0.6)',
+              // Scala responsive per ingrandire la nuvola
+              transform: breakpoint === 'mobile' ? 'scale(1.5)' : breakpoint === 'tablet' ? 'scale(1.3)' : 'scale(0.55)',
             }}
           />
         </div>
@@ -426,13 +453,13 @@ export default function HeroHome() {
           {/* Sposi - posizione diversa per breakpoint */}
           <Image
             ref={sposiRef}
-            src="/assets/images/sposi.webp"
+            src="/assets/images/sposi-original.webp"
             alt="Couple"
             width={650}
             height={800}
             priority
             fetchPriority="high"
-            quality={90}
+            quality={80}
             onLoad={() => {
               // Notifica il resource loader quando l'immagine è caricata
               if (typeof window !== 'undefined' && (window as any).markResourceLoaded) {
