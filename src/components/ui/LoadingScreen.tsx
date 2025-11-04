@@ -185,6 +185,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               alt=""
               fill
               sizes="170px"
+              priority
               className="object-cover"
             />
           </div>
@@ -198,6 +199,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               alt=""
               fill
               sizes="170px"
+              priority
               className="object-cover"
             />
           </div>
@@ -211,6 +213,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               alt=""
               fill
               sizes="170px"
+              priority
               className="object-cover"
             />
           </div>
@@ -224,6 +227,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               alt=""
               fill
               sizes="170px"
+              priority
               className="object-cover"
             />
           </div>
@@ -237,6 +241,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               alt=""
               fill
               sizes="170px"
+              priority
               className="object-cover"
             />
           </div>

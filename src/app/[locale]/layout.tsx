@@ -96,7 +96,12 @@ export default async function RootLayout(props: {
   preload('/assets/fonts/LAVENER.ttf', { as: 'font', type: 'font/ttf', crossOrigin: 'anonymous' });
   preload('/assets/fonts/Effloresce It.otf', { as: 'font', type: 'font/opentype', crossOrigin: 'anonymous' });
 
-  // Critical images for LCP
+  // CRITICAL: LoadingScreen images - must load IMMEDIATELY on page load
+  // These are shown first thing when user lands on home page
+  preload('/assets/images/LogoNero.webp', { as: 'image', fetchPriority: 'high' });
+  preload('/assets/images/image1.webp', { as: 'image', fetchPriority: 'high' });
+  preload('/assets/images/image2.webp', { as: 'image', fetchPriority: 'high' });
+  preload('/assets/images/image3.webp', { as: 'image', fetchPriority: 'high' });
   preload('/assets/images/backgropund.webp', { as: 'image', fetchPriority: 'high' });
   preload('/assets/images/sposi.webp', { as: 'image', fetchPriority: 'high' });
 
