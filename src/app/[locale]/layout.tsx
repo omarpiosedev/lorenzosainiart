@@ -94,7 +94,6 @@ export default async function RootLayout(props: {
   // ✅ React 19: Preload critical resources for optimal performance
   // Fonts - browser will prioritize these for FOUT prevention
   preload('/assets/fonts/LAVENER.ttf', { as: 'font', type: 'font/ttf', crossOrigin: 'anonymous' });
-  preload('/assets/fonts/WILLG___.TTF', { as: 'font', type: 'font/ttf', crossOrigin: 'anonymous' });
   preload('/assets/fonts/Effloresce It.otf', { as: 'font', type: 'font/opentype', crossOrigin: 'anonymous' });
 
   // Critical images for LCP

@@ -5,9 +5,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev:spotlight": "npx @spotlightjs/spotlight",
     "dev:next": "next dev -H 0.0.0.0",
-    "dev": "run-p dev:*",
+    "dev": "npm run dev:next",
     "build:next": "next build",
     "build": "npm run build:next",
     "start": "next start",
@@ -27,7 +26,6 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "@spotlightjs/spotlight": "4.3.0",
     "@t3-oss/env-nextjs": "^0.13.8",
     "clsx": "^2.1.1",
     "gsap": "^3.13.0",

@@ -175,6 +175,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               src="/assets/images/image1.webp"
               alt=""
               fill
+              sizes="170px"
               className="object-cover"
               priority
             />
@@ -188,6 +189,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               src="/assets/images/image2.webp"
               alt=""
               fill
+              sizes="170px"
               className="object-cover"
               priority
             />
@@ -201,6 +203,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               src="/assets/images/image3.webp"
               alt=""
               fill
+              sizes="170px"
               className="object-cover"
               priority
             />
@@ -214,6 +217,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               src="/assets/images/backgropund.webp"
               alt=""
               fill
+              sizes="170px"
               className="object-cover"
               priority
             />
@@ -227,6 +231,7 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
               src="/assets/images/sposi.webp"
               alt=""
               fill
+              sizes="170px"
               className="object-cover"
               priority
             />

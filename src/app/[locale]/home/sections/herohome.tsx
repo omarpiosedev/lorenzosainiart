@@ -393,8 +393,8 @@ export default function HeroHome() {
             ref={cloudRef}
             src="/assets/images/cloud.webp"
             alt="Clouds"
-            width={1920}
-            height={1080}
+            fill
+            sizes="(min-width: 1024px) 50vw, (min-width: 768px) 60vw, 125vw"
             priority
             fetchPriority="high"
             onLoad={() => {
@@ -403,7 +403,7 @@ export default function HeroHome() {
                 (window as any).markResourceLoaded('hero-cloud');
               }
             }}
-            className="absolute w-full h-auto object-cover"
+            className="object-cover"
             style={{
               zIndex: 1,
               transform: breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)',

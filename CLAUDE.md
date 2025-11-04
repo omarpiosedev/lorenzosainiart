@@ -115,8 +115,7 @@ Portfolio website for creative work (photography, video, art) with multi-languag
 
 ```bash
 # Development
-npm run dev              # Dev server + Spotlight (default port 3000)
-npm run dev:next         # Next.js only (no Spotlight)
+npm run dev              # Dev server (default port 3000)
 
 # Build & Test
 npm run build            # Production build
@@ -157,7 +156,7 @@ src/
 ## Styling Rules
 
 **Custom Fonts** (in `/public/assets/fonts/`):
-- Lavener (primary), Will (secondary), Effloresce It (decorative)
+- Lavener (primary), Effloresce It (decorative)
 
 **Fluid Design Tokens** (defined in `global.css`):
 - Typography: `--text-sm` to `--text-4xl`
