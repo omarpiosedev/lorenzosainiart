@@ -3,6 +3,7 @@
 import type { LoadingScreenHandle } from '@/components/ui/LoadingScreen';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { LoadingScreen } from '@/components/ui';
@@ -33,6 +34,7 @@ export default function HomeClient({ children }: HomeClientProps) {
   const loadingScreenRef = useRef<LoadingScreenHandle>(null);
   const [mounted, setMounted] = useState(false);
   const previousScrollY = useRef<number>(0);
+  const pathname = usePathname(); // Track route changes
 
   // Ensure we're on the client before using portal
   useEffect(() => {
@@ -109,7 +111,12 @@ export default function HomeClient({ children }: HomeClientProps) {
         <LoadingScreen ref={loadingScreenRef} />,
         document.body,
       )}
-      {children}
+      {/* CRITICAL: key={pathname} forces remount when navigating back to home
+          This ensures GSAP animations restart in production with React Compiler.
+          Without this, React Compiler memoizes the component and animations freeze. */}
+      <div key={pathname}>
+        {children}
+      </div>
     </>
   );
 }
