@@ -15,6 +15,7 @@ export default function HeroHome() {
   const [breakpoint, setBreakpoint] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [initialViewport, setInitialViewport] = useState<{ width: number; height: number } | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [mountKey, setMountKey] = useState(0); // Track quando il componente viene "visitato"
 
   // Refs per le animazioni
   const containerRef = useRef<HTMLElement>(null);
@@ -25,6 +26,12 @@ export default function HeroHome() {
   const signatureRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
   const tl = useRef<gsap.core.Timeline | undefined>(undefined);
+
+  // Incrementa mountKey ogni volta che il componente viene montato/visitato
+  // Questo forza le animazioni GSAP a ripartire grazie a revertOnUpdate
+  useEffect(() => {
+    setMountKey(prev => prev + 1);
+  }, []);
 
   useEffect(() => {
     const updateScale = () => {
@@ -111,6 +118,8 @@ export default function HeroHome() {
   }, [initialViewport]);
 
   // Animazioni quando la pagina è pronta - usando useGSAP per cleanup automatico
+  // CRITICAL: revertOnUpdate + mountKey garantiscono che le animazioni ripartano
+  // dopo navigazione portfolio -> home (fix per animazioni "freezate")
   useGSAP(() => {
     if (!isReady) {
       return;
@@ -121,7 +130,7 @@ export default function HeroHome() {
 
     // === NUVOLA E SPOSI ===
     // Appaiono immediatamente nelle posizioni finali (nessuna animazione)
-    const cloudOriginalTransform = breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)';
+    // Nuvola: usa object-contain senza scale, si adatta automaticamente
     const sposiOriginalTransform = breakpoint === 'mobile'
       ? 'translate(15px, 60px)'
       : breakpoint === 'tablet'
@@ -131,10 +140,6 @@ export default function HeroHome() {
     gsap.set([cloudRef.current, sposiRef.current], {
       opacity: 1,
       filter: 'blur(0px)',
-    });
-
-    gsap.set(cloudRef.current, {
-      transform: cloudOriginalTransform,
     });
 
     gsap.set(sposiRef.current, {
@@ -193,9 +198,9 @@ export default function HeroHome() {
         ease: 'power1.out', // Easing più graduale
       }, '+=0.5'); // 2.2s + 0.5s = 2.7s timeline = 2.9s reale (inizia poco dopo loading screen)
   }, {
-    dependencies: [isReady, breakpoint],
+    dependencies: [isReady, breakpoint, mountKey],
     scope: containerRef,
-    revertOnUpdate: true, // Cleanup automatico quando breakpoint cambia
+    revertOnUpdate: true, // ✅ Revert e re-esegui quando mountKey/breakpoint cambiano
   });
 
   // Parallax effect - sposi si muovono verso l'alto quando si scrolla giù
@@ -219,9 +224,9 @@ export default function HeroHome() {
       },
     });
   }, {
-    dependencies: [isReady, breakpoint],
+    dependencies: [isReady, breakpoint, mountKey],
     scope: containerRef,
-    revertOnUpdate: true,
+    revertOnUpdate: true, // ✅ Revert e re-esegui quando mountKey/breakpoint cambiano
   });
 
   // Ottieni dimensioni base del breakpoint corrente
@@ -380,12 +385,11 @@ export default function HeroHome() {
           zIndex: 5,
         }}
       >
-        {/* Contenitore per nuvola e sposi */}
+        {/* Contenitore per nuvola - dimensioni controllate per breakpoint */}
         <div
           className="absolute inset-0 flex items-center justify-center"
           style={{
-            overflow: 'hidden',
-            clipPath: 'inset(0)',
+            overflow: 'visible',
           }}
         >
           {/* Cloud layer */}
@@ -394,7 +398,7 @@ export default function HeroHome() {
             src="/assets/images/cloud.webp"
             alt="Clouds"
             fill
-            sizes="(min-width: 1024px) 50vw, (min-width: 768px) 60vw, 125vw"
+            sizes="(min-width: 1024px) 50vw, (min-width: 768px) 70vw, 150vw"
             priority
             fetchPriority="high"
             onLoad={() => {
@@ -406,10 +410,19 @@ export default function HeroHome() {
             className="object-cover"
             style={{
               zIndex: 1,
-              transform: breakpoint === 'desktop' ? 'scale(0.5)' : breakpoint === 'tablet' ? 'scale(0.6)' : 'scale(1.25)',
+              // Scala diretta per breakpoint
+              transform: breakpoint === 'mobile' ? 'scale(0.8)' : breakpoint === 'tablet' ? 'scale(0.7)' : 'scale(0.6)',
             }}
           />
+        </div>
 
+        {/* Contenitore separato per sposi - dimensioni indipendenti */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            overflow: 'visible',
+          }}
+        >
           {/* Sposi - posizione diversa per breakpoint */}
           <Image
             ref={sposiRef}
@@ -419,7 +432,7 @@ export default function HeroHome() {
             height={800}
             priority
             fetchPriority="high"
-            quality={70}
+            quality={90}
             onLoad={() => {
               // Notifica il resource loader quando l'immagine è caricata
               if (typeof window !== 'undefined' && (window as any).markResourceLoaded) {
