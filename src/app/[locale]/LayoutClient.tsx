@@ -96,10 +96,21 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
       const isMobile = window.matchMedia('(max-width: 1023px)').matches;
 
       // CRITICAL: Enable normalizeScroll on mobile to fix ScrollTrigger pin stuttering
+      // while maintaining smooth native scroll feel with optimized config.
       // This fixes iOS Safari bugs that cause pinned elements to "jump" or "stutter"
       // during scrolling. normalizeScroll() is GSAP's workaround for browser bugs.
       if (isMobile) {
-        ScrollTrigger.normalizeScroll(true);
+        ScrollTrigger.normalizeScroll({
+          allowNestedScroll: true, // Permette scroll nidificato per UX migliore
+          lockAxis: false, // Non blocca l'asse per scroll più naturale
+          type: 'touch', // Solo touch per mobile (no wheel/pointer)
+        });
+
+        // Configura ScrollTrigger per iOS Safari
+        ScrollTrigger.config({
+          ignoreMobileResize: true, // Ignora resize da address bar iOS
+        });
+
         return () => {
           ScrollTrigger.normalizeScroll(false);
         };
