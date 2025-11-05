@@ -32,6 +32,7 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   // ScrollSmoother refs
   const smoothWrapperRef = useRef<HTMLDivElement>(null);
   const smoothContentRef = useRef<HTMLDivElement>(null);
+  const smootherInstanceRef = useRef<ScrollSmoother | null>(null);
 
   // Page transition: animate content on route change
   useGSAP(
@@ -55,8 +56,13 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
       // Animate new page entering from bottom - VERY SMOOTH
       if (smoothContentRef.current) {
         // CRITICAL: Reset scroll position to top BEFORE animation for new page
-        // This ensures consistent scroll state across page transitions
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        // Desktop: Use ScrollSmoother.scrollTop() for virtual scroll
+        // Mobile: Use window.scrollTo() for native scroll
+        if (smootherInstanceRef.current) {
+          smootherInstanceRef.current.scrollTop(0); // Instant scroll to top
+        } else {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
 
         gsap.fromTo(
           smoothContentRef.current,
@@ -95,25 +101,14 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
       // Detect mobile/tablet for optimized smooth scrolling
       const isMobile = window.matchMedia('(max-width: 1023px)').matches;
 
-      // CRITICAL: Enable normalizeScroll on mobile to fix ScrollTrigger pin stuttering
-      // while maintaining smooth native scroll feel with optimized config.
-      // This fixes iOS Safari bugs that cause pinned elements to "jump" or "stutter"
-      // during scrolling. normalizeScroll() is GSAP's workaround for browser bugs.
+      // CRITICAL: Configure ScrollTrigger for mobile iOS Safari
+      // Using anticipatePin in individual ScrollTriggers instead of normalizeScroll
+      // to maintain native smooth scroll while fixing pin jittering
       if (isMobile) {
-        ScrollTrigger.normalizeScroll({
-          allowNestedScroll: true, // Permette scroll nidificato per UX migliore
-          lockAxis: false, // Non blocca l'asse per scroll più naturale
-          type: 'touch', // Solo touch per mobile (no wheel/pointer)
-        });
-
-        // Configura ScrollTrigger per iOS Safari
         ScrollTrigger.config({
           ignoreMobileResize: true, // Ignora resize da address bar iOS
         });
-
-        return () => {
-          ScrollTrigger.normalizeScroll(false);
-        };
+        return;
       }
 
       // Desktop only: create smooth scrolling experience
@@ -125,8 +120,12 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
         normalizeScroll: false, // Keep disabled on desktop to prevent conflicts with ScrollSmoother
       });
 
+      // Save ScrollSmoother instance for scroll-to-top on navigation
+      smootherInstanceRef.current = smoother;
+
       return () => {
         smoother?.kill();
+        smootherInstanceRef.current = null;
       };
     },
     {

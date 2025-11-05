@@ -283,6 +283,7 @@ export default function PortfolioSection() {
           end: () => `+=${cardRowRefs.current[1]!.offsetHeight}`,
           pin: true,
           pinSpacing: false,
+          anticipatePin: 1, // CRITICAL: Prevents pin jitter on fast scroll (mobile)
           invalidateOnRefresh: true,
         });
       }
