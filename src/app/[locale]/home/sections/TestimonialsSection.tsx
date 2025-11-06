@@ -140,7 +140,7 @@ export default function TestimonialsSection() {
         // Crea animazione infinita
         gsap.to(marqueeContent, {
           x: -contentWidth,
-          duration: 80, // 80 secondi come originale
+          duration: 130, // 130 secondi (rallentato ulteriormente)
           ease: 'none',
           repeat: -1, // Infinito
           modifiers: {
@@ -162,7 +162,7 @@ export default function TestimonialsSection() {
         // Crea animazione infinita
         gsap.to(marqueeContent, {
           x: -contentWidth,
-          duration: 60, // 60 secondi per mobile
+          duration: 110, // 110 secondi per mobile (rallentato ulteriormente)
           ease: 'none',
           repeat: -1,
           modifiers: {

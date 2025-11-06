@@ -12,7 +12,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const photoCards = [
   {
     id: 'left',
-    image: '/assets/images/4831a354-4deb-472f-9f1e-cad013deab74.webp',
+    image: '/assets/images/Cta/7c0095f7-6a6a-42f2-8920-cd6bfb7cd2426ad2.jpg',
     rotation: -8,
     rotateY: 40,
     scale: 0.85,
@@ -23,7 +23,7 @@ const photoCards = [
   },
   {
     id: 'center',
-    image: '/assets/images/e05dd087-50aa-42dd-a47b-8eabbb6823e3.webp',
+    image: '/assets/images/Cta/3cfea3cd-fcb1-4a0b-86c0-322695c02749_rw_38401bac.jpg',
     rotation: 0,
     rotateY: 0,
     scale: 1,
@@ -34,7 +34,7 @@ const photoCards = [
   },
   {
     id: 'right',
-    image: '/assets/images/f0137b66-fcfa-4e3d-8374-2b822059a091.webp',
+    image: '/assets/images/Cta/9f568ab3-2f54-48b7-9b16-1e6550abe560_rwc_512x0x1024x1364x1024bcab.jpg',
     rotation: 8,
     rotateY: -40,
     scale: 0.85,

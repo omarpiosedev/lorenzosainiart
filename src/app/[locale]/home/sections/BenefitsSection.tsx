@@ -90,38 +90,53 @@ export default function BenefitsSection() {
     createScrollAnimation(clockDesktopRef, '150px', '80px', 'top');
     createScrollAnimation(clockMobileRef, '150px', '80px', 'top');
 
-    // ✅ OPTIMIZED: Helper for size animations (width + height)
-    const createSizeAnimation = (
-      ref: React.RefObject<HTMLDivElement | null>,
-      fromSize: string,
-      toSize: string,
-    ) => {
-      if (!ref.current) {
-        return;
-      }
-
-      gsap.fromTo(
-        ref.current,
-        { width: fromSize, height: fromSize },
-        {
-          width: toSize,
-          height: toSize,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: ref.current,
-            start: 'top 120%',
-            end: 'top 60%',
-            scrub: 2,
-            toggleActions: 'play none none reverse',
-            invalidateOnRefresh: true, // ✅ Added: Recalculate on resize
+    // ✅ OPTIMIZED: Quinta image scale animations (GPU-accelerated)
+    // Animate the image element inside the container for zoom-out effect
+    // Desktop - zoom from 2.99x down to 2.3x (maintains the original scale design)
+    if (quintaImageDesktopRef.current) {
+      const imgElement = quintaImageDesktopRef.current.querySelector('img');
+      if (imgElement) {
+        gsap.fromTo(
+          imgElement,
+          { scale: 2.99 },
+          {
+            scale: 2.3,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: quintaImageDesktopRef.current,
+              start: 'top 120%',
+              end: 'top 60%',
+              scrub: 2,
+              toggleActions: 'play none none reverse',
+              invalidateOnRefresh: true,
+            },
           },
-        },
-      );
-    };
+        );
+      }
+    }
 
-    // ✅ OPTIMIZED: Quinta image size animations - using helper
-    createSizeAnimation(quintaImageDesktopRef, 'calc(80% + 100px)', '80%');
-    createSizeAnimation(quintaImageMobileRef, 'calc(160% + 200px)', '160%');
+    // Mobile - zoom from 1.4x down to 1x
+    if (quintaImageMobileRef.current) {
+      const imgElement = quintaImageMobileRef.current.querySelector('img');
+      if (imgElement) {
+        gsap.fromTo(
+          imgElement,
+          { scale: 1.4 },
+          {
+            scale: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: quintaImageMobileRef.current,
+              start: 'top 120%',
+              end: 'top 60%',
+              scrub: 2,
+              toggleActions: 'play none none reverse',
+              invalidateOnRefresh: true,
+            },
+          },
+        );
+      }
+    }
 
     // ✅ OPTIMIZED: TrustedUsers restart trigger (Card 6 - Desktop)
     // Use ref for tracking, setState only once for React re-render
@@ -301,71 +316,56 @@ export default function BenefitsSection() {
             {/* Polaroid 1 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/4831a354-4deb-472f-9f1e-cad013deab74.webp"
-                alt="Portrait 1"
+                src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.jpg"
+                alt="Portfolio work 1"
                 className="w-full h-full object-cover"
                 loading="lazy"
                 decoding="async"
               />
-              <div className="h-4 bg-white flex items-center justify-center">
-                <span className="text-xs text-gray-600 font-handwriting">Portrait 1</span>
-              </div>
             </div>
 
             {/* Polaroid 2 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/ChatGPT Image 19 ago 2025, 18_30_36.webp"
-                alt="Portrait 2"
+                src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.jpg"
+                alt="Portfolio work 2"
                 className="w-full h-full object-cover"
                 loading="lazy"
                 decoding="async"
               />
-              <div className="h-4 bg-white flex items-center justify-center">
-                <span className="text-xs text-gray-600 font-handwriting">Portrait 2</span>
-              </div>
             </div>
 
             {/* Polaroid 3 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/ChatGPT Image 19 ago 2025, 18_30_41.webp"
-                alt="Portrait 3"
+                src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.jpg"
+                alt="Portfolio work 3"
                 className="w-full h-full object-cover"
                 loading="lazy"
                 decoding="async"
               />
-              <div className="h-4 bg-white flex items-center justify-center">
-                <span className="text-xs text-gray-600 font-handwriting">Portrait 3</span>
-              </div>
             </div>
 
             {/* Polaroid 4 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/e05dd087-50aa-42dd-a47b-8eabbb6823e3.webp"
-                alt="Portrait 4"
+                src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.jpg"
+                alt="Portfolio work 4"
                 className="w-full h-full object-cover"
                 loading="lazy"
                 decoding="async"
               />
-              <div className="h-4 bg-white flex items-center justify-center">
-                <span className="text-xs text-gray-600 font-handwriting">Portrait 4</span>
-              </div>
             </div>
 
             {/* Polaroid 5 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/f0137b66-fcfa-4e3d-8374-2b822059a091.webp"
-                alt="Portrait 5"
+                src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.jpg"
+                alt="Portfolio work 5"
                 className="w-full h-full object-cover"
                 loading="lazy"
                 decoding="async"
               />
-              <div className="h-4 bg-white flex items-center justify-center">
-                <span className="text-xs text-gray-600 font-handwriting">Portrait 5</span>
-              </div>
             </div>
           </div>
         </div>
@@ -553,22 +553,21 @@ export default function BenefitsSection() {
         >
           <div
             ref={quintaImageDesktopRef}
-            className="absolute"
+            className="absolute transform-gpu"
             style={{
-              right: '-10%', // Posizione originale: -10% della card
-              bottom: '-10%', // Posizione originale: -10% della card
-              width: 'calc(80% + 100px)', // Ingrandita di 100px in larghezza (iniziale)
-              height: 'calc(80% + 100px)', // Ingrandita di 100px in altezza (iniziale)
+              right: '-10%',
+              bottom: '-10%',
+              width: '80%',
+              height: '80%',
             }}
           >
             <img
               src="/assets/images/quintacard.webp"
               alt="Portrait Photography - Eyes"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain transform-gpu"
               loading="lazy"
               decoding="async"
               style={{
-                transform: 'scale(2.3)', // Scala originale: 2.3x
                 transformOrigin: 'center center',
               }}
             />
@@ -721,71 +720,56 @@ export default function BenefitsSection() {
                 {/* Polaroid 1 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/4831a354-4deb-472f-9f1e-cad013deab74.webp"
-                    alt="Portrait 1"
+                    src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.jpg"
+                    alt="Portfolio work 1"
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
                   />
-                  <div className="h-3 bg-white flex items-center justify-center">
-                    <span className="text-xs text-gray-600">Portrait 1</span>
-                  </div>
                 </div>
 
                 {/* Polaroid 2 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/ChatGPT Image 19 ago 2025, 18_30_36.webp"
-                    alt="Portrait 2"
+                    src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.jpg"
+                    alt="Portfolio work 2"
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
                   />
-                  <div className="h-3 bg-white flex items-center justify-center">
-                    <span className="text-xs text-gray-600">Portrait 2</span>
-                  </div>
                 </div>
 
                 {/* Polaroid 3 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/ChatGPT Image 19 ago 2025, 18_30_41.webp"
-                    alt="Portrait 3"
+                    src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.jpg"
+                    alt="Portfolio work 3"
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
                   />
-                  <div className="h-3 bg-white flex items-center justify-center">
-                    <span className="text-xs text-gray-600">Portrait 3</span>
-                  </div>
                 </div>
 
                 {/* Polaroid 4 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/e05dd087-50aa-42dd-a47b-8eabbb6823e3.webp"
-                    alt="Portrait 4"
+                    src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.jpg"
+                    alt="Portfolio work 4"
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
                   />
-                  <div className="h-3 bg-white flex items-center justify-center">
-                    <span className="text-xs text-gray-600">Portrait 4</span>
-                  </div>
                 </div>
 
                 {/* Polaroid 5 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/f0137b66-fcfa-4e3d-8374-2b822059a091.webp"
-                    alt="Portrait 5"
+                    src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.jpg"
+                    alt="Portfolio work 5"
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
                   />
-                  <div className="h-3 bg-white flex items-center justify-center">
-                    <span className="text-xs text-gray-600">Portrait 5</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -941,12 +925,12 @@ export default function BenefitsSection() {
               {/* Image - Much larger */}
               <div
                 ref={quintaImageMobileRef}
-                className="absolute"
+                className="absolute transform-gpu"
                 style={{
                   top: '-15%',
                   left: '-30%',
-                  width: 'calc(160% + 200px)', // Ingrandita di 200px in larghezza (iniziale enfatizzata)
-                  height: 'calc(160% + 200px)', // Ingrandita di 200px in altezza (iniziale enfatizzata)
+                  width: '160%',
+                  height: '160%',
                 }}
               >
                 <img
