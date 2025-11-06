@@ -116,30 +116,80 @@
       "title": "Cosa dicono i miei clienti",
       "subtitle": "Feedback reali da persone con cui ho lavorato. Le loro esperienze raccontano il mio approccio meglio di quanto possa fare io.",
       "testimonials": {
+        "giulia": {
+          "name": "Giulia Bernasconi",
+          "company": "Wedding Planner, Como",
+          "text": "Lorenzo è il fotografo perfetto per i matrimoni sul Lago di Como. La sua capacità di catturare la magia delle nostre location più esclusive è straordinaria. Ogni album racconta un'emozione unica."
+        },
         "marco": {
           "name": "Marco Bianchi",
-          "company": "Founder, Milano Fashion",
-          "text": "Lorenzo ha catturato l'essenza del nostro brand con foto prodotto straordinarie. La sua attenzione ai dettagli e la capacità di raccontare una storia attraverso l'immagine sono uniche."
+          "company": "Direttore Marketing, Milano",
+          "text": "Collaboro con Lorenzo per i nostri eventi corporate a Milano e Como. La sua professionalità e il suo occhio per i dettagli rendono ogni shooting un'esperienza di altissimo livello."
         },
-        "sofia": {
-          "name": "Sofia Rossi",
-          "company": "Artista, Roma",
-          "text": "Professionalità e creatività si uniscono nel lavoro di Lorenzo. Ha saputo interpretare la mia visione artistica trasformandola in immagini potenti e emozionanti."
+        "chiara": {
+          "name": "Chiara Fontana",
+          "company": "Hotel Manager, Lago di Como",
+          "text": "Le foto di Lorenzo valorizzano l'eleganza del nostro hotel sul lago. La sua capacità di giocare con la luce naturale del Lario è impareggiabile. Clienti internazionali ci scelgono anche grazie alle sue immagini."
         },
-        "alessandro": {
-          "name": "Alessandro Conti",
-          "company": "CEO, Innovazione Italiana",
-          "text": "Un fotografo eccezionale! Lorenzo ha immortalato il nostro evento aziendale con uno stile elegante e moderno. Ogni scatto racconta una storia."
+        "andrea": {
+          "name": "Andrea Colombo",
+          "company": "Brand Manager, Como",
+          "text": "Per il nostro brand di seta comasca, Lorenzo ha creato un portfolio fotografico che unisce tradizione e modernità. La sua sensibilità artistica ha elevato la nostra comunicazione visiva."
         },
-        "elena": {
-          "name": "Elena Martini",
-          "company": "Sposa, Firenze",
-          "text": "Lorenzo ha un occhio artistico straordinario. Le foto del mio matrimonio sono semplicemente perfette, ogni momento è stato catturato con sensibilità e maestria."
+        "francesca": {
+          "name": "Francesca Villa",
+          "company": "Sposa, Bellagio",
+          "text": "Il mio matrimonio in una villa sul lago è stato immortalato in modo perfetto. Lorenzo ha saputo cogliere ogni istante magico della giornata più importante della mia vita. Foto da sogno!"
         },
-        "luca": {
-          "name": "Luca Ferrari",
-          "company": "Agente Immobiliare, Torino",
-          "text": "Collaboro con Lorenzo da anni per i miei progetti immobiliari. Le sue foto valorizzano ogni spazio con una luce naturale che fa la differenza nelle vendite."
+        "paolo": {
+          "name": "Paolo Moretti",
+          "company": "Architetto, Como",
+          "text": "Per i miei progetti di design sul lago, le fotografie architetturali di Lorenzo sono essenziali. Riesce a catturare l'anima degli spazi con una sensibilità unica nel panorama italiano."
+        },
+        "valentina": {
+          "name": "Valentina Galli",
+          "company": "Chef, Cernobbio",
+          "text": "Lorenzo ha fotografato i miei piatti con una cura maniacale. Le sue foto food trasmettono i sapori e l'atmosfera del nostro ristorante. Un artista completo!"
+        },
+        "matteo": {
+          "name": "Matteo Santoro",
+          "company": "Agente Immobiliare, Como & Lugano",
+          "text": "Vendo ville sul lago da 15 anni. Le foto di Lorenzo fanno la differenza: proprietà che restavano invendute per mesi trovano acquirenti in settimane grazie alle sue immagini."
+        },
+        "sara": {
+          "name": "Sara Ponti",
+          "company": "Fashion Designer, Monza",
+          "text": "Lorenzo ha fotografato la mia ultima collezione con uno stile contemporaneo e raffinato. La sua capacità di interpretare la moda è straordinaria. Consigliatissimo!"
+        },
+        "roberto": {
+          "name": "Roberto Castelli",
+          "company": "Hotel Manager, Como",
+          "text": "Per un hotel 5 stelle, la qualità fotografica è fondamentale. Lorenzo coglie l'essenza del lusso discreto che ci contraddistingue. Un professionista eccezionale."
+        },
+        "laura": {
+          "name": "Laura Redaelli",
+          "company": "Sposa, Lecco",
+          "text": "Il mio matrimonio vista lago è stato documentato con una sensibilità artistica rara. Lorenzo ha trasformato ogni momento in un'opera d'arte. Grazie infinite!"
+        },
+        "davide": {
+          "name": "Davide Mariani",
+          "company": "Imprenditore, Varese",
+          "text": "Per il lancio della mia startup, Lorenzo ha creato un servizio fotografico corporate che ha fatto la differenza nella nostra comunicazione. Professionalità e creatività al top."
+        },
+        "alessia": {
+          "name": "Alessia Riva",
+          "company": "Event Manager, Bergamo",
+          "text": "Organizzo eventi corporate in tutto il Nord Italia. Lorenzo è il mio fotografo di fiducia: affidabile, discreto e con un portfolio sempre impeccabile."
+        },
+        "simone": {
+          "name": "Simone Terraneo",
+          "company": "Agente Immobiliare, Como Centro",
+          "text": "Le foto di Lorenzo hanno rivoluzionato il mio business immobiliare nel centro storico di Como. Gli appartamenti si vendono più velocemente e a prezzi migliori. Magia pura!"
+        },
+        "michela": {
+          "name": "Michela Ceruti",
+          "company": "Art Director, Lugano",
+          "text": "Lorenzo è il fotografo con cui amo collaborare per i progetti più ambiziosi. La sua visione artistica e la capacità di esecuzione sono di livello internazionale."
         }
       }
     },

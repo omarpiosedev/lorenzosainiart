@@ -12,24 +12,64 @@ gsap.registerPlugin(useGSAP);
 
 const testimonials = [
   {
+    key: 'giulia',
+    image: '/assets/images/Avatars/Female/female-1.webp',
+  },
+  {
     key: 'marco',
-    image: '/assets/images/4831a354-4deb-472f-9f1e-cad013deab74.webp',
+    image: '/assets/images/Avatars/Male/male-1.webp',
   },
   {
-    key: 'sofia',
-    image: '/assets/images/ChatGPT Image 19 ago 2025, 18_30_36.webp',
+    key: 'chiara',
+    image: '/assets/images/Avatars/Female/female-2.webp',
   },
   {
-    key: 'alessandro',
-    image: '/assets/images/ChatGPT Image 19 ago 2025, 18_30_41.webp',
+    key: 'andrea',
+    image: '/assets/images/Avatars/Male/male-2.webp',
   },
   {
-    key: 'elena',
-    image: '/assets/images/e05dd087-50aa-42dd-a47b-8eabbb6823e3.webp',
+    key: 'francesca',
+    image: '/assets/images/Avatars/Female/female-3.webp',
   },
   {
-    key: 'luca',
-    image: '/assets/images/f0137b66-fcfa-4e3d-8374-2b822059a091.webp',
+    key: 'paolo',
+    image: '/assets/images/Avatars/Male/male-3.webp',
+  },
+  {
+    key: 'valentina',
+    image: '/assets/images/Avatars/Female/female-4.webp',
+  },
+  {
+    key: 'matteo',
+    image: '/assets/images/Avatars/Male/male-4.webp',
+  },
+  {
+    key: 'sara',
+    image: '/assets/images/Avatars/Female/female-5.webp',
+  },
+  {
+    key: 'roberto',
+    image: '/assets/images/Avatars/Male/male-5.webp',
+  },
+  {
+    key: 'laura',
+    image: '/assets/images/Avatars/Female/female-6.webp',
+  },
+  {
+    key: 'davide',
+    image: '/assets/images/Avatars/Male/male-6.webp',
+  },
+  {
+    key: 'alessia',
+    image: '/assets/images/Avatars/Female/female-7.webp',
+  },
+  {
+    key: 'simone',
+    image: '/assets/images/Avatars/Male/male-7.webp',
+  },
+  {
+    key: 'michela',
+    image: '/assets/images/Avatars/Female/female-8.webp',
   },
 ] as const;
 

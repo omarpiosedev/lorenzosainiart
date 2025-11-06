@@ -116,30 +116,80 @@
       "title": "What my clients say",
       "subtitle": "Real feedback from people I've worked with. Their experiences tell you more about my approach than I ever could.",
       "testimonials": {
+        "giulia": {
+          "name": "Giulia Bernasconi",
+          "company": "Wedding Planner, Como",
+          "text": "Lorenzo is the perfect photographer for Lake Como weddings. His ability to capture the magic of our most exclusive locations is extraordinary. Every album tells a unique emotion."
+        },
         "marco": {
           "name": "Marco Bianchi",
-          "company": "Founder, Milano Fashion",
-          "text": "Lorenzo captured our brand essence with extraordinary product photos. His attention to detail and ability to tell a story through images are truly unique."
+          "company": "Marketing Director, Milan",
+          "text": "I collaborate with Lorenzo for our corporate events in Milan and Como. His professionalism and eye for detail make every shoot a top-level experience."
         },
-        "sofia": {
-          "name": "Sofia Rossi",
-          "company": "Artist, Rome",
-          "text": "Professionalism and creativity unite in Lorenzo's work. He interpreted my artistic vision and transformed it into powerful and emotional images."
+        "chiara": {
+          "name": "Chiara Fontana",
+          "company": "Hotel Manager, Lake Como",
+          "text": "Lorenzo's photos enhance the elegance of our lakeside hotel. His ability to play with the natural light of Lake Como is unmatched. International clients choose us thanks to his images."
         },
-        "alessandro": {
-          "name": "Alessandro Conti",
-          "company": "CEO, Italian Innovation",
-          "text": "An exceptional photographer! Lorenzo captured our corporate event with elegant and modern style. Every shot tells a story."
+        "andrea": {
+          "name": "Andrea Colombo",
+          "company": "Brand Manager, Como",
+          "text": "For our Como silk brand, Lorenzo created a photography portfolio that blends tradition and modernity. His artistic sensitivity elevated our visual communication."
         },
-        "elena": {
-          "name": "Elena Martini",
-          "company": "Bride, Florence",
-          "text": "Lorenzo has an extraordinary artistic eye. My wedding photos are simply perfect, every moment was captured with sensitivity and mastery."
+        "francesca": {
+          "name": "Francesca Villa",
+          "company": "Bride, Bellagio",
+          "text": "My wedding at a lakeside villa was captured perfectly. Lorenzo managed to seize every magical moment of my life's most important day. Dream photos!"
         },
-        "luca": {
-          "name": "Luca Ferrari",
-          "company": "Real Estate Agent, Turin",
-          "text": "I've worked with Lorenzo for years on my real estate projects. His photos enhance every space with natural light that makes the difference in sales."
+        "paolo": {
+          "name": "Paolo Moretti",
+          "company": "Architect, Como",
+          "text": "For my lakeside design projects, Lorenzo's architectural photography is essential. He captures the soul of spaces with a sensitivity unique in the Italian landscape."
+        },
+        "valentina": {
+          "name": "Valentina Galli",
+          "company": "Chef, Cernobbio",
+          "text": "Lorenzo photographed my dishes with meticulous care. His food photos convey the flavors and atmosphere of our restaurant. A complete artist!"
+        },
+        "matteo": {
+          "name": "Matteo Santoro",
+          "company": "Real Estate Agent, Como & Lugano",
+          "text": "I've been selling lakeside villas for 15 years. Lorenzo's photos make the difference: properties that remained unsold for months find buyers in weeks thanks to his images."
+        },
+        "sara": {
+          "name": "Sara Ponti",
+          "company": "Fashion Designer, Monza",
+          "text": "Lorenzo photographed my latest collection with a contemporary and refined style. His ability to interpret fashion is extraordinary. Highly recommended!"
+        },
+        "roberto": {
+          "name": "Roberto Castelli",
+          "company": "Hotel Manager, Como",
+          "text": "For a 5-star hotel, photographic quality is fundamental. Lorenzo captures the essence of the discrete luxury that distinguishes us. An exceptional professional."
+        },
+        "laura": {
+          "name": "Laura Redaelli",
+          "company": "Bride, Lecco",
+          "text": "My lakeside wedding was documented with rare artistic sensitivity. Lorenzo transformed every moment into a work of art. Thank you so much!"
+        },
+        "davide": {
+          "name": "Davide Mariani",
+          "company": "Entrepreneur, Varese",
+          "text": "For my startup launch, Lorenzo created a corporate photo shoot that made the difference in our communication. Top professionalism and creativity."
+        },
+        "alessia": {
+          "name": "Alessia Riva",
+          "company": "Event Manager, Bergamo",
+          "text": "I organize corporate events throughout Northern Italy. Lorenzo is my trusted photographer: reliable, discreet, and with an always impeccable portfolio."
+        },
+        "simone": {
+          "name": "Simone Terraneo",
+          "company": "Real Estate Agent, Como Center",
+          "text": "Lorenzo's photos revolutionized my real estate business in Como's historic center. Apartments sell faster and at better prices. Pure magic!"
+        },
+        "michela": {
+          "name": "Michela Ceruti",
+          "company": "Art Director, Lugano",
+          "text": "Lorenzo is the photographer I love to collaborate with for the most ambitious projects. His artistic vision and execution capability are at an international level."
         }
       }
     },

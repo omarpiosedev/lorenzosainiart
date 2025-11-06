@@ -177,11 +177,11 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
 
       {/* Polaroid photos container */}
       <div ref={photosRef} className="relative w-full h-full" style={{ opacity: 0 }}>
-        {/* Photo 1 - Top Left (blonde woman) */}
+        {/* Photo 1 - Top Left */}
         <div className="polaroid-photo absolute left-[13%] top-[20%] w-[170px] h-[210px] bg-white rounded-lg shadow-2xl p-4 rotate-[-12deg]">
           <div className="relative w-full h-[150px] bg-gray-100 mb-2">
             <Image
-              src="/assets/images/image1.webp"
+              src="/assets/images/LoadingScreen/Polaroid 1.webp"
               alt=""
               fill
               sizes="170px"
@@ -191,11 +191,11 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
           </div>
         </div>
 
-        {/* Photo 2 - Top Center (yellow turtleneck) */}
+        {/* Photo 2 - Top Center */}
         <div className="polaroid-photo absolute left-[50%] translate-x-[-50%] top-[15%] w-[170px] h-[210px] bg-white rounded-lg shadow-2xl p-4 rotate-[2deg]">
           <div className="relative w-full h-[150px] bg-gray-100 mb-2">
             <Image
-              src="/assets/images/image2.webp"
+              src="/assets/images/LoadingScreen/Polaroid2.webp"
               alt=""
               fill
               sizes="170px"
@@ -205,11 +205,11 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
           </div>
         </div>
 
-        {/* Photo 3 - Top Right (purple headphones) */}
+        {/* Photo 3 - Top Right */}
         <div className="polaroid-photo absolute right-[13%] top-[18%] w-[170px] h-[210px] bg-white rounded-lg shadow-2xl p-4 rotate-[8deg]">
           <div className="relative w-full h-[150px] bg-gray-100 mb-2">
             <Image
-              src="/assets/images/image3.webp"
+              src="/assets/images/LoadingScreen/Polaroid3.webp"
               alt=""
               fill
               sizes="170px"
@@ -219,11 +219,11 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
           </div>
         </div>
 
-        {/* Photo 4 - Bottom Left (white hat) */}
+        {/* Photo 4 - Bottom Left */}
         <div className="polaroid-photo absolute left-[30%] bottom-[12%] w-[170px] h-[210px] bg-white rounded-lg shadow-2xl p-4 rotate-[15deg]">
           <div className="relative w-full h-[150px] bg-gray-100 mb-2">
             <Image
-              src="/assets/images/backgropund.webp"
+              src="/assets/images/LoadingScreen/Polaroid4.webp"
               alt=""
               fill
               sizes="170px"
@@ -233,11 +233,11 @@ export const LoadingScreen = ({ ref }: { ref: React.Ref<LoadingScreenHandle> }) 
           </div>
         </div>
 
-        {/* Photo 5 - Bottom Right (rooftop) */}
+        {/* Photo 5 - Bottom Right */}
         <div className="polaroid-photo absolute right-[25%] bottom-[18%] w-[170px] h-[210px] bg-white rounded-lg shadow-2xl p-4 rotate-[-8deg]">
           <div className="relative w-full h-[150px] bg-gray-100 mb-2">
             <Image
-              src="/assets/images/sposi.webp"
+              src="/assets/images/LoadingScreen/Polaroid5.webp"
               alt=""
               fill
               sizes="170px"
