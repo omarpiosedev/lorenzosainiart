@@ -31,7 +31,7 @@ const Noise = ({
 
     let frame = 0;
     let animationId: number;
-    const canvasSize = 2048;
+    const canvasSize = 1012;
 
     const resize = () => {
       if (!canvas) {

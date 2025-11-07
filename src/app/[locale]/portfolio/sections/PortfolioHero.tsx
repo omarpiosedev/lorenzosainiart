@@ -49,7 +49,7 @@ export default function PortfolioHero() {
       src: '/assets/images/PortfolioHero/521bf560-6b45-43d3-8f20-b22d725c5dee_rw_3840ff89.webp',
       // Mobile: middle-left, Desktop: maintained
       className:
-        'absolute top-[48%] left-[3%] w-[34%] h-[24%] lg:top-[30%] lg:left-auto lg:right-[12%] lg:w-[15%] lg:h-[33%]',
+        'absolute top-[48%] left-[3%] w-[34%] h-[24%] lg:top-[30%] lg:left-auto lg:right-[8%] lg:w-[15%] lg:h-[33%]',
     },
     {
       id: 'img-4',
@@ -283,15 +283,15 @@ export default function PortfolioHero() {
     <section
       ref={containerRef}
       data-section="portfolio-hero"
-      className="relative w-full bg-[#0a0a0a] overflow-hidden"
+      className="relative w-full bg-white overflow-hidden"
       style={{
         minHeight: '100vh',
         height: '100vh',
       }}
     >
       {/* Animated Noise Grain - covers everything including background */}
-      <div className="absolute inset-0 z-20 pointer-events-none opacity-85 mix-blend-soft-light">
-        <Noise patternAlpha={100} patternRefreshInterval={2} />
+      <div className="absolute inset-0 z-20 pointer-events-none opacity-100 mix-blend-multiply">
+        <Noise patternAlpha={50} patternRefreshInterval={2} patternSize={150} />
       </div>
 
       {/* Portfolio Images - Positioned absolutely */}
@@ -332,13 +332,13 @@ export default function PortfolioHero() {
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-30 px-4">
         <h1
           ref={titleRef}
-          className="text-white text-center leading-[1.1] mb-6"
+          className="text-black text-center leading-[1.1] mb-6"
           style={{
             fontFamily: '"Cormorant Garamond", serif',
             fontWeight: 300,
             letterSpacing: '0.05em',
-            fontSize: 'clamp(2.5rem, 8vw, 6.5rem)',
-            textShadow: '0 8px 32px rgba(0, 0, 0, 0.8)',
+            fontSize: 'clamp(1.8rem, 5.5vw, 4.5rem)',
+            textShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             opacity: 0,
           }}
         >
@@ -353,7 +353,7 @@ export default function PortfolioHero() {
             opacity: 0,
           }}
         >
-          <span className="text-white/70">{t('hero.label')}</span>
+          <span className="text-black/70">{t('hero.label')}</span>
         </div>
       </div>
     </section>
