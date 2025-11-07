@@ -4,7 +4,9 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useRef } from 'react';
+import Noise from '@/components/Noise';
 
 // Register GSAP plugins
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -13,8 +15,7 @@ type ImageConfig = {
   id: string;
   alt: string;
   className: string;
-  gradient: string;
-  socialIcon?: 'instagram' | 'pinterest' | 'twitter' | null;
+  src: string;
 };
 
 export default function PortfolioHero() {
@@ -29,74 +30,66 @@ export default function PortfolioHero() {
     {
       id: 'img-1',
       alt: 'Portfolio image 1',
+      src: '/assets/images/PortfolioHero/0df95003-185c-4339-9b8c-d4b673e48b974bde.webp',
       // Mobile: top-left, Desktop: maintained
       className:
         'absolute top-[2%] left-[2%] w-[35%] h-[23%] lg:top-[8%] lg:left-[5%] lg:w-[15%] lg:h-[40%]',
-      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      socialIcon: 'instagram',
     },
     {
       id: 'img-2',
       alt: 'Portfolio image 2',
+      src: '/assets/images/PortfolioHero/1d10e477-37ef-47cf-a510-e03a81f9688f_rwc_251x0x1537x2048x153788ee.webp',
       // Mobile: top-right (large), Desktop: maintained
       className:
         'absolute top-[10%] right-[2%] w-[42%] h-[32%] lg:top-[-5%] lg:left-[35%] lg:right-auto lg:w-[15%] lg:h-[35%]',
-      gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      socialIcon: 'pinterest',
     },
     {
       id: 'img-3',
       alt: 'Portfolio image 3',
+      src: '/assets/images/PortfolioHero/521bf560-6b45-43d3-8f20-b22d725c5dee_rw_3840ff89.webp',
       // Mobile: middle-left, Desktop: maintained
       className:
         'absolute top-[48%] left-[3%] w-[34%] h-[24%] lg:top-[30%] lg:left-auto lg:right-[12%] lg:w-[15%] lg:h-[33%]',
-      gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      socialIcon: 'pinterest',
     },
     {
       id: 'img-4',
       alt: 'Portfolio image 4',
+      src: '/assets/images/PortfolioHero/53c9c768-8380-4850-8b3f-b43f6cf07b8f_rw_1920c93c.webp',
       // Mobile: bottom-right, Desktop: maintained
       className:
         'absolute top-[75%] right-[4%] w-[45%] h-[18%] lg:bottom-[-3%] lg:top-auto lg:left-[8%] lg:right-auto lg:w-[18%] lg:h-[38%]',
-      gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-      socialIcon: null,
     },
     {
       id: 'img-5',
       alt: 'Portfolio image 5',
+      src: '/assets/images/PortfolioHero/62a73e53-e709-445b-83b3-ec4283ab3fe7_rw_19205948.webp',
       // Mobile: bottom-center, Desktop: maintained
       className:
         'absolute top-[83%] left-[35%] w-[32%] h-[20%] lg:bottom-[10%] lg:top-auto lg:left-[32%] lg:w-[12%] lg:h-[22%]',
-      gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      socialIcon: 'pinterest',
     },
     {
       id: 'img-6',
       alt: 'Portfolio image 6',
+      src: '/assets/images/PortfolioHero/6785377c-6f6d-470a-984a-512b8f994d04_rw_1920d928.webp',
       // Mobile: hidden or very bottom, Desktop: maintained
       className:
         'absolute top-[105%] right-[28%] w-[16%] h-[15%] lg:bottom-[-8%] lg:top-auto lg:w-[16%] lg:h-[33%]',
-      gradient: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
-      socialIcon: null,
     },
     {
       id: 'img-7',
       alt: 'Portfolio image 7',
+      src: '/assets/images/PortfolioHero/6a2f7d0b-c56e-4ed9-b07b-4c703515a4a62c6d.webp',
       // Mobile: very bottom right, Desktop: maintained
       className:
         'absolute top-[110%] right-[-3%] w-[14%] h-[12%] lg:bottom-[-10%] lg:top-auto lg:w-[14%] lg:h-[28%]',
-      gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
-      socialIcon: 'twitter',
     },
     {
       id: 'img-8',
       alt: 'Portfolio image 8',
+      src: '/assets/images/PortfolioHero/6ff895bc-e829-44ab-8895-d5e2c069ff6a_rw_38400696.webp',
       // Mobile: hidden or off-screen, Desktop: maintained
       className:
         'absolute top-[115%] right-[-10%] w-[14%] h-[12%] lg:bottom-[30%] lg:top-auto lg:w-[14%] lg:h-[33%]',
-      gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-      socialIcon: 'instagram',
     },
   ];
 
@@ -290,67 +283,48 @@ export default function PortfolioHero() {
     <section
       ref={containerRef}
       data-section="portfolio-hero"
-      className="relative w-full bg-[#060010] overflow-hidden"
+      className="relative w-full bg-[#0a0a0a] overflow-hidden"
       style={{
         minHeight: '100vh',
         height: '100vh',
       }}
     >
+      {/* Animated Noise Grain - covers everything including background */}
+      <div className="absolute inset-0 z-20 pointer-events-none opacity-85 mix-blend-soft-light">
+        <Noise patternAlpha={100} patternRefreshInterval={2} />
+      </div>
+
       {/* Portfolio Images - Positioned absolutely */}
-      {images.map((image, index) => (
+      {images.map(image => (
         <div
           key={image.id}
-          className={`portfolio-image ${image.className} overflow-hidden rounded-lg`}
+          className={`portfolio-image ${image.className} overflow-hidden`}
           style={{
             willChange: 'transform',
             opacity: 0,
           }}
         >
-          {/* Gradient Placeholder */}
-          <div
-            className="gradient-placeholder absolute inset-0 flex items-center justify-center"
+          {/* Image */}
+          <Image
+            src={image.src}
+            alt={image.alt}
+            fill
+            sizes="(max-width: 1024px) 50vw, 20vw"
+            className="object-cover"
             style={{
-              background: image.gradient,
+              filter: 'saturate(0.7) contrast(0.9)',
             }}
-          >
-            {/* Placeholder Number */}
-            <div className="text-white/30 text-6xl font-bold">
-              {index + 1}
-            </div>
+            priority
+          />
 
-            {/* Social Icon Badge */}
-            {image.socialIcon && (
-              <div className="absolute bottom-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
-                {image.socialIcon === 'instagram' && (
-                  <svg
-                    className="w-4 h-4 text-black"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                  </svg>
-                )}
-                {image.socialIcon === 'pinterest' && (
-                  <svg
-                    className="w-4 h-4 text-black"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 0c-6.627 0-12 5.372-12 12 0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z" />
-                  </svg>
-                )}
-                {image.socialIcon === 'twitter' && (
-                  <svg
-                    className="w-4 h-4 text-black"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                )}
-              </div>
-            )}
-          </div>
+          {/* Dark desaturation overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundColor: 'rgba(20, 20, 30, 0.25)',
+              mixBlendMode: 'multiply',
+            }}
+          />
         </div>
       ))}
 
