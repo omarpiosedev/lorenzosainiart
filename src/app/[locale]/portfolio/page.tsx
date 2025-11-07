@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import pick from 'lodash/pick';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { BreadcrumbJsonLd, PortfolioCollectionJsonLd } from '@/components/seo/JsonLd';
 import { getBaseUrl } from '@/utils/AppConfig';
+import PortfolioHero from './sections/PortfolioHero';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -48,6 +51,9 @@ export default async function PortfolioPage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 
+  // Get messages for PortfolioPage namespace
+  const messages = await getMessages();
+
   const baseUrl = getBaseUrl();
   const breadcrumbItems = [
     { name: 'Home', url: `${baseUrl}/${locale}` },
@@ -58,14 +64,10 @@ export default async function PortfolioPage(props: Props) {
   // Example: const portfolioItems = await getPortfolioItems();
 
   return (
-    <>
+    <NextIntlClientProvider messages={pick(messages, ['PortfolioPage'])}>
       <BreadcrumbJsonLd items={breadcrumbItems} />
       <PortfolioCollectionJsonLd locale={locale} />
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">PORTFOLIO</h1>
-        </div>
-      </div>
-    </>
+      <PortfolioHero />
+    </NextIntlClientProvider>
   );
 }

@@ -233,7 +233,31 @@
     }
   },
   "PortfolioPage": {
-    "title": "Portfolio"
+    "title": "Portfolio",
+    "hero": {
+      "signature": {
+        "name": "Lorenzo Saini",
+        "role1": "Photographer",
+        "role2": "Videomaker",
+        "role3": "Designer"
+      },
+      "navigation": {
+        "index": "Index",
+        "about": "About"
+      },
+      "label": "Works",
+      "title": "Fragments of Eternity",
+      "cta": {
+        "ariaLabel": "Scroll to explore portfolio"
+      },
+      "availability": {
+        "text": "Available for work",
+        "date": "Dec 2025"
+      },
+      "controls": {
+        "ariaLabel": "Navigate gallery"
+      }
+    }
   },
   "BlogPage": {
     "title": "Blog"

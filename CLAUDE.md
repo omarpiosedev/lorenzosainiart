@@ -1,15 +1,10 @@
 # CLAUDE.md - Lorenzo Saini Portfolio
 
 ## 🚨 CRITICAL: Context7 MCP First
-
+**Always analyze mi project, how i use GSAP, the GSAP plugin
 **Always use context7 (minimun 15000 token) when I need code generation, setup or configuration steps, or
 library/API documentation. This means you should automatically use the Context7 MCP
 tools to resolve library id and get library docs without me having to explicitly ask.
-
-**How to use:**
-1. `mcp__context7__resolve-library-id` - Find the library (e.g., "next.js", "gsap")
-2. `mcp__context7__get-library-docs` - Get latest docs, patterns, examples
-3. Apply modern best practices from Context7 results
 
 **Examples:**
 - "Before adding GSAP animation, check Context7 for React 19 patterns..."
@@ -20,6 +15,39 @@ tools to resolve library id and get library docs without me having to explicitly
 **Available Skills & Agents:**
 - Always check which specialized skills (gsap-nextjs, gsap-react, nextjs-fullstack) are available
 - Use relevant agents when appropriate for the task
+
+---
+
+## 🖼️ CRITICAL: Layout Cloning from Images
+
+**When receiving an image with a request to clone/recreate the layout:**
+
+**YOU MUST perform deep visual analysis:**
+- ✅ Analyze exact positions and spacing between all elements
+- ✅ Measure proportions and size relationships (widths, heights, aspect ratios)
+- ✅ Identify ALL visual elements (text, images, icons, shapes, colors, shadows, borders)
+- ✅ Study layout structure (grid, flexbox, absolute positioning, z-index layers)
+- ✅ Note typography details (font sizes, weights, line heights, letter spacing)
+- ✅ Identify color palette and opacity values
+- ✅ Recreate the layout 1:1 pixel-perfect where requested
+
+**DO NOT:**
+- ❌ Provide generic layout suggestions instead of exact recreation
+- ❌ Approximate positions or sizes ("about here", "roughly this size")
+- ❌ Skip details or elements from the image
+- ❌ Make assumptions about unspecified visual aspects
+- ❌ Use placeholder content when exact content is visible
+
+**Workflow:**
+1. **Deep Analysis**: Thoroughly analyze the image (positions, sizes, proportions, elements, spacing, colors)
+2. **Element Inventory**: List all identified elements with their exact properties
+3. **1:1 Implementation**: Create the exact layout using project's tech stack (Tailwind, GSAP, fluid tokens)
+4. **Visual Verification**: ALWAYS use Playwright MCP after implementation to verify 1:1 accuracy
+   - Start dev server and navigate to the page
+   - Take screenshot of ONLY the specific section/component implemented
+   - Compare screenshot with original image/requirements
+   - Verify pixel-perfect matching of positions, sizes, spacing, colors
+   - Fix any discrepancies found
 
 ---
 
@@ -51,6 +79,26 @@ npm run check:types       # TypeScript validation
 npm run check:i18n        # Translation validation
 ```
 
+**IMPORTANT - Runtime Verification:**
+After implementing complex code changes (new features, refactoring, component logic), ALWAYS use MCP Next.js DevTools to verify runtime behavior:
+- ✅ Start dev server and use `nextjs_runtime` MCP tools to check for errors and logs
+- ✅ Verify no runtime errors, compilation issues, or console warnings
+- ❌ Skip this step ONLY for trivial changes (e.g., image sizes, spacing, colors, simple text edits)
+
+**When to use MCP verification:**
+- New components or features
+- GSAP animation implementations
+- Data fetching or API integration
+- State management changes
+- Routing or i18n modifications
+
+**IMPORTANT - Visual Layout Verification:**
+After implementing specific layouts (from image cloning OR textual requirements), ALWAYS use Playwright MCP to verify visual accuracy:
+- ✅ Use `browser_navigate` to reach the page
+- ✅ Use `browser_take_screenshot` with `element` parameter to capture ONLY the specific section
+- ✅ Verify 1:1 pixel-perfect matching with requirements
+- ✅ Fix any visual discrepancies immediately
+
 ## 🚫 ANTI-PATTERNS (ABSOLUTELY FORBIDDEN)
 
 **Implementation Failures:**
@@ -80,24 +128,8 @@ Before considering ANY task complete:
 4. ✅ Code reviewed against project patterns
 5. ✅ Production-ready error handling present
 6. ✅ No security vulnerabilities introduced
-7. ✅ iOS Safari compatibility verified (for UI changes)
 
-## 🧠 CONTEXT MANAGEMENT (Prevent Hallucinations)
 
-**File References:**
-- Use explicit paths: `@src/components/ui/NavBar.tsx`
-- Reference documentation URLs when available
-- Include visual context (design mocks, diagrams) if relevant
-
-**Context Cleanup:**
-- Use `/clear` between unrelated tasks to prevent context bleed
-- For parallel work, consider Git worktrees with isolated Claude instances
-
-**Specific over Generic:**
-- ✅ "Do not use mocks" (specific constraint)
-- ❌ "Avoid mocks" (vague, easily ignored)
-
----
 
 ## Project Overview
 
@@ -111,28 +143,6 @@ Portfolio website for creative work (photography, video, art) with multi-languag
 - next-intl (Italian primary, English secondary)
 - Vitest + Playwright + Storybook
 
-## Commands
-
-```bash
-# Development
-npm run dev              # Dev server (default port 3000)
-
-# Build & Test
-npm run build            # Production build
-npm run test             # Vitest unit tests
-npm run test:e2e         # Playwright E2E (first run: npx playwright install)
-npm run storybook        # Storybook on :6006
-
-# Code Quality
-npm run lint:fix         # Auto-fix linting
-npm run check:types      # TypeScript check
-npm run check:deps       # Find unused deps (knip)
-npm run check:i18n       # Validate translations (IMPORTANT: run before commits)
-
-# Utilities
-npm run build-stats      # Bundle analyzer
-npm run commit           # Conventional commits CLI
-```
 
 ## File Structure
 
@@ -249,21 +259,7 @@ useGSAP(() => {
 **Performance:**
 - GSAP: `transform`/`opacity` only (GPU-accelerated)
 - Bundle: monitor with `npm run build-stats`
-- Test on iOS Safari (critical for this project)
 
-## Continuous Improvement
 
-**After each feature:**
-1. Pattern Recognition: What worked? Document it
-2. Decoherence Check: Where did we deviate from plan?
-3. Optimization: Can we reduce complexity?
-4. Update CLAUDE.md with proven patterns monthly
 
 ---
-
-## Key Files
-
-- `next.config.ts` - Next.js config (i18n, bundle analyzer)
-- `src/utils/AppConfig.ts` - Locales + URLs config
-- `src/styles/global.css` - Design tokens, fonts, iOS fixes
-- `src/components/ui/NavBar.tsx` - GSAP animation reference
