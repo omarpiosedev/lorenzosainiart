@@ -47,9 +47,9 @@ export default function PortfolioHero() {
       id: 'img-3',
       alt: 'Portfolio image 3',
       src: '/assets/images/PortfolioHero/521bf560-6b45-43d3-8f20-b22d725c5dee_rw_3840ff89.webp',
-      // Mobile: middle-left, Desktop: maintained
+      // Mobile: 9:16 vertical, Desktop: 16:9 horizontal (aspect-video)
       className:
-        'absolute top-[48%] left-[3%] w-[34%] h-[24%] lg:top-[30%] lg:left-auto lg:right-[8%] lg:w-[15%] lg:h-[33%]',
+        'absolute top-[48%] left-[3%] w-[34%] aspect-[9/16] lg:top-[15%] lg:left-auto lg:right-[15%] lg:w-[20%] lg:aspect-video',
     },
     {
       id: 'img-4',
