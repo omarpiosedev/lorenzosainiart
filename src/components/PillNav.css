@@ -207,14 +207,14 @@
   opacity: 0;
   transform-origin: top center;
   visibility: hidden;
-  padding: 1rem;
+  padding: 1.5rem !important;
   min-height: auto;
 }
 
 .mobile-menu-list {
   list-style: none;
   margin: 0;
-  padding: 0.5rem;
+  padding: 0;
   display: flex;
   flex-direction: row !important;
   flex-wrap: wrap;

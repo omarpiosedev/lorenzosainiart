@@ -419,7 +419,7 @@ const NavBar = ({
         </button>
       </nav>
 
-      <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
+      <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={{ ...cssVars, padding: '1.5rem' }}>
         <ul className="mobile-menu-list" style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', display: 'flex' }}>
           {items.map((item, i) => (
             <li key={item.href || `mobile-item-${i}`} style={{ display: 'inline-block' }}>
