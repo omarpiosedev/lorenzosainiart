@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
+import { preload } from 'react-dom';
 import { getBaseUrl } from '@/utils/AppConfig';
 import HomeClient from './HomeClient';
 import BenefitsSection from './sections/BenefitsSection';
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
       type: 'website',
       images: [
         {
-          url: `${baseUrl}/assets/images/backgropund.webp`,
+          url: `${baseUrl}/assets/images/background.webp`,
           width: 1200,
           height: 630,
           alt: 'Lorenzo Saini Portfolio',
@@ -71,6 +72,21 @@ export default async function HomePage({ params }: HomePageProps) {
 
   // Enable static rendering
   setRequestLocale(locale);
+
+  // ✅ PERFORMANCE: Preload home page-specific critical images
+  // LoadingScreen Polaroid images - shown immediately on first load
+  preload('/assets/images/LoadingScreen/Polaroid 1.webp', { as: 'image', fetchPriority: 'high' });
+  preload('/assets/images/LoadingScreen/Polaroid2.webp', { as: 'image', fetchPriority: 'high' });
+  preload('/assets/images/LoadingScreen/Polaroid3.webp', { as: 'image', fetchPriority: 'high' });
+  preload('/assets/images/LoadingScreen/Polaroid4.webp', { as: 'image', fetchPriority: 'high' });
+  preload('/assets/images/LoadingScreen/Polaroid5.webp', { as: 'image', fetchPriority: 'high' });
+
+  // Home page hero and gallery images - needed for above-the-fold content
+  preload('/assets/images/background.webp', { as: 'image' });
+  preload('/assets/images/sposi.webp', { as: 'image' });
+  preload('/assets/images/image1.webp', { as: 'image' });
+  preload('/assets/images/image2.webp', { as: 'image' });
+  preload('/assets/images/image3.webp', { as: 'image' });
 
   return (
     <HomeClient>

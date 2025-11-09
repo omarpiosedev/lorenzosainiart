@@ -325,7 +325,7 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
           className="w-full h-full object-cover"
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
         />
       </div>
     </>

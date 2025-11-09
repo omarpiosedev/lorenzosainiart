@@ -97,16 +97,12 @@ export default async function RootLayout(props: {
   preload('/assets/fonts/Effloresce It.otf', { as: 'font', type: 'font/opentype', crossOrigin: 'anonymous' });
 
   // CRITICAL: LoadingScreen images - must load IMMEDIATELY on page load
-  // These are shown first thing when user lands on home page
+  // Only preload assets that are actually used in LoadingScreen component
   preload('/assets/images/LogoNero.webp', { as: 'image', fetchPriority: 'high' });
-  preload('/assets/images/image1.webp', { as: 'image', fetchPriority: 'high' });
-  preload('/assets/images/image2.webp', { as: 'image', fetchPriority: 'high' });
-  preload('/assets/images/image3.webp', { as: 'image', fetchPriority: 'high' });
-  preload('/assets/images/backgropund.webp', { as: 'image', fetchPriority: 'high' });
-  preload('/assets/images/sposi.webp', { as: 'image', fetchPriority: 'high' });
 
-  // Loading screen video - critical for initial experience
-  preload('/videos/Logoanimated.mp4', { as: 'video', type: 'video/mp4' });
+  // NOTE: Page-specific images (image1.webp, image2.webp, image3.webp, background.webp, sposi.webp)
+  // are now preloaded in their respective pages to avoid loading 17MB on all routes
+  // See: src/app/[locale]/home/page.tsx for home-specific preloads
 
   const navItems = [
     { label: 'HOME', href: `/${locale}` },

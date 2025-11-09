@@ -378,7 +378,7 @@ export default function HeroHome() {
         }}
       >
         <Image
-          src="/assets/images/backgropund.webp"
+          src="/assets/images/background.webp"
           alt="Background"
           fill
           priority

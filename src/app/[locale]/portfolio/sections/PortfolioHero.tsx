@@ -512,7 +512,7 @@ export default function PortfolioHero() {
         }}
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
       />
 
       {/* Portfolio Images - Positioned absolutely */}
