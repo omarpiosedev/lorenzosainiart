@@ -12,6 +12,16 @@ import Noise from '@/components/Noise';
 // Register GSAP plugins
 gsap.registerPlugin(useGSAP, ScrollTrigger, MotionPathPlugin);
 
+// Configure ScrollTrigger for mobile iOS Safari fixes
+// - normalizeScroll: fixes iOS Safari bugs with position reporting and pin jumping
+// - ignoreMobileResize: prevents refresh when iOS address bar shows/hides
+if (typeof window !== 'undefined') {
+  ScrollTrigger.normalizeScroll(true);
+  ScrollTrigger.config({
+    ignoreMobileResize: true,
+  });
+}
+
 type ImageConfig = {
   id: string;
   alt: string;
@@ -364,7 +374,7 @@ export default function PortfolioHero() {
 
           video.addEventListener('timeupdate', handleTimeUpdate);
 
-          // Create timeline with three phases
+          // Create timeline with mobile-friendly pin configuration
           timeline = gsap.timeline({
             scrollTrigger: {
               trigger: containerRef.current,
@@ -373,6 +383,8 @@ export default function PortfolioHero() {
               scrub: 2, // Higher scrub value = smoother, more delayed animation
               pin: containerRef.current, // Pin hero section during animation
               pinSpacing: true, // Add virtual scroll space to complete animation
+              anticipatePin: 1, // MOBILE FIX: Anticipate pin to prevent flash of unpinned content
+              preventOverlaps: true, // Prevent animation overlaps during fast scrolling
             },
           });
 
