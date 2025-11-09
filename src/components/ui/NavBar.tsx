@@ -420,7 +420,7 @@ const NavBar = ({
       </nav>
 
       <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
-        <ul className="mobile-menu-list">
+        <ul className="mobile-menu-list" style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
           {items.map((item, i) => (
             <li key={item.href || `mobile-item-${i}`}>
               {isRouterLink(item.href)
