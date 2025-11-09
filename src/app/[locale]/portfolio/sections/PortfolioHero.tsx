@@ -215,52 +215,6 @@ export default function PortfolioHero() {
     },
   );
 
-  // Parallax effect for images (delayed until entrance completes, excluding img-3)
-  useGSAP(
-    () => {
-      if (!containerRef.current) {
-        return;
-      }
-
-      // Wait for entrance animation to complete
-      const checkInterval = setInterval(() => {
-        if (isEntranceComplete.current) {
-          clearInterval(checkInterval);
-
-          const imageElements = gsap.utils.toArray<HTMLElement>('.portfolio-image');
-
-          imageElements.forEach((item, index) => {
-            // Skip img-3 (index 2) - it has its own MotionPath animation
-            if (index === 2) {
-              return;
-            }
-
-            // Different parallax speeds for depth effect
-            const speeds = [-60, -40, -80, -50, -70, -45, -65, -55];
-            const speed = speeds[index] || -50;
-
-            gsap.to(item, {
-              y: speed,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: containerRef.current,
-                start: 'top top',
-                end: 'bottom top',
-                scrub: true,
-              },
-            });
-          });
-        }
-      }, 100);
-
-      return () => clearInterval(checkInterval);
-    },
-    {
-      scope: containerRef,
-      dependencies: [],
-    },
-  );
-
   // Mouse parallax effect (delayed until entrance completes, excluding img-3, desktop only)
   useGSAP(
     () => {
@@ -389,7 +343,7 @@ export default function PortfolioHero() {
                 trigger: containerRef.current,
                 start: 'top top',
                 end: () => `+=${window.innerHeight * 4}`,
-                scrub: 2,
+                scrub: 1.5,
                 pin: containerRef.current,
                 pinSpacing: true,
                 anticipatePin: 1,
@@ -399,46 +353,30 @@ export default function PortfolioHero() {
 
             const tl = timeline;
 
-            // Phase 1: Move to center using GSAP's xPercent/yPercent
+            // Single fluid animation: move + zoom to fullscreen simultaneously
             tl.to(img3, {
-              left: '50%',
-              top: '50%',
-              xPercent: -50,
-              yPercent: -50,
-              ease: 'sine.inOut',
-              duration: 1.2,
+              left: '0',
+              top: '0',
+              width: '100vw',
+              height: '100vh',
+              ease: 'power1.inOut',
+              duration: 2.8,
+              onComplete: () => {
+                if (video.paused) {
+                  video.play().catch((err) => {
+                    console.error('Video autoplay failed:', err);
+                  });
+                }
+              },
             });
 
-            // Phase 2: Expand to fullscreen
-            tl.to(
-              img3,
-              {
-                left: '0',
-                top: '0',
-                xPercent: 0,
-                yPercent: 0,
-                width: '100vw',
-                height: '100vh',
-                ease: 'sine.inOut',
-                duration: 0.8,
-                onComplete: () => {
-                  if (video.paused) {
-                    video.play().catch((err) => {
-                      console.error('Video autoplay failed:', err);
-                    });
-                  }
-                },
-              },
-              '>',
-            );
-
-            // Phase 3: Fade in video over image
+            // Fade in video over image (starts AFTER fullscreen is reached)
             tl.to(
               video,
               {
                 opacity: 1,
-                duration: 1.0,
-                ease: 'sine.inOut',
+                duration: 1.5,
+                ease: 'power1.inOut',
               },
               '>',
             );
@@ -473,7 +411,7 @@ export default function PortfolioHero() {
                 trigger: containerRef.current,
                 start: 'top top',
                 end: () => `+=${window.innerHeight * 4}`,
-                scrub: 2,
+                scrub: 1.5,
                 pin: containerRef.current,
                 pinSpacing: true,
                 anticipatePin: 1,
@@ -483,46 +421,30 @@ export default function PortfolioHero() {
 
             const tl = timeline;
 
-            // Phase 1: Move to center using GSAP's xPercent/yPercent
+            // Single fluid animation: move + zoom to fullscreen simultaneously
             tl.to(img3, {
-              left: '50%',
-              top: '50%',
-              xPercent: -50,
-              yPercent: -50,
-              ease: 'sine.inOut',
-              duration: 1.2,
+              left: '0',
+              top: '0',
+              width: '100vw',
+              height: '100vh',
+              ease: 'power1.inOut',
+              duration: 2.8,
+              onComplete: () => {
+                if (video.paused) {
+                  video.play().catch((err) => {
+                    console.error('Video autoplay failed:', err);
+                  });
+                }
+              },
             });
 
-            // Phase 2: Expand to fullscreen
-            tl.to(
-              img3,
-              {
-                left: '0',
-                top: '0',
-                xPercent: 0,
-                yPercent: 0,
-                width: '100vw',
-                height: '100vh',
-                ease: 'sine.inOut',
-                duration: 0.8,
-                onComplete: () => {
-                  if (video.paused) {
-                    video.play().catch((err) => {
-                      console.error('Video autoplay failed:', err);
-                    });
-                  }
-                },
-              },
-              '>',
-            );
-
-            // Phase 3: Fade in video over image
+            // Fade in video over image (starts AFTER fullscreen is reached)
             tl.to(
               video,
               {
                 opacity: 1,
-                duration: 1.0,
-                ease: 'sine.inOut',
+                duration: 1.5,
+                ease: 'power1.inOut',
               },
               '>',
             );
