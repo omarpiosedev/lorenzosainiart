@@ -374,87 +374,176 @@ export default function PortfolioHero() {
 
           video.addEventListener('timeupdate', handleTimeUpdate);
 
-          // Create timeline with mobile-friendly pin configuration
-          timeline = gsap.timeline({
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top top',
-              end: () => `+=${window.innerHeight * 4}`, // Create 4x viewport height for smooth video transition
-              scrub: 2, // Higher scrub value = smoother, more delayed animation
-              pin: containerRef.current, // Pin hero section during animation
-              pinSpacing: true, // Add virtual scroll space to complete animation
-              anticipatePin: 1, // MOBILE FIX: Anticipate pin to prevent flash of unpinned content
-              preventOverlaps: true, // Prevent animation overlaps during fast scrolling
-            },
-          });
+          // Use matchMedia for different mobile/desktop configurations
+          const mm = gsap.matchMedia();
 
-          const tl = timeline;
-
-          // Phase 1: Move to center using GSAP's xPercent/yPercent
-          tl.to(img3, {
-            left: '50%',
-            top: '50%',
-            xPercent: -50,
-            yPercent: -50,
-            ease: 'sine.inOut', // Very smooth easing
-            duration: 1.2, // Longer duration for more smoothness
-          });
-
-          // Phase 2: Expand to fullscreen
-          // Reset xPercent/yPercent and set to fullscreen
-          tl.to(
-            img3,
-            {
-              left: '0',
-              top: '0',
-              xPercent: 0,
-              yPercent: 0,
-              width: '100vw',
-              height: '100vh',
-              ease: 'sine.inOut', // Very smooth easing
-              duration: 0.8,
-              onComplete: () => {
-                // Start video when image reaches fullscreen
-                if (video.paused) {
-                  video.play().catch((err) => {
-                    console.error('Video autoplay failed:', err);
-                  });
-                }
+          // Mobile configuration (with pin - overflow hidden prevents scrolling issues)
+          mm.add('(max-width: 1023px)', () => {
+            timeline = gsap.timeline({
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: 'top top',
+                end: () => `+=${window.innerHeight * 4}`,
+                scrub: 2,
+                pin: containerRef.current,
+                pinSpacing: true,
+                anticipatePin: 1,
+                preventOverlaps: true,
               },
-            },
-            '>', // Start after previous animation completes
-          );
+            });
 
-          // Phase 3: Fade in video over image
-          tl.to(
-            video,
-            {
-              opacity: 1,
-              duration: 1.0,
+            const tl = timeline;
+
+            // Phase 1: Move to center using GSAP's xPercent/yPercent
+            tl.to(img3, {
+              left: '50%',
+              top: '50%',
+              xPercent: -50,
+              yPercent: -50,
               ease: 'sine.inOut',
-            },
-            '>', // Start after phase 2 completes
-          );
+              duration: 1.2,
+            });
 
-          // Phase 4: Show buttons at the end
-          if (buttonsRef.current) {
-            tl.fromTo(
-              buttonsRef.current,
+            // Phase 2: Expand to fullscreen
+            tl.to(
+              img3,
               {
-                opacity: 0,
-                y: 40,
-                scale: 0.95,
+                left: '0',
+                top: '0',
+                xPercent: 0,
+                yPercent: 0,
+                width: '100vw',
+                height: '100vh',
+                ease: 'sine.inOut',
+                duration: 0.8,
+                onComplete: () => {
+                  if (video.paused) {
+                    video.play().catch((err) => {
+                      console.error('Video autoplay failed:', err);
+                    });
+                  }
+                },
               },
+              '>',
+            );
+
+            // Phase 3: Fade in video over image
+            tl.to(
+              video,
               {
                 opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 1.2,
-                ease: 'expo.out',
+                duration: 1.0,
+                ease: 'sine.inOut',
               },
-              '-=0.5', // Start slightly before video fade completes
+              '>',
             );
-          }
+
+            // Phase 4: Show buttons at the end
+            if (buttonsRef.current) {
+              tl.fromTo(
+                buttonsRef.current,
+                {
+                  opacity: 0,
+                  y: 40,
+                  scale: 0.95,
+                },
+                {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  duration: 1.2,
+                  ease: 'expo.out',
+                },
+                '-=0.5',
+              );
+            }
+
+            return () => {}; // Cleanup for mobile matchMedia
+          });
+
+          // Desktop configuration (with pin)
+          mm.add('(min-width: 1024px)', () => {
+            timeline = gsap.timeline({
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: 'top top',
+                end: () => `+=${window.innerHeight * 4}`,
+                scrub: 2,
+                pin: containerRef.current,
+                pinSpacing: true,
+                anticipatePin: 1,
+                preventOverlaps: true,
+              },
+            });
+
+            const tl = timeline;
+
+            // Phase 1: Move to center using GSAP's xPercent/yPercent
+            tl.to(img3, {
+              left: '50%',
+              top: '50%',
+              xPercent: -50,
+              yPercent: -50,
+              ease: 'sine.inOut',
+              duration: 1.2,
+            });
+
+            // Phase 2: Expand to fullscreen
+            tl.to(
+              img3,
+              {
+                left: '0',
+                top: '0',
+                xPercent: 0,
+                yPercent: 0,
+                width: '100vw',
+                height: '100vh',
+                ease: 'sine.inOut',
+                duration: 0.8,
+                onComplete: () => {
+                  if (video.paused) {
+                    video.play().catch((err) => {
+                      console.error('Video autoplay failed:', err);
+                    });
+                  }
+                },
+              },
+              '>',
+            );
+
+            // Phase 3: Fade in video over image
+            tl.to(
+              video,
+              {
+                opacity: 1,
+                duration: 1.0,
+                ease: 'sine.inOut',
+              },
+              '>',
+            );
+
+            // Phase 4: Show buttons at the end
+            if (buttonsRef.current) {
+              tl.fromTo(
+                buttonsRef.current,
+                {
+                  opacity: 0,
+                  y: 40,
+                  scale: 0.95,
+                },
+                {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  duration: 1.2,
+                  ease: 'expo.out',
+                },
+                '-=0.5',
+              );
+            }
+
+            return () => {}; // Cleanup for desktop matchMedia
+          });
         }
       }, 100);
 
@@ -490,6 +579,7 @@ export default function PortfolioHero() {
       style={{
         minHeight: '100vh',
         height: '100vh',
+        overflow: 'hidden',
       }}
     >
       {/* Animated Noise Grain - covers everything including background */}

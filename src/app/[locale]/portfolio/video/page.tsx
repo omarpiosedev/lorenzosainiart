@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'website',
       images: [
         {
-          url: `${baseUrl}/assets/images/portfolio-video-og.jpg`,
+          url: `${baseUrl}/assets/images/portfolio-video-og.webp`,
           width: 1200,
           height: 630,
           alt: 'Video portfolio showcase',

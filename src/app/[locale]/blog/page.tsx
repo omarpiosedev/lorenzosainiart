@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'website',
       images: [
         {
-          url: `${baseUrl}/assets/images/blog-og.jpg`,
+          url: `${baseUrl}/assets/images/blog-og.webp`,
           width: 1200,
           height: 630,
           alt: 'Lorenzo Saini Blog',
@@ -84,8 +84,8 @@ export default async function BlogPage(props: Props) {
     { name: 'Blog', url: `${baseUrl}/${locale}/blog` },
   ];
 
-  // Fetch posts from Sanity
-  const posts = await client.fetch<BlogPost[]>(POSTS_QUERY);
+  // Fetch posts from Sanity (if configured)
+  const posts = client ? await client.fetch<BlogPost[]>(POSTS_QUERY) : [];
 
   return (
     <>

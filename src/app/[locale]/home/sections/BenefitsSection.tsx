@@ -316,7 +316,7 @@ export default function BenefitsSection() {
             {/* Polaroid 1 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.jpg"
+                src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.webp"
                 alt="Portfolio work 1"
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -327,7 +327,7 @@ export default function BenefitsSection() {
             {/* Polaroid 2 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.jpg"
+                src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.webp"
                 alt="Portfolio work 2"
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -338,7 +338,7 @@ export default function BenefitsSection() {
             {/* Polaroid 3 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.jpg"
+                src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.webp"
                 alt="Portfolio work 3"
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -349,7 +349,7 @@ export default function BenefitsSection() {
             {/* Polaroid 4 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.jpg"
+                src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.webp"
                 alt="Portfolio work 4"
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -360,7 +360,7 @@ export default function BenefitsSection() {
             {/* Polaroid 5 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
               <img
-                src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.jpg"
+                src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.webp"
                 alt="Portfolio work 5"
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -720,7 +720,7 @@ export default function BenefitsSection() {
                 {/* Polaroid 1 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.jpg"
+                    src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.webp"
                     alt="Portfolio work 1"
                     className="w-full h-full object-cover"
                     loading="lazy"
@@ -731,7 +731,7 @@ export default function BenefitsSection() {
                 {/* Polaroid 2 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.jpg"
+                    src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.webp"
                     alt="Portfolio work 2"
                     className="w-full h-full object-cover"
                     loading="lazy"
@@ -742,7 +742,7 @@ export default function BenefitsSection() {
                 {/* Polaroid 3 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.jpg"
+                    src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.webp"
                     alt="Portfolio work 3"
                     className="w-full h-full object-cover"
                     loading="lazy"
@@ -753,7 +753,7 @@ export default function BenefitsSection() {
                 {/* Polaroid 4 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.jpg"
+                    src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.webp"
                     alt="Portfolio work 4"
                     className="w-full h-full object-cover"
                     loading="lazy"
@@ -764,7 +764,7 @@ export default function BenefitsSection() {
                 {/* Polaroid 5 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
                   <img
-                    src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.jpg"
+                    src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.webp"
                     alt="Portfolio work 5"
                     className="w-full h-full object-cover"
                     loading="lazy"

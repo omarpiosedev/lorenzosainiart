@@ -11,5 +11,8 @@ export const config = {
   // - API routes (/api/*)
   // - Static files (/_next/*, /favicon.ico, etc.)
   // - Image optimization files
-  matcher: ['/', '/(it|en)/:path*', '/((?!_next|_vercel|.*\\..*).*)'],
+  matcher: [
+    // Match all pathnames except for
+    '/((?!api|_next|_vercel|.*\\..*).*)',
+  ],
 };

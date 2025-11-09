@@ -5,9 +5,10 @@ import { gsap } from 'gsap';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import './NavBar.css';
 
-// Register GSAP plugins at module level (best practice)
+// Register GSAP plugins at module level
 gsap.registerPlugin(useGSAP);
 
 type NavBarProps = {
@@ -44,8 +45,7 @@ const NavBar = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Refs for GSAP animations
-  const containerRef = useRef<HTMLDivElement>(null); // Main container for scoped queries
-  const circleRefs = useRef<HTMLElement[]>([]);
+  const circleRefs = useRef<(HTMLElement | null)[]>([]);
   const tlRefs = useRef<gsap.core.Timeline[]>([]);
   const activeTweenRefs = useRef<gsap.core.Tween[]>([]);
   const logoImgRef = useRef<HTMLImageElement>(null);
@@ -67,8 +67,7 @@ const NavBar = ({
 
   const activeHref = getActiveHref();
 
-  // ✅ BEST PRACTICE: Use useGSAP hook instead of useEffect for React 19 compatibility
-  // Automatic cleanup, scoped queries, prevents double-mount issues
+  // ✅ BEST PRACTICE: Use useGSAP hook for React 19 compatibility
   const { contextSafe } = useGSAP(
     () => {
       const layout = () => {
@@ -77,7 +76,7 @@ const NavBar = ({
             return;
           }
 
-          const pill = circle.parentElement as HTMLElement;
+          const pill = circle.parentElement;
           const rect = pill.getBoundingClientRect();
           const { width: w, height: h } = rect;
           const R = ((w * w) / 4 + h * h) / (2 * h);
@@ -111,7 +110,6 @@ const NavBar = ({
             return;
           }
 
-          // Kill previous timeline to avoid memory leaks
           tlRefs.current[index]?.kill();
           const tl = gsap.timeline({ paused: true });
 
@@ -147,68 +145,43 @@ const NavBar = ({
       const onResize = () => layout();
       window.addEventListener('resize', onResize);
 
-      if (document.fonts) {
+      if (document.fonts?.ready) {
         document.fonts.ready.then(layout).catch(() => {});
       }
 
-      // Initial load animations
-      if (initialLoadAnimation) {
-        const menu = mobileMenuRef.current;
-        if (menu) {
-          gsap.set(menu, { visibility: 'hidden', opacity: 0, scaleY: 1, y: 0 });
-        }
+      const menu = mobileMenuRef.current;
+      if (menu) {
+        gsap.set(menu, { visibility: 'hidden', opacity: 0, scaleY: 1 });
+      }
 
-        const hamburger = hamburgerRef.current;
-        if (hamburger) {
-          gsap.set(hamburger, { scale: 0, transformOrigin: 'center center' });
-          gsap.to(hamburger, {
-            scale: 1,
-            duration: 0.4,
-            delay: 0.2,
-            ease,
-          });
-        }
+      if (initialLoadAnimation) {
         const logo = logoRef.current;
         const navItems = navItemsRef.current;
 
         if (logo) {
-          gsap.set(logo, { scale: 0, transformOrigin: 'center center' });
+          gsap.set(logo, { scale: 0 });
           gsap.to(logo, {
             scale: 1,
-            duration: 0.4,
+            duration: 0.6,
             ease,
           });
         }
 
         if (navItems) {
-          gsap.set(navItems, {
-            scaleX: 0,
-            transformOrigin: 'left center',
-            overflow: 'hidden',
-          });
+          gsap.set(navItems, { width: 0, overflow: 'hidden' });
           gsap.to(navItems, {
-            scaleX: 1,
+            width: 'auto',
             duration: 0.6,
-            delay: 0.2,
             ease,
           });
         }
       }
 
-      // Cleanup: Remove resize listener
       return () => window.removeEventListener('resize', onResize);
     },
-    {
-      dependencies: [items, ease, initialLoadAnimation],
-      scope: containerRef, // Scoped queries for better performance
-    },
+    { dependencies: [items, ease, initialLoadAnimation] },
   );
 
-  // Riferimento al pathname precedente per rilevare i cambi di pagina
-  const prevPathnameRef = useRef(pathname);
-
-  // ✅ BEST PRACTICE: Wrap event handlers with contextSafe() to ensure animations are properly tracked
-  // Context7 documentation: Event handlers created outside useGSAP need contextSafe wrapper
   const handleEnter = contextSafe((i: number) => {
     const tl = tlRefs.current[i];
     if (!tl) {
@@ -250,7 +223,6 @@ const NavBar = ({
     });
   });
 
-  // ✅ BEST PRACTICE: Wrap toggleMobileMenu with contextSafe() for proper cleanup
   const toggleMobileMenu = contextSafe(() => {
     const newState = !isMobileMenuOpen;
     setIsMobileMenuOpen(newState);
@@ -307,21 +279,6 @@ const NavBar = ({
     onMobileMenuClick?.();
   });
 
-  // Chiudi il menu mobile quando cambia la pagina
-
-  useEffect(() => {
-    if (prevPathnameRef.current !== pathname && isMobileMenuOpen) {
-      // Aggiorna il riferimento
-      prevPathnameRef.current = pathname;
-
-      // Usa la funzione toggleMobileMenu esistente per chiudere correttamente
-      toggleMobileMenu();
-    } else {
-      // Aggiorna il riferimento se non c'è cambio ma il pathname è diverso
-      prevPathnameRef.current = pathname;
-    }
-  }, [pathname, isMobileMenuOpen, toggleMobileMenu]);
-
   const isExternalLink = (href: string) =>
     href.startsWith('http://')
     || href.startsWith('https://')
@@ -337,315 +294,177 @@ const NavBar = ({
     '--pill-bg': pillColor,
     '--hover-text': hoveredPillTextColor,
     '--pill-text': resolvedPillTextColor,
-    '--nav-h': '42px',
-    '--logo': '36px',
-    '--pill-pad-x': '18px',
-    '--pill-gap': '3px',
-  };
+  } as React.CSSProperties;
+
+  const firstItemHref = items?.[0]?.href;
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-[99999] pb-4"
-      style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
-    >
-      <nav
-        className={`w-full md:w-max flex items-center justify-between md:justify-start box-border px-4 md:px-0 ${className}`}
-        aria-label="Primary"
-        style={cssVars as React.CSSProperties}
-      >
-        {items?.[0] && isRouterLink(items[0].href)
+    <div className="pill-nav-container">
+      <nav className={`pill-nav ${className}`} aria-label="Primary" style={cssVars}>
+        {firstItemHref && isRouterLink(firstItemHref)
           ? (
               <Link
-                href={items[0].href}
+                className="pill-logo"
+                href={firstItemHref}
                 aria-label="Home"
                 onMouseEnter={handleLogoEnter}
                 role="menuitem"
-                ref={(el) => {
-                  logoRef.current = el;
-                }}
-                className="rounded-full p-2 inline-flex items-center justify-center overflow-hidden"
-                style={{
-                  width: 'var(--nav-h)',
-                  height: 'var(--nav-h)',
-                  background: 'var(--base, #000)',
-                }}
+                ref={logoRef}
               >
-                <Image
-                  src={logo}
-                  alt={logoAlt || 'Logo'}
-                  ref={logoImgRef}
-                  width={48}
-                  height={48}
-                  priority
-                  className="w-full h-full object-cover block"
-                />
+                <Image src={logo} alt={logoAlt} ref={logoImgRef} width={48} height={48} priority />
               </Link>
             )
           : (
               <a
-                href={items?.[0]?.href || '#'}
+                className="pill-logo"
+                href={firstItemHref || '#'}
                 aria-label="Home"
                 onMouseEnter={handleLogoEnter}
-                ref={(el) => {
-                  logoRef.current = el;
-                }}
-                className="rounded-full p-2 inline-flex items-center justify-center overflow-hidden"
-                style={{
-                  width: 'var(--nav-h)',
-                  height: 'var(--nav-h)',
-                  background: 'var(--base, #000)',
-                }}
+                ref={logoRef}
               >
-                <Image
-                  src={logo}
-                  alt={logoAlt || 'Logo'}
-                  ref={logoImgRef}
-                  width={48}
-                  height={48}
-                  priority
-                  className="w-full h-full object-cover block"
-                />
+                <Image src={logo} alt={logoAlt} ref={logoImgRef} width={48} height={48} priority />
               </a>
             )}
 
-        {/* Desktop Navigation */}
-        <div
-          ref={navItemsRef}
-          className="relative items-center rounded-full hidden md:flex"
-          style={{
-            height: 'var(--nav-h)',
-            background: 'var(--base, #000)',
-          }}
-        >
-          <ul
-            role="menubar"
-            className="list-none flex items-stretch m-0 p-[3px] h-full"
-            style={{ gap: 'var(--pill-gap)' }}
-          >
-            {items.map((item, i) => {
-              const isActive = activeHref === item.href;
-
-              const pillStyle = {
-                background: 'var(--pill-bg, #fff)',
-                color: 'var(--pill-text, var(--base, #000))',
-                paddingLeft: 'var(--pill-pad-x)',
-                paddingRight: 'var(--pill-pad-x)',
-              };
-
-              const PillContent = (
-                <>
-                  <span
-                    className="hover-circle absolute left-1/2 bottom-0 rounded-full z-[1] block pointer-events-none"
-                    style={{
-                      background: 'var(--base, #000)',
-                      willChange: 'transform',
-                    }}
-                    aria-hidden="true"
-                    ref={(el) => {
-                      if (el) {
-                        circleRefs.current[i] = el;
-                      }
-                    }}
-                  />
-                  <span className="label-stack relative inline-block leading-[1] z-[2]">
-                    <span
-                      className="pill-label relative z-[2] inline-block leading-[1]"
-                      style={{ willChange: 'transform' }}
-                    >
-                      {item.label}
-                    </span>
-                    <span
-                      className="pill-label-hover absolute left-0 top-0 z-[3] inline-block"
-                      style={{
-                        color: 'var(--hover-text, #fff)',
-                        willChange: 'transform, opacity',
-                      }}
-                      aria-hidden="true"
-                    >
-                      {item.label}
-                    </span>
-                  </span>
-                  {isActive && (
-                    <span
-                      className="absolute left-1/2 -bottom-[6px] -translate-x-1/2 w-3 h-3 rounded-full z-[4]"
-                      style={{ background: 'var(--base, #000)' }}
-                      aria-hidden="true"
-                    />
-                  )}
-                </>
-              );
-
-              const basePillClasses
-                = 'relative overflow-hidden inline-flex items-center justify-center h-full no-underline rounded-full box-border font-semibold text-[16px] leading-[0] uppercase tracking-[0.2px] whitespace-nowrap cursor-pointer px-0';
-
-              return (
-                <li key={item.href} role="none" className="flex h-full">
-                  {isRouterLink(item.href)
-                    ? (
-                        <Link
-                          role="menuitem"
-                          href={item.href}
-                          className={basePillClasses}
-                          style={pillStyle}
-                          aria-label={item.ariaLabel || item.label}
-                          onMouseEnter={() => handleEnter(i)}
-                          onMouseLeave={() => handleLeave(i)}
-                        >
-                          {PillContent}
-                        </Link>
-                      )
-                    : (
-                        <a
-                          role="menuitem"
-                          href={item.href}
-                          className={basePillClasses}
-                          style={pillStyle}
-                          aria-label={item.ariaLabel || item.label}
-                          onMouseEnter={() => handleEnter(i)}
-                          onMouseLeave={() => handleLeave(i)}
-                        >
-                          {PillContent}
-                        </a>
-                      )}
-                </li>
-              );
-            })}
-            {/* Settings Button - Desktop */}
-            <li role="none" className="flex h-full ml-2">
-              <button
-                type="button"
-                onClick={() => onSettingsClick?.()}
-                className="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 hover:scale-105 px-0"
-                style={{
-                  background: pillColor,
-                  color: resolvedPillTextColor,
-                }}
-                aria-label="Open settings"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          type="button"
-          ref={hamburgerRef}
-          onClick={toggleMobileMenu}
-          aria-label="Toggle menu"
-          aria-expanded={isMobileMenuOpen}
-          className="md:hidden rounded-full border-0 flex flex-col items-center justify-center gap-1 cursor-pointer p-0 relative"
-          style={{
-            width: 'var(--nav-h)',
-            height: 'var(--nav-h)',
-            background: 'var(--base, #000)',
-          }}
-        >
-          <span
-            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-[10ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]"
-            style={{ background: 'var(--pill-bg, #fff)' }}
-          />
-          <span
-            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-[10ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]"
-            style={{ background: 'var(--pill-bg, #fff)' }}
-          />
-        </button>
-      </nav>
-
-      {/* Mobile Menu */}
-      <div
-        ref={mobileMenuRef}
-        className="md:hidden absolute bottom-[3.5rem] left-0 right-0 rounded-[27px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] z-[998] origin-bottom"
-        style={{
-          ...cssVars,
-          background: 'var(--base, #f0f0f0)',
-          visibility: isMobileMenuOpen ? 'visible' : 'hidden',
-          opacity: isMobileMenuOpen ? 1 : 0,
-        }}
-      >
-        <ul className="list-none m-0 p-[3px] flex flex-col gap-[3px]">
-          {items.map((item) => {
-            const defaultStyle = {
-              background: 'var(--pill-bg, #fff)',
-              color: 'var(--pill-text, #fff)',
-            };
-            const hoverIn = (e: React.MouseEvent<HTMLAnchorElement>) => {
-              e.currentTarget.style.background = 'var(--base)';
-              e.currentTarget.style.color = 'var(--hover-text, #fff)';
-            };
-            const hoverOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
-              e.currentTarget.style.background = 'var(--pill-bg, #fff)';
-              e.currentTarget.style.color = 'var(--pill-text, #fff)';
-            };
-
-            const linkClasses
-              = 'block py-3 px-4 text-[16px] font-medium rounded-[50px] transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]';
-
-            return (
-              <li key={item.href}>
+        <div className="pill-nav-items desktop-only" ref={navItemsRef}>
+          <ul className="pill-list" role="menubar">
+            {items.map((item, i) => (
+              <li key={item.href || `item-${i}`} role="none">
                 {isRouterLink(item.href)
                   ? (
                       <Link
+                        role="menuitem"
                         href={item.href}
-                        className={linkClasses}
-                        style={defaultStyle}
-                        onMouseEnter={hoverIn}
-                        onMouseLeave={hoverOut}
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`pill${activeHref === item.href ? ' is-active' : ''}`}
+                        aria-label={item.ariaLabel || item.label}
+                        onMouseEnter={() => handleEnter(i)}
+                        onMouseLeave={() => handleLeave(i)}
                       >
-                        {item.label}
+                        <span
+                          className="hover-circle"
+                          aria-hidden="true"
+                          ref={(el) => {
+                            circleRefs.current[i] = el;
+                          }}
+                        />
+                        <span className="label-stack">
+                          <span className="pill-label">{item.label}</span>
+                          <span className="pill-label-hover" aria-hidden="true">
+                            {item.label}
+                          </span>
+                        </span>
+                        {activeHref === item.href && (
+                          <span className="active-indicator" aria-hidden="true" />
+                        )}
                       </Link>
                     )
                   : (
                       <a
+                        role="menuitem"
                         href={item.href}
-                        className={linkClasses}
-                        style={defaultStyle}
-                        onMouseEnter={hoverIn}
-                        onMouseLeave={hoverOut}
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`pill${activeHref === item.href ? ' is-active' : ''}`}
+                        aria-label={item.ariaLabel || item.label}
+                        onMouseEnter={() => handleEnter(i)}
+                        onMouseLeave={() => handleLeave(i)}
                       >
-                        {item.label}
+                        <span
+                          className="hover-circle"
+                          aria-hidden="true"
+                          ref={(el) => {
+                            circleRefs.current[i] = el;
+                          }}
+                        />
+                        <span className="label-stack">
+                          <span className="pill-label">{item.label}</span>
+                          <span className="pill-label-hover" aria-hidden="true">
+                            {item.label}
+                          </span>
+                        </span>
+                        {activeHref === item.href && (
+                          <span className="active-indicator" aria-hidden="true" />
+                        )}
                       </a>
                     )}
               </li>
-            );
-          })}
+            ))}
+
+            {/* Settings Button - Desktop */}
+            {onSettingsClick && (
+              <li role="none" className="settings-item">
+                <button
+                  type="button"
+                  onClick={onSettingsClick}
+                  className="pill pill-settings"
+                  aria-label="Open settings"
+                >
+                  <svg className="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </button>
+              </li>
+            )}
+          </ul>
+        </div>
+
+        <button
+          className="mobile-menu-button mobile-only"
+          onClick={toggleMobileMenu}
+          aria-label="Toggle menu"
+          ref={hamburgerRef}
+          type="button"
+        >
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+        </button>
+      </nav>
+
+      <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
+        <ul className="mobile-menu-list">
+          {items.map((item, i) => (
+            <li key={item.href || `mobile-item-${i}`}>
+              {isRouterLink(item.href)
+                ? (
+                    <Link
+                      href={item.href}
+                      className={`mobile-menu-link${activeHref === item.href ? ' is-active' : ''}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  )
+                : (
+                    <a
+                      href={item.href}
+                      className={`mobile-menu-link${activeHref === item.href ? ' is-active' : ''}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </a>
+                  )}
+            </li>
+          ))}
 
           {/* Settings Button - Mobile */}
-          <li className="mt-2 flex justify-center">
-            <div
-              className="w-12 h-12 flex items-center justify-center rounded-full transition-all duration-200"
-              style={{
-                background: 'var(--pill-bg, #fff)',
-                color: 'var(--pill-text, #fff)',
-              }}
-            >
+          {onSettingsClick && (
+            <li className="settings-item-mobile">
               <button
                 type="button"
                 onClick={() => {
-                  onSettingsClick?.();
+                  onSettingsClick();
                   setIsMobileMenuOpen(false);
                 }}
-                className="flex items-center justify-center w-6 h-6 rounded-full transition-all duration-200 hover:scale-105"
-                style={{
-                  background: 'transparent',
-                  color: 'var(--pill-text, #fff)',
-                }}
+                className="mobile-menu-link settings-link"
                 aria-label="Open settings"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="settings-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
+                <span>Settings</span>
               </button>
-            </div>
-          </li>
+            </li>
+          )}
         </ul>
       </div>
     </div>

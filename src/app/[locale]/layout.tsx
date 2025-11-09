@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import pick from 'lodash/pick';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { notFound } from 'next/navigation';
 import { preload } from 'react-dom';
 import { PersonJsonLd, WebsiteJsonLd } from '@/components/seo/JsonLd';
 import { routing } from '@/lib/i18n/routing';
@@ -80,12 +79,16 @@ export default async function RootLayout(props: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await props.params;
+  // Extract locale from params - this is set by the [locale] route segment
+  const { locale: paramLocale } = await props.params;
 
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
+  // CRITICAL: Validate and normalize locale to prevent hydration mismatch
+  // Always use 'it' if paramLocale is invalid or missing
+  const locale = hasLocale(routing.locales, paramLocale)
+    ? paramLocale
+    : routing.defaultLocale;
 
+  // Set the locale for this request (required for next-intl)
   setRequestLocale(locale);
 
   // ✅ BEST PRACTICE: Ottieni tutti i messaggi dal server
@@ -113,7 +116,7 @@ export default async function RootLayout(props: {
   ];
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         {/* JSON-LD Structured Data for SEO */}
         <WebsiteJsonLd locale={locale} />
@@ -124,8 +127,13 @@ export default async function RootLayout(props: {
             Questo riduce il bundle JS client e migliora le performance.
             Include 'loading' per LoadingScreen e 'HomePage' per la pagina principale.
             Altre pagine dovrebbero avvolgere il contenuto in NextIntlClientProvider
-            con i loro namespace specifici se necessario. */}
-        <NextIntlClientProvider messages={pick(messages, ['loading', 'HomePage', 'Footer'])}>
+            con i loro namespace specifici se necessario.
+            CRITICAL: Pass locale AND timeZone explicitly to prevent hydration mismatch. */}
+        <NextIntlClientProvider
+          locale={locale}
+          timeZone="Europe/Rome"
+          messages={pick(messages, ['loading', 'HomePage', 'Footer'])}
+        >
           <LayoutClient navItems={navItems}>
             {props.children}
           </LayoutClient>

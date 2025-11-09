@@ -40,6 +40,7 @@
     "next-sanity": "^11.6.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.5",
     "sanity": "^4.14.2",
     "styled-components": "^6.1.19",
     "tailwind-merge": "^3.3.1",
@@ -93,6 +94,8 @@
     "vitest": "^3.2.4"
   },
   "overrides": {
+    "glob": "^11.0.0",
+    "inflight": "npm:@nolyfill/inflight@latest",
     "prismjs": ">=1.30.0"
   },
   "release": {

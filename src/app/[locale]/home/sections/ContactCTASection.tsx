@@ -12,7 +12,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const photoCards = [
   {
     id: 'left',
-    image: '/assets/images/Cta/7c0095f7-6a6a-42f2-8920-cd6bfb7cd2426ad2.jpg',
+    image: '/assets/images/Cta/7c0095f7-6a6a-42f2-8920-cd6bfb7cd2426ad2.webp',
     rotation: -8,
     rotateY: 40,
     scale: 0.85,
@@ -23,7 +23,7 @@ const photoCards = [
   },
   {
     id: 'center',
-    image: '/assets/images/Cta/3cfea3cd-fcb1-4a0b-86c0-322695c02749_rw_38401bac.jpg',
+    image: '/assets/images/Cta/3cfea3cd-fcb1-4a0b-86c0-322695c02749_rw_38401bac.webp',
     rotation: 0,
     rotateY: 0,
     scale: 1,
@@ -34,7 +34,7 @@ const photoCards = [
   },
   {
     id: 'right',
-    image: '/assets/images/Cta/9f568ab3-2f54-48b7-9b16-1e6550abe560_rwc_512x0x1024x1364x1024bcab.jpg',
+    image: '/assets/images/Cta/9f568ab3-2f54-48b7-9b16-1e6550abe560_rwc_512x0x1024x1364x1024bcab.webp',
     rotation: 8,
     rotateY: -40,
     scale: 0.85,
@@ -94,7 +94,6 @@ export default function ContactCTASection() {
   const t = useTranslations('HomePage.sez7');
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const cardsContainerRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const socialRef = useRef<HTMLDivElement>(null);
 
@@ -117,23 +116,6 @@ export default function ContactCTASection() {
             y: 50,
             duration: 0.8,
             stagger: 0.15,
-            ease: 'power3.out',
-          });
-        }
-
-        // Cards stacked animation
-        if (cardsContainerRef.current) {
-          gsap.from(cardsContainerRef.current.children, {
-            scrollTrigger: {
-              trigger: cardsContainerRef.current,
-              start: 'top 75%',
-              toggleActions: 'play none none reverse',
-            },
-            opacity: 0,
-            scale: 0.9,
-            y: 60,
-            duration: 1,
-            stagger: 0.12,
             ease: 'power3.out',
           });
         }
@@ -203,7 +185,6 @@ export default function ContactCTASection() {
 
         {/* Photo Cards Stack */}
         <div
-          ref={cardsContainerRef}
           className="relative flex items-center justify-center mb-12 md:mb-16 lg:mb-20"
           style={{
             minHeight: '400px',

@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'profile',
       images: [
         {
-          url: `${baseUrl}/assets/images/about-og.jpg`,
+          url: `${baseUrl}/assets/images/about-og.webp`,
           width: 1200,
           height: 630,
           alt: 'About Lorenzo Saini',
