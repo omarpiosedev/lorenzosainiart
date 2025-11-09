@@ -261,7 +261,7 @@ export default function PortfolioHero() {
     },
   );
 
-  // Mouse parallax effect (delayed until entrance completes, excluding img-3)
+  // Mouse parallax effect (delayed until entrance completes, excluding img-3, desktop only)
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -274,6 +274,11 @@ export default function PortfolioHero() {
       const checkInterval = setInterval(() => {
         if (isEntranceComplete.current) {
           clearInterval(checkInterval);
+
+          // Only enable mouse parallax on desktop (>= 1024px)
+          if (window.innerWidth < 1024) {
+            return;
+          }
 
           const imageElements = gsap.utils.toArray<HTMLElement>('.portfolio-image');
 
