@@ -273,7 +273,16 @@
     }
   },
   "AboutPage": {
-    "title": "About Me"
+    "title": "About Me",
+    "header": {
+      "name": "Lorenzo Saini",
+      "role": "Photographer"
+    },
+    "badge": "About me",
+    "heading": "Hey, I'm Lorenzo Saini",
+    "description": "I'm a photographer focused on fashion, portrait, and commercial work — blending natural light with intentional storytelling.",
+    "cta": "View portfolio",
+    "contact": "Contact"
   },
   "ContactPage": {
     "title": "Contact"

@@ -273,7 +273,16 @@
     }
   },
   "AboutPage": {
-    "title": "Chi Sono"
+    "title": "Chi Sono",
+    "header": {
+      "name": "Lorenzo Saini",
+      "role": "Fotografo"
+    },
+    "badge": "Chi sono",
+    "heading": "Ciao, sono Lorenzo Saini",
+    "description": "Sono un fotografo specializzato in moda, ritratti e lavoro commerciale — combinando luce naturale con storytelling intenzionale.",
+    "cta": "Visualizza portfolio",
+    "contact": "Contatti"
   },
   "ContactPage": {
     "title": "Contatti"

@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import pick from 'lodash/pick';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { getBaseUrl } from '@/utils/AppConfig';
+import AboutContent from './AboutContent';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -13,11 +16,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: 'About Me',
-    description: 'Learn about Lorenzo Saini, a creative artist specializing in photography, video production, and visual arts.',
-    keywords: ['about', 'artist', 'photographer', 'creative professional', 'biography'],
+    description:
+      'Learn about Lorenzo Saini, a creative artist specializing in photography, video production, and visual arts.',
+    keywords: [
+      'about',
+      'artist',
+      'photographer',
+      'creative professional',
+      'biography',
+    ],
     openGraph: {
       title: 'About Me | Lorenzo Saini Art',
-      description: 'Learn about Lorenzo Saini, a creative artist specializing in photography, video production, and visual arts.',
+      description:
+        'Learn about Lorenzo Saini, a creative artist specializing in photography, video production, and visual arts.',
       url: `${baseUrl}/${locale}/aboutme`,
       type: 'profile',
       images: [
@@ -32,7 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title: 'About Me | Lorenzo Saini Art',
-      description: 'Learn about Lorenzo Saini, a creative artist specializing in photography, video production, and visual arts.',
+      description:
+        'Learn about Lorenzo Saini, a creative artist specializing in photography, video production, and visual arts.',
     },
     alternates: {
       canonical: `${baseUrl}/${locale}/aboutme`,
@@ -48,6 +60,9 @@ export default async function AboutMePage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 
+  // Get messages for AboutPage namespace
+  const messages = await getMessages();
+
   const baseUrl = getBaseUrl();
   const breadcrumbItems = [
     { name: 'Home', url: `${baseUrl}/${locale}` },
@@ -55,13 +70,9 @@ export default async function AboutMePage(props: Props) {
   ];
 
   return (
-    <>
+    <NextIntlClientProvider messages={pick(messages, ['AboutPage'])}>
       <BreadcrumbJsonLd items={breadcrumbItems} />
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">ABOUT ME</h1>
-        </div>
-      </div>
-    </>
+      <AboutContent />
+    </NextIntlClientProvider>
   );
 }
