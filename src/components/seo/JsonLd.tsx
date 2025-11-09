@@ -49,6 +49,7 @@ export function WebsiteJsonLd({ locale }: JsonLdProps) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      suppressHydrationWarning
     />
   );
 }
@@ -84,6 +85,7 @@ export function PersonJsonLd({ locale }: JsonLdProps) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      suppressHydrationWarning
     />
   );
 }
@@ -126,6 +128,7 @@ export function PortfolioCollectionJsonLd({ locale, items }: JsonLdProps & { ite
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      suppressHydrationWarning
     />
   );
 }
@@ -164,6 +167,7 @@ export function ArticleJsonLd({ article }: { article: BlogArticle }) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      suppressHydrationWarning
     />
   );
 }
@@ -206,6 +210,7 @@ export function ImageObjectJsonLd({
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      suppressHydrationWarning
     />
   );
 }
@@ -226,6 +231,7 @@ export function BreadcrumbJsonLd({ items }: { items: Array<{ name: string; url: 
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      suppressHydrationWarning
     />
   );
 }

@@ -256,11 +256,21 @@
       },
       "controls": {
         "ariaLabel": "Navigate gallery"
+      },
+      "buttons": {
+        "photography": "Photography",
+        "video": "Video"
       }
     }
   },
   "BlogPage": {
-    "title": "Blog"
+    "title": "Blog",
+    "hero": {
+      "badge": "Blog",
+      "title": "Behind the lens",
+      "subtitle1": "Thoughts, insights, and stories from my photography journey.",
+      "subtitle2": "Take a peek into my creative process and recent projects."
+    }
   },
   "AboutPage": {
     "title": "About Me"

@@ -103,6 +103,8 @@ section.w-screen {
   --space-8: 32px;
   --space-12: 48px;
   --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
 
   /* iOS Safe Areas */
   --safe-area-inset-top: env(safe-area-inset-top);

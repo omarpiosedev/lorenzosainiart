@@ -1,11 +1,39 @@
 import type { Metadata } from 'next';
+import type { BlogPost } from '@/sanity/types';
 import { setRequestLocale } from 'next-intl/server';
+import { BlogFeed } from '@/components/blog/BlogFeed';
+import { BlogHero } from '@/components/blog/BlogHero';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { client } from '@/sanity/client';
 import { getBaseUrl } from '@/utils/AppConfig';
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+const POSTS_QUERY = `*[_type == "blogPost"] | order(publishedAt desc) {
+  _id,
+  _type,
+  _createdAt,
+  title,
+  subtitle,
+  slug,
+  "author": author->{
+    _id,
+    _type,
+    name,
+    slug,
+    image,
+    bio,
+    role
+  },
+  featured,
+  category,
+  images,
+  content,
+  tags,
+  publishedAt
+}`;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -44,6 +72,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+export const revalidate = 60; // Revalidate every 60 seconds
+
 export default async function BlogPage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
@@ -54,13 +84,15 @@ export default async function BlogPage(props: Props) {
     { name: 'Blog', url: `${baseUrl}/${locale}/blog` },
   ];
 
+  // Fetch posts from Sanity
+  const posts = await client.fetch<BlogPost[]>(POSTS_QUERY);
+
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbItems} />
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">BLOG</h1>
-        </div>
+      <div className="min-h-screen">
+        <BlogHero />
+        <BlogFeed posts={posts} locale={locale} />
       </div>
     </>
   );

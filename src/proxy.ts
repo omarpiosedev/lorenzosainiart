@@ -12,6 +12,11 @@ const handleI18nRouting = createMiddleware(routing);
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Exclude Sanity Studio from i18n routing
+  if (pathname.startsWith('/studio')) {
+    return NextResponse.next();
+  }
+
   // Handle root redirect to default locale with /home
   if (pathname === '/') {
     return NextResponse.redirect(new URL(`/${routing.defaultLocale}/home`, request.url));

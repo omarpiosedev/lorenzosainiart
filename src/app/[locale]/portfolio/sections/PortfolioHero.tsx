@@ -2,14 +2,15 @@
 
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRef } from 'react';
 import Noise from '@/components/Noise';
 
 // Register GSAP plugins
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger, MotionPathPlugin);
 
 type ImageConfig = {
   id: string;
@@ -20,10 +21,36 @@ type ImageConfig = {
 
 export default function PortfolioHero() {
   const t = useTranslations('PortfolioPage');
+  const locale = useLocale();
   const containerRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const img3Ref = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+  const noiseRef = useRef<HTMLDivElement>(null);
   const isEntranceComplete = useRef(false);
+  const hasVideoPlayedOnce = useRef(false);
+
+  // Handle button click to trigger global video transition
+  const handleButtonClick = (category: 'photography' | 'video') => {
+    // Kill all GSAP animations and ScrollTriggers to prevent errors during unmount
+    gsap.killTweensOf('*');
+    ScrollTrigger.getAll().forEach((trigger) => {
+      try {
+        trigger.kill();
+      } catch {
+        // Silently ignore if already killed
+      }
+    });
+
+    // Dispatch custom event for global video transition
+    const targetUrl = `/${locale}/portfolio/${category}`;
+    const event = new CustomEvent('videoTransition', {
+      detail: { targetUrl },
+    });
+    window.dispatchEvent(event);
+  };
 
   // Mobile-first image configuration matching the reference screenshot
   const images: ImageConfig[] = [
@@ -178,7 +205,7 @@ export default function PortfolioHero() {
     },
   );
 
-  // Parallax effect for images (delayed until entrance completes)
+  // Parallax effect for images (delayed until entrance completes, excluding img-3)
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -193,6 +220,11 @@ export default function PortfolioHero() {
           const imageElements = gsap.utils.toArray<HTMLElement>('.portfolio-image');
 
           imageElements.forEach((item, index) => {
+            // Skip img-3 (index 2) - it has its own MotionPath animation
+            if (index === 2) {
+              return;
+            }
+
             // Different parallax speeds for depth effect
             const speeds = [-60, -40, -80, -50, -70, -45, -65, -55];
             const speed = speeds[index] || -50;
@@ -219,7 +251,7 @@ export default function PortfolioHero() {
     },
   );
 
-  // Mouse parallax effect (delayed until entrance completes)
+  // Mouse parallax effect (delayed until entrance completes, excluding img-3)
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -244,6 +276,11 @@ export default function PortfolioHero() {
             const yPercent = (clientY / innerHeight - 0.5) * 2;
 
             imageElements.forEach((item, index) => {
+              // Skip img-3 (index 2) - it has its own MotionPath animation
+              if (index === 2) {
+                return;
+              }
+
               // Different speeds for depth effect
               const speeds = [0.8, 0.5, 1.0, 0.6, 0.9, 0.55, 0.75, 0.85];
               const speed = speeds[index] || 0.7;
@@ -279,6 +316,160 @@ export default function PortfolioHero() {
     },
   );
 
+  // Image 3 Animation: MotionPath to center + Scale to fullscreen + Video loop
+  useGSAP(
+    () => {
+      if (!img3Ref.current || !containerRef.current || !videoRef.current) {
+        return;
+      }
+
+      let handleTimeUpdate: ((this: HTMLVideoElement, ev: Event) => void) | null = null;
+      let timeline: gsap.core.Timeline | null = null;
+
+      // Wait for entrance animation to complete
+      const checkInterval = setInterval(() => {
+        if (isEntranceComplete.current) {
+          clearInterval(checkInterval);
+
+          const img3 = img3Ref.current;
+          const video = videoRef.current;
+          if (!img3 || !video) {
+            return;
+          }
+
+          const loopStartTime = video.duration - 4; // Last 4 seconds
+          const loopTriggerTime = video.duration - 0.1; // Trigger loop 100ms before end
+
+          // Use 'timeupdate' to catch loop point before video ends (prevents visual gap)
+          handleTimeUpdate = () => {
+            if (!video.duration) {
+              return;
+            }
+
+            const currentTime = video.currentTime;
+
+            // After first complete play, trigger loop just before the end
+            if (hasVideoPlayedOnce.current) {
+              if (currentTime >= loopTriggerTime) {
+                video.currentTime = loopStartTime;
+              }
+            } else {
+              // First play: mark as complete when reaching loop trigger point
+              if (currentTime >= loopTriggerTime) {
+                hasVideoPlayedOnce.current = true;
+                video.currentTime = loopStartTime;
+              }
+            }
+          };
+
+          video.addEventListener('timeupdate', handleTimeUpdate);
+
+          // Create timeline with three phases
+          timeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top top',
+              end: () => `+=${window.innerHeight * 4}`, // Create 4x viewport height for smooth video transition
+              scrub: 2, // Higher scrub value = smoother, more delayed animation
+              pin: containerRef.current, // Pin hero section during animation
+              pinSpacing: true, // Add virtual scroll space to complete animation
+            },
+          });
+
+          const tl = timeline;
+
+          // Phase 1: Move to center using GSAP's xPercent/yPercent
+          tl.to(img3, {
+            left: '50%',
+            top: '50%',
+            xPercent: -50,
+            yPercent: -50,
+            ease: 'sine.inOut', // Very smooth easing
+            duration: 1.2, // Longer duration for more smoothness
+          });
+
+          // Phase 2: Expand to fullscreen
+          // Reset xPercent/yPercent and set to fullscreen
+          tl.to(
+            img3,
+            {
+              left: '0',
+              top: '0',
+              xPercent: 0,
+              yPercent: 0,
+              width: '100vw',
+              height: '100vh',
+              ease: 'sine.inOut', // Very smooth easing
+              duration: 0.8,
+              onComplete: () => {
+                // Start video when image reaches fullscreen
+                if (video.paused) {
+                  video.play().catch((err) => {
+                    console.error('Video autoplay failed:', err);
+                  });
+                }
+              },
+            },
+            '>', // Start after previous animation completes
+          );
+
+          // Phase 3: Fade in video over image
+          tl.to(
+            video,
+            {
+              opacity: 1,
+              duration: 1.0,
+              ease: 'sine.inOut',
+            },
+            '>', // Start after phase 2 completes
+          );
+
+          // Phase 4: Show buttons at the end
+          if (buttonsRef.current) {
+            tl.fromTo(
+              buttonsRef.current,
+              {
+                opacity: 0,
+                y: 40,
+                scale: 0.95,
+              },
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 1.2,
+                ease: 'expo.out',
+              },
+              '-=0.5', // Start slightly before video fade completes
+            );
+          }
+        }
+      }, 100);
+
+      return () => {
+        clearInterval(checkInterval);
+        if (handleTimeUpdate && videoRef.current) {
+          try {
+            videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+          } catch {
+            // Silently ignore if video is already removed
+          }
+        }
+        // Kill timeline and its ScrollTrigger to prevent errors during unmount
+        if (timeline) {
+          try {
+            timeline.kill();
+          } catch {
+            // Silently ignore if already killed
+          }
+        }
+      };
+    },
+    {
+      dependencies: [],
+    },
+  );
+
   return (
     <section
       ref={containerRef}
@@ -290,18 +481,40 @@ export default function PortfolioHero() {
       }}
     >
       {/* Animated Noise Grain - covers everything including background */}
-      <div className="absolute inset-0 z-20 pointer-events-none opacity-100 mix-blend-multiply">
+      <div
+        ref={noiseRef}
+        className="absolute inset-0 z-20 pointer-events-none opacity-100 mix-blend-multiply"
+        style={{ transition: 'opacity 0.3s ease' }}
+      >
         <Noise patternAlpha={50} patternRefreshInterval={2} patternSize={150} />
       </div>
+
+      {/* Video overlay - appears after image 3 reaches fullscreen */}
+      <video
+        ref={videoRef}
+        src="/assets/videos/Partendo_da_questo_202511072258_9snja.mp4"
+        className="fixed inset-0 w-screen h-screen object-cover pointer-events-none"
+        style={{
+          opacity: 0,
+          zIndex: 10000,
+        }}
+        muted
+        playsInline
+        preload="auto"
+      />
 
       {/* Portfolio Images - Positioned absolutely */}
       {images.map(image => (
         <div
           key={image.id}
-          className={`portfolio-image ${image.className} overflow-hidden`}
+          ref={image.id === 'img-3' ? img3Ref : null}
+          className={`portfolio-image ${image.className} overflow-hidden ${
+            image.id === 'img-3' ? 'fixed' : ''
+          }`}
           style={{
             willChange: 'transform',
             opacity: 0,
+            zIndex: image.id === 'img-3' ? 9999 : 10,
           }}
         >
           {/* Image */}
@@ -355,6 +568,67 @@ export default function PortfolioHero() {
         >
           <span className="text-black/70">{t('hero.label')}</span>
         </div>
+      </div>
+
+      {/* Category Buttons - Appear at end of scroll animation */}
+      <div
+        ref={buttonsRef}
+        className="fixed top-0 left-0 right-0 flex justify-center gap-6 px-4 pointer-events-auto"
+        style={{
+          paddingTop: 'clamp(6rem, 12vh, 10rem)',
+          opacity: 0,
+          zIndex: 10001,
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => handleButtonClick('photography')}
+          className="group relative overflow-hidden rounded-full border-2 border-white/30 backdrop-blur-sm transition-all duration-500 hover:border-white/60 hover:scale-105"
+          style={{
+            padding: 'clamp(1rem, 2vw, 1.5rem) clamp(2rem, 4vw, 3rem)',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            minWidth: 'clamp(10rem, 20vw, 15rem)',
+          }}
+        >
+          <span
+            className="relative z-10 text-white transition-colors duration-500 group-hover:text-white"
+            style={{
+              fontFamily: '"Cormorant Garamond", serif',
+              fontSize: 'clamp(1.2rem, 2.5vw, 2rem)',
+              fontWeight: 300,
+              letterSpacing: '0.05em',
+            }}
+          >
+            {t('hero.buttons.photography')}
+          </span>
+          {/* Hover background effect */}
+          <div className="absolute inset-0 bg-white/10 scale-x-0 transition-transform duration-500 group-hover:scale-x-100 origin-left" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => handleButtonClick('video')}
+          className="group relative overflow-hidden rounded-full border-2 border-white/30 backdrop-blur-sm transition-all duration-500 hover:border-white/60 hover:scale-105"
+          style={{
+            padding: 'clamp(1rem, 2vw, 1.5rem) clamp(2rem, 4vw, 3rem)',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            minWidth: 'clamp(10rem, 20vw, 15rem)',
+          }}
+        >
+          <span
+            className="relative z-10 text-white transition-colors duration-500 group-hover:text-white"
+            style={{
+              fontFamily: '"Cormorant Garamond", serif',
+              fontSize: 'clamp(1.2rem, 2.5vw, 2rem)',
+              fontWeight: 300,
+              letterSpacing: '0.05em',
+            }}
+          >
+            {t('hero.buttons.video')}
+          </span>
+          {/* Hover background effect */}
+          <div className="absolute inset-0 bg-white/10 scale-x-0 transition-transform duration-500 group-hover:scale-x-100 origin-left" />
+        </button>
       </div>
     </section>
   );
