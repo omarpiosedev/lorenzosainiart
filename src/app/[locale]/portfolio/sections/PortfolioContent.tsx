@@ -18,7 +18,7 @@ export default function PortfolioContent() {
         return;
       }
 
-      gsap.fromTo(
+      const tween = gsap.fromTo(
         sectionRef.current,
         {
           opacity: 0,
@@ -37,6 +37,15 @@ export default function PortfolioContent() {
           },
         },
       );
+
+      // CRITICAL: Complete cleanup to prevent DOM errors during navigation
+      // Kill both ScrollTrigger and tween BEFORE React unmounts
+      return () => {
+        if (tween.scrollTrigger) {
+          tween.scrollTrigger.kill();
+        }
+        tween.kill();
+      };
     },
     {
       scope: sectionRef,

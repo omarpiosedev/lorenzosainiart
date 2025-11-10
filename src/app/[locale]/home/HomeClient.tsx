@@ -4,9 +4,10 @@ import type { LoadingScreenHandle } from '@/components/ui/LoadingScreen';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { LoadingScreen } from '@/components/ui';
+import { useHomeLoading } from '@/contexts/HomeLoadingContext';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -33,14 +34,22 @@ type HomeClientProps = {
 export default function HomeClient({ children }: HomeClientProps) {
   const loadingScreenRef = useRef<LoadingScreenHandle>(null);
   const [mounted, setMounted] = useState(false);
+  const [isContentVisible, setIsContentVisible] = useState(false);
   const previousScrollY = useRef<number>(0);
   const pathname = usePathname();
+  const { setIsHomeLoading } = useHomeLoading();
 
   // CRITICAL: Navigation counter ensures unique key on EVERY navigation
   // pathname alone doesn't work because returning to same route = same key
   const [navigationKey, setNavigationKey] = useState(0);
 
-  // Ensure we're on the client before using portal
+  // CRITICAL: Set home loading state to hide Footer in LayoutClient
+  // Use useLayoutEffect to run BEFORE browser paint (prevents footer flash)
+  useLayoutEffect(() => {
+    setIsHomeLoading(true);
+  }, [setIsHomeLoading]);
+
+  // Separate effect for mounted state
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -49,10 +58,12 @@ export default function HomeClient({ children }: HomeClientProps) {
   // This ensures component remounts EVERY time, even when returning to same route
   useEffect(() => {
     setNavigationKey(prev => prev + 1);
+    // Reset content visibility on navigation
+    setIsContentVisible(false);
   }, [pathname]);
 
   // Show loading screen on mount, then hide it after animation
-  useEffect(() => {
+  useLayoutEffect(() => {
     // CRITICAL: Save current scroll position before locking
     previousScrollY.current = window.scrollY;
 
@@ -73,8 +84,14 @@ export default function HomeClient({ children }: HomeClientProps) {
     document.body.style.width = '100%';
 
     let refreshTimer: NodeJS.Timeout | null = null;
+    let contentVisibilityTimer: NodeJS.Timeout | null = null;
 
     const hideLoadingScreen = async () => {
+      // Show content slightly before LoadingScreen exit for smooth transition
+      contentVisibilityTimer = setTimeout(() => {
+        setIsContentVisible(true);
+      }, 2600); // Show content 200ms before LoadingScreen exit starts
+
       // Wait for entrance animation (~2.8s), then exit starts immediately
       await new Promise((resolve) => {
         const timer = setTimeout(resolve, 2800);
@@ -90,6 +107,9 @@ export default function HomeClient({ children }: HomeClientProps) {
 
       // CRITICAL iOS FIX: Ensure we're at top after unlocking scroll
       window.scrollTo(0, 0);
+
+      // CRITICAL: Set home loading to false - this will show Footer in LayoutClient
+      setIsHomeLoading(false);
 
       // CRITICAL: Refresh all ScrollTrigger instances after loading completes
       // This recalculates all scroll-based animations with correct layout dimensions
@@ -108,12 +128,20 @@ export default function HomeClient({ children }: HomeClientProps) {
       document.body.style.position = originalPosition;
       document.body.style.top = originalTop;
       document.body.style.width = originalWidth;
+      // CRITICAL: Reset loading state when navigating away from home
+      setIsHomeLoading(false);
       if (refreshTimer) {
         clearTimeout(refreshTimer);
       }
+      if (contentVisibilityTimer) {
+        clearTimeout(contentVisibilityTimer);
+      }
     };
-  }, []);
+  }, [setIsHomeLoading]);
 
+  // CRITICAL: Hydration Guard Pattern - prevents footer flash
+  // Return ONLY LoadingScreen during SSR/hydration, children render AFTER mount
+  // This prevents any content (including footer) from being visible before LoadingScreen
   return (
     <>
       {/* Use portal to render LoadingScreen directly in body, bypassing transform hierarchy */}
@@ -121,13 +149,18 @@ export default function HomeClient({ children }: HomeClientProps) {
         <LoadingScreen ref={loadingScreenRef} />,
         document.body,
       )}
-      {/* CRITICAL: key={navigationKey} forces remount on EVERY navigation
-          pathname alone doesn't work because returning to same route = same key.
-          navigationKey increments on every pathname change, ensuring remount.
-          This fixes GSAP animations not restarting in production. */}
-      <div key={navigationKey}>
-        {children}
-      </div>
+      {/* CRITICAL: Don't render children until mounted to prevent footer flash */}
+      {mounted && (
+        <div
+          key={navigationKey}
+          style={{
+            opacity: isContentVisible ? 1 : 0,
+            transition: 'opacity 0.3s ease-out',
+          }}
+        >
+          {children}
+        </div>
+      )}
     </>
   );
 }

@@ -103,60 +103,54 @@ export default function ContactCTASection() {
         return;
       }
 
-      const ctx = gsap.context(() => {
-        // Header animation (title + subtitle)
-        if (headerRef.current) {
-          gsap.from(headerRef.current.children, {
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top 70%',
-              toggleActions: 'play none none reverse',
-            },
-            opacity: 0,
-            y: 50,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: 'power3.out',
-          });
-        }
+      // Header animation (title + subtitle)
+      if (headerRef.current) {
+        gsap.from(headerRef.current.children, {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 70%',
+            toggleActions: 'play none none reverse',
+          },
+          opacity: 0,
+          y: 50,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out',
+        });
+      }
 
-        // CTA button animation
-        if (ctaRef.current) {
-          gsap.from(ctaRef.current, {
-            scrollTrigger: {
-              trigger: ctaRef.current,
-              start: 'top 80%',
-              toggleActions: 'play none none reverse',
-            },
-            opacity: 0,
-            y: 30,
-            duration: 0.7,
-            ease: 'power3.out',
-          });
-        }
+      // CTA button animation
+      if (ctaRef.current) {
+        gsap.from(ctaRef.current, {
+          scrollTrigger: {
+            trigger: ctaRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+          opacity: 0,
+          y: 30,
+          duration: 0.7,
+          ease: 'power3.out',
+        });
+      }
 
-        // Social links animation
-        if (socialRef.current) {
-          gsap.from(socialRef.current.children, {
-            scrollTrigger: {
-              trigger: socialRef.current,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse',
-            },
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: 'power3.out',
-          });
-        }
-      }, sectionRef);
-
-      return () => {
-        ctx.revert();
-      };
+      // Social links animation
+      if (socialRef.current) {
+        gsap.from(socialRef.current.children, {
+          scrollTrigger: {
+            trigger: socialRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power3.out',
+        });
+      }
     },
-    { dependencies: [] },
+    { dependencies: [], scope: sectionRef },
   );
 
   return (

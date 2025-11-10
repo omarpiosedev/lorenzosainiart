@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 import { ShimmerLabel } from '@/components/ui';
@@ -63,14 +64,15 @@ function ProjectCard({ title, date, category, imageSrc, onHover, onLeave, infoRe
     >
       {/* Image Container with Corner Decorations */}
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-200">
-        {/* Placeholder image - replace with actual image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url('${imageSrc}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
+        {/* ✅ PERFORMANCE: Next.js Image instead of background-image */}
+        <Image
+          src={imageSrc}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover"
+          quality={75}
+          loading="lazy"
         />
 
         {/* Hover Overlay with Plus Icon */}
@@ -310,16 +312,14 @@ export default function PortfolioSection() {
     { dependencies: [] },
   );
 
-  // Microinteractions
-  const { contextSafe } = useGSAP({ dependencies: [] });
-
-  const handleProjectHover = contextSafe(() => {
+  // Microinteractions - placeholder for future hover effects
+  const handleProjectHover = () => {
     // Hover effects can be added here if needed
-  });
+  };
 
-  const handleProjectLeave = contextSafe(() => {
+  const handleProjectLeave = () => {
     // Leave effects can be added here if needed
-  });
+  };
 
   return (
     <div data-section="portfolio" className="relative">

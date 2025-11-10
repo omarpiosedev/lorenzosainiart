@@ -26,6 +26,8 @@ export default function HeroHome() {
   const signatureRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
   const tl = useRef<gsap.core.Timeline | undefined>(undefined);
+  const sposiParallaxRef = useRef<gsap.core.Tween | null>(null);
+  const cloudParallaxRef = useRef<gsap.core.Tween | null>(null);
 
   // Incrementa mountKey ogni volta che il componente viene montato/visitato
   // Questo forza le animazioni GSAP a ripartire grazie a revertOnUpdate
@@ -120,6 +122,7 @@ export default function HeroHome() {
   // Animazioni quando la pagina è pronta - usando useGSAP per cleanup automatico
   // CRITICAL: revertOnUpdate + mountKey garantiscono che le animazioni ripartano
   // dopo navigazione portfolio -> home (fix per animazioni "freezate")
+  // React 19.2 + GSAP: Explicit cleanup for timeline
   useGSAP(() => {
     if (!isReady) {
       return;
@@ -197,6 +200,18 @@ export default function HeroHome() {
         duration: 1.8, // Movimento più veloce (2.8s + 1.8s = 4.6s)
         ease: 'power1.out', // Easing più graduale
       }, '+=0.5'); // 2.2s + 0.5s = 2.7s timeline = 2.9s reale (inizia poco dopo loading screen)
+
+    // CRITICAL: Complete cleanup to prevent DOM errors during navigation
+    return () => {
+      if (tl.current) {
+        try {
+          tl.current.kill();
+          tl.current = undefined;
+        } catch {
+          // Silently ignore if already killed
+        }
+      }
+    };
   }, {
     dependencies: [isReady, breakpoint, mountKey],
     scope: containerRef,
@@ -204,6 +219,7 @@ export default function HeroHome() {
   });
 
   // Parallax effect - sposi si muovono verso l'alto quando si scrolla giù
+  // React 19.2 + GSAP: Save tween in ref for memory management
   useGSAP(() => {
     if (!isReady || !sposiRef.current || !containerRef.current) {
       return;
@@ -213,7 +229,7 @@ export default function HeroHome() {
     const parallaxAmount = breakpoint === 'mobile' ? -50 : -150;
 
     // Parallax semplice: muove l'immagine verso l'alto mentre si scrolla giù
-    gsap.to(sposiRef.current, {
+    sposiParallaxRef.current = gsap.to(sposiRef.current, {
       y: parallaxAmount, // -50px su mobile, -150px su tablet/desktop
       ease: 'none', // movimento lineare per effetto parallax naturale
       scrollTrigger: {
@@ -223,6 +239,21 @@ export default function HeroHome() {
         scrub: true, // sincronizza con lo scroll
       },
     });
+
+    // CRITICAL: Complete cleanup to prevent DOM errors during navigation
+    return () => {
+      if (sposiParallaxRef.current) {
+        try {
+          if (sposiParallaxRef.current.scrollTrigger) {
+            sposiParallaxRef.current.scrollTrigger.kill();
+          }
+          sposiParallaxRef.current.kill();
+          sposiParallaxRef.current = null;
+        } catch {
+          // Silently ignore if already killed
+        }
+      }
+    };
   }, {
     dependencies: [isReady, breakpoint, mountKey],
     scope: containerRef,
@@ -230,6 +261,7 @@ export default function HeroHome() {
   });
 
   // Parallax effect - nuvola si muove verso il basso quando si scrolla giù (opposto agli sposi)
+  // React 19.2 + GSAP: Save tween in ref for memory management
   useGSAP(() => {
     if (!isReady || !cloudRef.current || !containerRef.current) {
       return;
@@ -239,7 +271,7 @@ export default function HeroHome() {
     const parallaxAmount = breakpoint === 'mobile' ? 50 : 150;
 
     // Parallax inverso: muove la nuvola verso il basso mentre si scrolla giù
-    gsap.to(cloudRef.current, {
+    cloudParallaxRef.current = gsap.to(cloudRef.current, {
       y: parallaxAmount, // +50px su mobile, +150px su tablet/desktop (opposto agli sposi)
       ease: 'none', // movimento lineare per effetto parallax naturale
       scrollTrigger: {
@@ -249,6 +281,21 @@ export default function HeroHome() {
         scrub: true, // sincronizza con lo scroll
       },
     });
+
+    // CRITICAL: Complete cleanup to prevent DOM errors during navigation
+    return () => {
+      if (cloudParallaxRef.current) {
+        try {
+          if (cloudParallaxRef.current.scrollTrigger) {
+            cloudParallaxRef.current.scrollTrigger.kill();
+          }
+          cloudParallaxRef.current.kill();
+          cloudParallaxRef.current = null;
+        } catch {
+          // Silently ignore if already killed
+        }
+      }
+    };
   }, {
     dependencies: [isReady, breakpoint, mountKey],
     scope: containerRef,

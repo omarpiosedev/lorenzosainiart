@@ -9,6 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Footer from '@/components/ui/Footer';
 import SettingsModal from '@/components/ui/SettingsModal';
+import { useHomeLoading } from '@/contexts/HomeLoadingContext';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP);
@@ -29,6 +30,13 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   const pathname = usePathname();
   const previousPathnameRef = useRef<string | null>(null);
   const isInitialMountRef = useRef(true);
+  const { isHomeLoading } = useHomeLoading();
+
+  // CRITICAL: Track if we're on initial home page mount to prevent footer flash
+  // Initialize to true if current path is home, false otherwise
+  const [isHomeInitialMount, setIsHomeInitialMount] = useState(() => {
+    return pathname.match(/^\/(it|en)(\/home)?$/) !== null;
+  });
 
   // ScrollSmoother refs
   const smoothWrapperRef = useRef<HTMLDivElement>(null);
@@ -40,6 +48,24 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoEndHandlerRef = useRef<(() => void) | null>(null);
   const isVideoTransitionActiveRef = useRef(false);
+
+  // CRITICAL: Reset home initial mount flag when navigating TO home
+  // This prevents footer flash when navigating from other pages to home
+  useEffect(() => {
+    const isHomePage = pathname.match(/^\/(it|en)(\/home)?$/) !== null;
+    if (isHomePage && !isHomeInitialMount) {
+      setIsHomeInitialMount(true);
+    }
+  }, [pathname, isHomeInitialMount]);
+
+  // CRITICAL: Clear home initial mount flag when loading finishes
+  // This allows footer to appear after LoadingScreen completes
+  useEffect(() => {
+    if (isHomeInitialMount && !isHomeLoading) {
+      setIsHomeInitialMount(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHomeLoading]);
 
   // Listen for video transition events from child components
   useEffect(() => {
@@ -75,20 +101,11 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
       // Show overlay with video IMMEDIATELY (no fade)
       gsap.set(overlay, { opacity: 1 });
 
-      // Start video
-      video
-        .play()
-        .then(() => {
-          // Navigate immediately after video starts
-          router.push(targetUrl);
-        })
-        .catch(() => {
-          // If autoplay fails, navigate anyway
-          router.push(targetUrl);
-        });
-
-      // When video ends, fade out overlay
+      // When video ends, navigate to new page then fade out overlay
       const handleVideoEnd = () => {
+        // Navigate to new page
+        router.push(targetUrl);
+
         // Check if refs still exist before animating
         if (!videoTransitionRef.current) {
           return;
@@ -96,6 +113,7 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
 
         const currentOverlay = videoTransitionRef.current;
 
+        // Fade out overlay after navigation
         gsap.to(currentOverlay, {
           opacity: 0,
           duration: 0.5,
@@ -119,6 +137,14 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
 
       videoEndHandlerRef.current = handleVideoEnd;
       video.addEventListener('ended', handleVideoEnd);
+
+      // Start video
+      video
+        .play()
+        .catch(() => {
+          // If autoplay fails, navigate immediately
+          router.push(targetUrl);
+        });
     };
 
     window.addEventListener(
@@ -192,33 +218,72 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
             window.scrollTo({ top: 0, behavior: 'instant' });
           }
 
-          gsap.fromTo(
-            smoothContentRef.current,
-            {
-              yPercent: 100, // Start below viewport
-              opacity: 0.8,
-            },
-            {
-              yPercent: 0, // End at normal position
-              opacity: 1,
-              duration: 0.9, // Smooth, not too fast
-              ease: 'expo.out', // Very smooth exponential easing
-              overwrite: true, // Cancel any previous animations
-              onComplete: () => {
-                // CRITICAL iOS FIX: Refresh ScrollTrigger after page transition completes
-                // This allows new page's ScrollTrigger instances to recalculate with correct layout
-                setTimeout(() => {
-                  ScrollTrigger.refresh();
-                }, 50);
+          // Get main content (children) - exclude footer from page transition animation
+          const mainContent = smoothContentRef.current.querySelector('[data-main-content]');
+
+          if (mainContent) {
+            // Animate ONLY main content, not footer
+            gsap.fromTo(
+              mainContent,
+              {
+                yPercent: 100, // Start below viewport
+                opacity: 0.8,
               },
-            },
-          );
+              {
+                yPercent: 0, // End at normal position
+                opacity: 1,
+                duration: 0.9, // Smooth, not too fast
+                ease: 'expo.out', // Very smooth exponential easing
+                overwrite: true, // Cancel any previous animations
+                onComplete: () => {
+                  // CRITICAL iOS FIX: Refresh ScrollTrigger after page transition completes
+                  // This allows new page's ScrollTrigger instances to recalculate with correct layout
+                  setTimeout(() => {
+                    ScrollTrigger.refresh();
+                  }, 50);
+                },
+              },
+            );
+          } else {
+            // Fallback: animate entire content if data-main-content not found
+            gsap.fromTo(
+              smoothContentRef.current,
+              {
+                yPercent: 100,
+                opacity: 0.8,
+              },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.9,
+                ease: 'expo.out',
+                overwrite: true,
+                onComplete: () => {
+                  setTimeout(() => {
+                    ScrollTrigger.refresh();
+                  }, 50);
+                },
+              },
+            );
+          }
         } catch {
           // Silently ignore if elements are no longer in DOM
         }
       }
 
       previousPathnameRef.current = pathname;
+
+      // CRITICAL: Complete cleanup to prevent DOM errors during navigation
+      // Kill page transition tweens BEFORE React unmounts
+      return () => {
+        if (smoothContentRef.current) {
+          const mainContent = smoothContentRef.current.querySelector('[data-main-content]');
+          if (mainContent) {
+            gsap.killTweensOf(mainContent);
+          }
+          gsap.killTweensOf(smoothContentRef.current);
+        }
+      };
     },
     {
       dependencies: [pathname],
@@ -281,12 +346,17 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
             position: 'relative',
           }}
         >
-          {/* Page Content - Animated on route change */}
-          {children}
+          {/* Main Content Wrapper - Animated on route change */}
+          <div data-main-content>
+            {children}
+          </div>
 
-          {/* Footer - Inside smooth-content so it scrolls with the page */}
-          {/* Exclude footer from portfolio page */}
-          {!pathname.includes('/portfolio') && <Footer />}
+          {/* Footer - Inside smooth-content but OUTSIDE data-main-content */}
+          {/* This prevents footer from being animated during page transitions */}
+          {/* CRITICAL: Exclude footer from portfolio page */}
+          {/* For home page: hide footer during initial mount AND during LoadingScreen */}
+          {/* isHomeInitialMount prevents footer flash on page reload */}
+          {!pathname.includes('/portfolio') && !isHomeLoading && !isHomeInitialMount && <Footer />}
         </div>
 
         {/* NavBar - OUTSIDE smooth-content so fixed positioning works */}

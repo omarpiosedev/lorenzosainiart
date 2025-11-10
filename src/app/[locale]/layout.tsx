@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { preload } from 'react-dom';
 import { PersonJsonLd, WebsiteJsonLd } from '@/components/seo/JsonLd';
+import { HomeLoadingProvider } from '@/contexts/HomeLoadingContext';
 import { routing } from '@/lib/i18n/routing';
 import { getBaseUrl } from '@/utils/AppConfig';
 import LayoutClient from './LayoutClient';
@@ -134,9 +135,11 @@ export default async function RootLayout(props: {
           timeZone="Europe/Rome"
           messages={pick(messages, ['loading', 'HomePage', 'Footer'])}
         >
-          <LayoutClient navItems={navItems}>
-            {props.children}
-          </LayoutClient>
+          <HomeLoadingProvider>
+            <LayoutClient navItems={navItems}>
+              {props.children}
+            </LayoutClient>
+          </HomeLoadingProvider>
         </NextIntlClientProvider>
       </body>
     </html>

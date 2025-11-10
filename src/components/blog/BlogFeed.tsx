@@ -25,9 +25,11 @@ export function BlogFeed({ posts, locale }: BlogFeedProps) {
       }
 
       const cards = feedRef.current.querySelectorAll('.blog-card');
+      const triggers: ScrollTrigger[] = [];
+      const tweens: gsap.core.Tween[] = [];
 
       cards.forEach((card, index) => {
-        gsap.fromTo(
+        const tween = gsap.fromTo(
           card,
           {
             opacity: 0,
@@ -46,7 +48,22 @@ export function BlogFeed({ posts, locale }: BlogFeedProps) {
             },
           },
         );
+
+        // Store both tween and ScrollTrigger for comprehensive cleanup
+        tweens.push(tween);
+        if (tween.scrollTrigger) {
+          triggers.push(tween.scrollTrigger);
+        }
       });
+
+      // CRITICAL: Complete cleanup in correct order
+      // 1. Kill ScrollTriggers first (removes scroll listeners)
+      // 2. Kill tweens (stops any in-flight animations)
+      // This prevents DOM manipulation after React unmounts
+      return () => {
+        triggers.forEach(st => st.kill());
+        tweens.forEach(tw => tw.kill());
+      };
     },
     { dependencies: [posts], scope: feedRef },
   );

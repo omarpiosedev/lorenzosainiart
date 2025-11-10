@@ -6,7 +6,7 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Noise from '@/components/Noise';
 
 // Register GSAP plugins
@@ -39,18 +39,44 @@ export default function PortfolioHero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const noiseRef = useRef<HTMLDivElement>(null);
-  const isEntranceComplete = useRef(false);
-  const hasVideoPlayedOnce = useRef(false);
+  const scrollTimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const gsapContextRef = useRef<gsap.Context | null>(null);
+
+  // React 19.2 compliant: use useState for boolean flags instead of useRef
+  const [isEntranceComplete, setIsEntranceComplete] = useState(false);
+  const [hasVideoPlayedOnce, setHasVideoPlayedOnce] = useState(false);
+
+  // Get contextSafe from useGSAP for button handlers
+  const { contextSafe } = useGSAP({ scope: containerRef });
 
   // Handle button click to trigger global video transition
-  const handleButtonClick = (category: 'photography' | 'video') => {
-    // Kill all GSAP animations and ScrollTriggers to prevent errors during unmount
-    gsap.killTweensOf('*');
+  // React 19.2 + GSAP compliant: use contextSafe wrapper
+  const handleButtonClick = contextSafe((category: 'photography' | 'video') => {
+    // CRITICAL: Force video to remain visible for the global transition
+    // Must be done BEFORE killing animations
+    if (videoRef.current) {
+      gsap.set(videoRef.current, {
+        autoAlpha: 1,
+        clearProps: 'none', // Prevent revert from resetting this
+      });
+    }
+
+    // Kill only GSAP animations scoped to this component
+    if (gsapContextRef.current) {
+      gsapContextRef.current.revert();
+    }
+
+    // Kill only ScrollTriggers within this container
     ScrollTrigger.getAll().forEach((trigger) => {
-      try {
-        trigger.kill();
-      } catch {
-        // Silently ignore if already killed
+      if (
+        trigger.trigger
+        && containerRef.current?.contains(trigger.trigger as Node)
+      ) {
+        try {
+          trigger.kill();
+        } catch {
+          // Silently ignore if already killed
+        }
       }
     });
 
@@ -60,7 +86,7 @@ export default function PortfolioHero() {
       detail: { targetUrl },
     });
     window.dispatchEvent(event);
-  };
+  });
 
   // Mobile-first image configuration matching the reference screenshot
   const images: ImageConfig[] = [
@@ -70,7 +96,7 @@ export default function PortfolioHero() {
       src: '/assets/images/PortfolioHero/0df95003-185c-4339-9b8c-d4b673e48b974bde.webp',
       // Mobile: top-left, Desktop: maintained
       className:
-        'absolute top-[2%] left-[2%] w-[35%] h-[23%] lg:top-[8%] lg:left-[5%] lg:w-[15%] lg:h-[40%]',
+        'absolute top-[-3%] left-[-2%] w-[35%] h-[23%] lg:top-[8%] lg:left-[5%] lg:w-[15%] lg:h-[40%]',
     },
     {
       id: 'img-2',
@@ -78,7 +104,7 @@ export default function PortfolioHero() {
       src: '/assets/images/PortfolioHero/1d10e477-37ef-47cf-a510-e03a81f9688f_rwc_251x0x1537x2048x153788ee.webp',
       // Mobile: top-right (large), Desktop: maintained
       className:
-        'absolute top-[10%] right-[2%] w-[42%] h-[32%] lg:top-[-5%] lg:left-[35%] lg:right-auto lg:w-[15%] lg:h-[35%]',
+        'absolute top-[5%] right-[2%] w-[42%] h-[32%] lg:top-[-5%] lg:left-[35%] lg:right-auto lg:w-[15%] lg:h-[35%]',
     },
     {
       id: 'img-3',
@@ -86,7 +112,7 @@ export default function PortfolioHero() {
       src: '/assets/images/PortfolioHero/521bf560-6b45-43d3-8f20-b22d725c5dee_rw_3840ff89.webp',
       // Mobile: 9:16 vertical, Desktop: 16:9 horizontal (aspect-video)
       className:
-        'absolute top-[48%] left-[3%] w-[34%] aspect-[9/16] lg:top-[15%] lg:left-auto lg:right-[15%] lg:w-[20%] lg:aspect-video',
+        'absolute top-[58%] left-[3%] w-[34%] aspect-[9/16] lg:top-[15%] lg:left-auto lg:right-[15%] lg:w-[20%] lg:aspect-video',
     },
     {
       id: 'img-4',
@@ -94,7 +120,7 @@ export default function PortfolioHero() {
       src: '/assets/images/PortfolioHero/53c9c768-8380-4850-8b3f-b43f6cf07b8f_rw_1920c93c.webp',
       // Mobile: bottom-right, Desktop: maintained
       className:
-        'absolute top-[75%] right-[4%] w-[45%] h-[18%] lg:bottom-[-3%] lg:top-auto lg:left-[8%] lg:right-auto lg:w-[18%] lg:h-[38%]',
+        'absolute top-[60%] right-[4%] w-[45%] h-[18%] lg:bottom-[-3%] lg:top-auto lg:left-[8%] lg:right-auto lg:w-[18%] lg:h-[38%]',
     },
     {
       id: 'img-5',
@@ -102,40 +128,43 @@ export default function PortfolioHero() {
       src: '/assets/images/PortfolioHero/62a73e53-e709-445b-83b3-ec4283ab3fe7_rw_19205948.webp',
       // Mobile: bottom-center, Desktop: maintained
       className:
-        'absolute top-[83%] left-[35%] w-[32%] h-[20%] lg:bottom-[10%] lg:top-auto lg:left-[32%] lg:w-[12%] lg:h-[22%]',
+        'absolute top-[83%] left-[55%] w-[32%] h-[20%] lg:bottom-[10%] lg:top-auto lg:left-[32%] lg:w-[12%] lg:h-[22%]',
     },
     {
       id: 'img-6',
       alt: 'Portfolio image 6',
       src: '/assets/images/PortfolioHero/6785377c-6f6d-470a-984a-512b8f994d04_rw_1920d928.webp',
-      // Mobile: hidden or very bottom, Desktop: maintained
+      // Mobile: hidden, Desktop: visible
       className:
-        'absolute top-[105%] right-[28%] w-[16%] h-[15%] lg:bottom-[-8%] lg:top-auto lg:w-[16%] lg:h-[33%]',
+        'hidden lg:block absolute lg:bottom-[-8%] lg:top-auto lg:right-[28%] lg:w-[16%] lg:h-[33%]',
     },
     {
       id: 'img-7',
       alt: 'Portfolio image 7',
       src: '/assets/images/PortfolioHero/6a2f7d0b-c56e-4ed9-b07b-4c703515a4a62c6d.webp',
-      // Mobile: very bottom right, Desktop: maintained
+      // Mobile: hidden, Desktop: visible
       className:
-        'absolute top-[110%] right-[-3%] w-[14%] h-[12%] lg:bottom-[-10%] lg:top-auto lg:w-[14%] lg:h-[28%]',
+        'hidden lg:block absolute lg:bottom-[-10%] lg:top-auto lg:right-[-3%] lg:w-[14%] lg:h-[28%]',
     },
     {
       id: 'img-8',
       alt: 'Portfolio image 8',
       src: '/assets/images/PortfolioHero/6ff895bc-e829-44ab-8895-d5e2c069ff6a_rw_38400696.webp',
-      // Mobile: hidden or off-screen, Desktop: maintained
       className:
-        'absolute top-[115%] right-[-10%] w-[14%] h-[12%] lg:bottom-[30%] lg:top-auto lg:w-[14%] lg:h-[33%]',
+        'absolute top-[26%] left-[8%] w-[28%] h-[18%] lg:bottom-[30%] lg:top-auto lg:right-[-10%] lg:left-auto lg:w-[14%] lg:h-[33%]',
     },
   ];
 
   // Entrance animations
+  // React 19.2 + GSAP: Save context and use state callbacks
   useGSAP(
-    () => {
+    (context) => {
       if (!titleRef.current || !subtitleRef.current) {
         return;
       }
+
+      // Save GSAP context for scoped cleanup
+      gsapContextRef.current = context;
 
       // Set initial states
       gsap.set(titleRef.current, {
@@ -203,11 +232,18 @@ export default function PortfolioHero() {
             duration: 1.8,
             ease: 'expo.out',
             onComplete: () => {
-              isEntranceComplete.current = true;
+              // React 19.2 compliant: use setState instead of ref mutation
+              setIsEntranceComplete(true);
             },
           },
           '-=1.6',
         );
+
+      // CRITICAL: Complete cleanup to prevent DOM errors during navigation
+      // Kill timeline BEFORE React unmounts
+      return () => {
+        tl.kill();
+      };
     },
     {
       scope: containerRef,
@@ -216,285 +252,308 @@ export default function PortfolioHero() {
   );
 
   // Mouse parallax effect (delayed until entrance completes, excluding img-3, desktop only)
+  // React 19.2 + GSAP: Use state dependency instead of setInterval polling
   useGSAP(
     () => {
-      if (!containerRef.current) {
+      if (!containerRef.current || !isEntranceComplete) {
         return;
       }
 
-      let handleMouseMove: ((e: MouseEvent) => void) | null = null;
+      // Only enable mouse parallax on desktop (>= 1024px)
+      if (window.innerWidth < 1024) {
+        return;
+      }
 
-      // Wait for entrance animation to complete
-      const checkInterval = setInterval(() => {
-        if (isEntranceComplete.current) {
-          clearInterval(checkInterval);
+      const imageElements = gsap.utils.toArray<HTMLElement>('.portfolio-image');
 
-          // Only enable mouse parallax on desktop (>= 1024px)
-          if (window.innerWidth < 1024) {
+      const handleMouseMove = (e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+
+        // Normalizza le coordinate del mouse da -1 a 1
+        const xPercent = (clientX / innerWidth - 0.5) * 2;
+        const yPercent = (clientY / innerHeight - 0.5) * 2;
+
+        imageElements.forEach((item, index) => {
+          // Skip img-3 (index 2) - it has its own MotionPath animation
+          if (index === 2) {
             return;
           }
 
-          const imageElements = gsap.utils.toArray<HTMLElement>('.portfolio-image');
+          // Different speeds for depth effect
+          const speeds = [0.8, 0.5, 1.0, 0.6, 0.9, 0.55, 0.75, 0.85];
+          const speed = speeds[index] || 0.7;
 
-          handleMouseMove = (e: MouseEvent) => {
-            const { clientX, clientY } = e;
-            const { innerWidth, innerHeight } = window;
+          // Movimento pronunciato (max 100px)
+          const xMove = xPercent * 100 * speed;
+          const yMove = yPercent * 100 * speed;
 
-            // Normalizza le coordinate del mouse da -1 a 1
-            const xPercent = (clientX / innerWidth - 0.5) * 2;
-            const yPercent = (clientY / innerHeight - 0.5) * 2;
+          gsap.to(item, {
+            x: xMove,
+            y: yMove,
+            duration: 1.2,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
+        });
+      };
 
-            imageElements.forEach((item, index) => {
-              // Skip img-3 (index 2) - it has its own MotionPath animation
-              if (index === 2) {
-                return;
-              }
+      window.addEventListener('mousemove', handleMouseMove);
 
-              // Different speeds for depth effect
-              const speeds = [0.8, 0.5, 1.0, 0.6, 0.9, 0.55, 0.75, 0.85];
-              const speed = speeds[index] || 0.7;
-
-              // Movimento pronunciato (max 100px)
-              const xMove = xPercent * 100 * speed;
-              const yMove = yPercent * 100 * speed;
-
-              gsap.to(item, {
-                x: xMove,
-                y: yMove,
-                duration: 1.2,
-                ease: 'power2.out',
-                overwrite: 'auto',
-              });
-            });
-          };
-
-          window.addEventListener('mousemove', handleMouseMove);
-        }
-      }, 100);
-
+      // CRITICAL: Complete cleanup to prevent DOM errors during navigation
       return () => {
-        clearInterval(checkInterval);
-        if (handleMouseMove) {
-          window.removeEventListener('mousemove', handleMouseMove);
-        }
+        window.removeEventListener('mousemove', handleMouseMove);
+        // Kill all parallax tweens on images
+        imageElements.forEach((item) => {
+          gsap.killTweensOf(item);
+        });
       };
     },
     {
       scope: containerRef,
-      dependencies: [],
+      dependencies: [isEntranceComplete], // Re-run when entrance completes
     },
   );
 
   // Image 3 Animation: MotionPath to center + Scale to fullscreen + Video loop
+  // React 19.2 + GSAP: Use state dependency and save timeline in ref
   useGSAP(
     () => {
-      if (!img3Ref.current || !containerRef.current || !videoRef.current) {
+      if (
+        !img3Ref.current
+        || !containerRef.current
+        || !videoRef.current
+        || !isEntranceComplete
+      ) {
         return;
       }
 
-      let handleTimeUpdate: ((this: HTMLVideoElement, ev: Event) => void) | null = null;
-      let timeline: gsap.core.Timeline | null = null;
+      const img3 = img3Ref.current;
+      const video = videoRef.current;
 
-      // Wait for entrance animation to complete
-      const checkInterval = setInterval(() => {
-        if (isEntranceComplete.current) {
-          clearInterval(checkInterval);
+      const loopStartTime = video.duration - 4; // Last 4 seconds
+      const loopTriggerTime = video.duration - 0.1; // Trigger loop 100ms before end
 
-          const img3 = img3Ref.current;
-          const video = videoRef.current;
-          if (!img3 || !video) {
-            return;
-          }
-
-          const loopStartTime = video.duration - 4; // Last 4 seconds
-          const loopTriggerTime = video.duration - 0.1; // Trigger loop 100ms before end
-
-          // Use 'timeupdate' to catch loop point before video ends (prevents visual gap)
-          handleTimeUpdate = () => {
-            if (!video.duration) {
-              return;
-            }
-
-            const currentTime = video.currentTime;
-
-            // After first complete play, trigger loop just before the end
-            if (hasVideoPlayedOnce.current) {
-              if (currentTime >= loopTriggerTime) {
-                video.currentTime = loopStartTime;
-              }
-            } else {
-              // First play: mark as complete when reaching loop trigger point
-              if (currentTime >= loopTriggerTime) {
-                hasVideoPlayedOnce.current = true;
-                video.currentTime = loopStartTime;
-              }
-            }
-          };
-
-          video.addEventListener('timeupdate', handleTimeUpdate);
-
-          // Use matchMedia for different mobile/desktop configurations
-          const mm = gsap.matchMedia();
-
-          // Mobile configuration (with pin - overflow hidden prevents scrolling issues)
-          mm.add('(max-width: 1023px)', () => {
-            timeline = gsap.timeline({
-              scrollTrigger: {
-                trigger: containerRef.current,
-                start: 'top top',
-                end: () => `+=${window.innerHeight * 4}`,
-                scrub: 1.5,
-                pin: containerRef.current,
-                pinSpacing: true,
-                anticipatePin: 1,
-                preventOverlaps: true,
-              },
-            });
-
-            const tl = timeline;
-
-            // Single fluid animation: move + zoom to fullscreen simultaneously
-            tl.to(img3, {
-              left: '0',
-              top: '0',
-              width: '100vw',
-              height: '100vh',
-              ease: 'power1.inOut',
-              duration: 2.8,
-              onComplete: () => {
-                if (video.paused) {
-                  video.play().catch((err) => {
-                    console.error('Video autoplay failed:', err);
-                  });
-                }
-              },
-            });
-
-            // Fade in video over image (starts AFTER fullscreen is reached)
-            tl.to(
-              video,
-              {
-                opacity: 1,
-                duration: 1.5,
-                ease: 'power1.inOut',
-              },
-              '>',
-            );
-
-            // Phase 4: Show buttons at the end
-            if (buttonsRef.current) {
-              tl.fromTo(
-                buttonsRef.current,
-                {
-                  opacity: 0,
-                  y: 40,
-                  scale: 0.95,
-                },
-                {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  duration: 1.2,
-                  ease: 'expo.out',
-                },
-                '-=0.5',
-              );
-            }
-
-            return () => {}; // Cleanup for mobile matchMedia
-          });
-
-          // Desktop configuration (with pin)
-          mm.add('(min-width: 1024px)', () => {
-            timeline = gsap.timeline({
-              scrollTrigger: {
-                trigger: containerRef.current,
-                start: 'top top',
-                end: () => `+=${window.innerHeight * 4}`,
-                scrub: 1.5,
-                pin: containerRef.current,
-                pinSpacing: true,
-                anticipatePin: 1,
-                preventOverlaps: true,
-              },
-            });
-
-            const tl = timeline;
-
-            // Single fluid animation: move + zoom to fullscreen simultaneously
-            tl.to(img3, {
-              left: '0',
-              top: '0',
-              width: '100vw',
-              height: '100vh',
-              ease: 'power1.inOut',
-              duration: 2.8,
-              onComplete: () => {
-                if (video.paused) {
-                  video.play().catch((err) => {
-                    console.error('Video autoplay failed:', err);
-                  });
-                }
-              },
-            });
-
-            // Fade in video over image (starts AFTER fullscreen is reached)
-            tl.to(
-              video,
-              {
-                opacity: 1,
-                duration: 1.5,
-                ease: 'power1.inOut',
-              },
-              '>',
-            );
-
-            // Phase 4: Show buttons at the end
-            if (buttonsRef.current) {
-              tl.fromTo(
-                buttonsRef.current,
-                {
-                  opacity: 0,
-                  y: 40,
-                  scale: 0.95,
-                },
-                {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  duration: 1.2,
-                  ease: 'expo.out',
-                },
-                '-=0.5',
-              );
-            }
-
-            return () => {}; // Cleanup for desktop matchMedia
-          });
+      // Use 'timeupdate' to catch loop point before video ends (prevents visual gap)
+      const handleTimeUpdate = () => {
+        if (!video.duration) {
+          return;
         }
-      }, 100);
 
+        const currentTime = video.currentTime;
+
+        // After first complete play, trigger loop just before the end
+        if (hasVideoPlayedOnce) {
+          if (currentTime >= loopTriggerTime) {
+            video.currentTime = loopStartTime;
+          }
+        } else {
+          // First play: mark as complete when reaching loop trigger point
+          if (currentTime >= loopTriggerTime) {
+            setHasVideoPlayedOnce(true);
+            video.currentTime = loopStartTime;
+          }
+        }
+      };
+
+      video.addEventListener('timeupdate', handleTimeUpdate);
+
+      // Use matchMedia for different mobile/desktop configurations
+      const mm = gsap.matchMedia();
+
+      // Mobile configuration (with pin - overflow hidden prevents scrolling issues)
+      mm.add('(max-width: 1023px)', () => {
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: () => `+=${window.innerHeight * 4}`,
+            scrub: 1.5,
+            pin: containerRef.current,
+            pinSpacing: true,
+            anticipatePin: 1,
+            preventOverlaps: true,
+          },
+        });
+
+        // Save timeline to ref for React 19.2 memory management
+        scrollTimelineRef.current = timeline;
+
+        const tl = timeline;
+
+        // Single fluid animation: move + zoom to fullscreen simultaneously
+        tl.to(img3, {
+          left: '0',
+          top: '0',
+          width: '100vw',
+          height: '100vh',
+          ease: 'power1.inOut',
+          duration: 2.8,
+        });
+
+        // Fade in video over image (starts AFTER fullscreen is reached)
+        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
+        tl.to(
+          video,
+          {
+            autoAlpha: 1,
+            duration: 1.5,
+            ease: 'power1.inOut',
+            onStart: () => {
+              // Play video when it starts appearing
+              if (video.paused) {
+                video.play().catch((err) => {
+                  console.error('Video autoplay failed:', err);
+                });
+              }
+            },
+            onReverseComplete: () => {
+              // Pause and reset video when scrolling back
+              video.pause();
+              video.currentTime = 0;
+            },
+          },
+          '>',
+        );
+
+        // Phase 4: Show buttons at the end
+        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
+        if (buttonsRef.current) {
+          tl.fromTo(
+            buttonsRef.current,
+            {
+              autoAlpha: 0,
+              y: 40,
+              scale: 0.95,
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 1.2,
+              ease: 'expo.out',
+            },
+            '-=0.5',
+          );
+        }
+
+        return () => {}; // Cleanup for mobile matchMedia
+      });
+
+      // Desktop configuration (with pin)
+      mm.add('(min-width: 1024px)', () => {
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: () => `+=${window.innerHeight * 4}`,
+            scrub: 1.5,
+            pin: containerRef.current,
+            pinSpacing: true,
+            anticipatePin: 1,
+            preventOverlaps: true,
+          },
+        });
+
+        // Save timeline to ref for React 19.2 memory management
+        scrollTimelineRef.current = timeline;
+
+        const tl = timeline;
+
+        // Single fluid animation: move + zoom to fullscreen simultaneously
+        tl.to(img3, {
+          left: '0',
+          top: '0',
+          width: '100vw',
+          height: '100vh',
+          ease: 'power1.inOut',
+          duration: 2.8,
+        });
+
+        // Fade in video over image (starts AFTER fullscreen is reached)
+        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
+        tl.to(
+          video,
+          {
+            autoAlpha: 1,
+            duration: 1.5,
+            ease: 'power1.inOut',
+            onStart: () => {
+              // Play video when it starts appearing
+              if (video.paused) {
+                video.play().catch((err) => {
+                  console.error('Video autoplay failed:', err);
+                });
+              }
+            },
+            onReverseComplete: () => {
+              // Pause and reset video when scrolling back
+              video.pause();
+              video.currentTime = 0;
+            },
+          },
+          '>',
+        );
+
+        // Phase 4: Show buttons at the end
+        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
+        if (buttonsRef.current) {
+          tl.fromTo(
+            buttonsRef.current,
+            {
+              autoAlpha: 0,
+              y: 40,
+              scale: 0.95,
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 1.2,
+              ease: 'expo.out',
+            },
+            '-=0.5',
+          );
+        }
+
+        return () => {}; // Cleanup for desktop matchMedia
+      });
+
+      // CRITICAL: Complete cleanup to prevent DOM errors during navigation
+      // Kill timeline, ScrollTriggers, and event listeners BEFORE React unmounts
       return () => {
-        clearInterval(checkInterval);
-        if (handleTimeUpdate && videoRef.current) {
+        if (videoRef.current) {
           try {
             videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
           } catch {
             // Silently ignore if video is already removed
           }
         }
-        // Kill timeline and its ScrollTrigger to prevent errors during unmount
-        if (timeline) {
+        // Kill timeline and its ScrollTrigger using ref
+        if (scrollTimelineRef.current) {
           try {
-            timeline.kill();
+            // Kill the ScrollTrigger first
+            if (scrollTimelineRef.current.scrollTrigger) {
+              scrollTimelineRef.current.scrollTrigger.kill();
+            }
+            // Then kill the timeline
+            scrollTimelineRef.current.kill();
+            scrollTimelineRef.current = null;
           } catch {
             // Silently ignore if already killed
           }
         }
+        // Kill any remaining tweens on img3 and video
+        if (img3Ref.current) {
+          gsap.killTweensOf(img3Ref.current);
+        }
+        if (videoRef.current) {
+          gsap.killTweensOf(videoRef.current);
+        }
       };
     },
     {
-      dependencies: [],
+      dependencies: [isEntranceComplete, hasVideoPlayedOnce], // Re-run when state changes
     },
   );
 
@@ -525,6 +584,7 @@ export default function PortfolioHero() {
         className="fixed inset-0 w-screen h-screen object-cover pointer-events-none"
         style={{
           opacity: 0,
+          visibility: 'hidden',
           zIndex: 10000,
         }}
         muted
@@ -579,7 +639,7 @@ export default function PortfolioHero() {
             fontFamily: '"Cormorant Garamond", serif',
             fontWeight: 300,
             letterSpacing: '0.05em',
-            fontSize: 'clamp(1.8rem, 5.5vw, 4.5rem)',
+            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
             textShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             opacity: 0,
           }}
@@ -606,6 +666,7 @@ export default function PortfolioHero() {
         style={{
           paddingTop: 'clamp(6rem, 12vh, 10rem)',
           opacity: 0,
+          visibility: 'hidden',
           zIndex: 10001,
         }}
       >

@@ -37,6 +37,12 @@ export default function BenefitsSection() {
   const trustedUsersMobileRef = useRef<HTMLDivElement>(null);
   const polaroidMobileRef = useRef<HTMLDivElement>(null);
 
+  // React 19.2 + GSAP: Refs to save all tweens and ScrollTriggers for proper memory management
+  const scrollAnimationsRef = useRef<gsap.core.Tween[]>([]);
+  const quintaScaleTweensRef = useRef<gsap.core.Tween[]>([]);
+  const trustedUsersTriggersRef = useRef<ScrollTrigger[]>([]);
+  const polaroidTweensRef = useRef<gsap.core.Tween[]>([]);
+
   // ✅ OPTIMIZED: Use ref instead of state to avoid re-renders during scroll
   // Context7 best practice: State updates in ScrollTrigger callbacks can cause unwanted re-renders
   const restartTriggerRef = useRef(0);
@@ -44,10 +50,16 @@ export default function BenefitsSection() {
   const t = useTranslations('HomePage.sez4');
 
   // Modern useGSAP hook replaces useEffect for automatic cleanup
-  // All tweens and ScrollTriggers created here are automatically killed on unmount
+  // React 19.2 + GSAP: Save all tweens in refs for proper memory management
   useGSAP(() => {
+    // Clear all ref arrays at the start
+    scrollAnimationsRef.current = [];
+    quintaScaleTweensRef.current = [];
+    trustedUsersTriggersRef.current = [];
+    polaroidTweensRef.current = [];
+
     // ✅ OPTIMIZED: Helper function to reduce code duplication
-    // Context7 best practice: DRY principle for maintainable animations
+    // React 19.2 + GSAP: Save tween in ref for memory management
     const createScrollAnimation = (
       ref: React.RefObject<HTMLDivElement | null>,
       fromValue: string,
@@ -58,7 +70,7 @@ export default function BenefitsSection() {
         return;
       }
 
-      gsap.fromTo(
+      const tween = gsap.fromTo(
         ref.current,
         { [property]: fromValue },
         {
@@ -74,6 +86,9 @@ export default function BenefitsSection() {
           },
         },
       );
+
+      // Save tween to ref for React 19.2 memory management
+      scrollAnimationsRef.current.push(tween);
     };
 
     // ✅ OPTIMIZED: Camera animations (desktop & mobile) - using helper
@@ -91,12 +106,13 @@ export default function BenefitsSection() {
     createScrollAnimation(clockMobileRef, '150px', '80px', 'top');
 
     // ✅ OPTIMIZED: Quinta image scale animations (GPU-accelerated)
+    // React 19.2 + GSAP: Save tween in ref for memory management
     // Animate the image element inside the container for zoom-out effect
     // Desktop - zoom from 2.99x down to 2.3x (maintains the original scale design)
     if (quintaImageDesktopRef.current) {
       const imgElement = quintaImageDesktopRef.current.querySelector('img');
       if (imgElement) {
-        gsap.fromTo(
+        const tween = gsap.fromTo(
           imgElement,
           { scale: 2.99 },
           {
@@ -112,6 +128,8 @@ export default function BenefitsSection() {
             },
           },
         );
+        // Save tween to ref for React 19.2 memory management
+        quintaScaleTweensRef.current.push(tween);
       }
     }
 
@@ -119,7 +137,7 @@ export default function BenefitsSection() {
     if (quintaImageMobileRef.current) {
       const imgElement = quintaImageMobileRef.current.querySelector('img');
       if (imgElement) {
-        gsap.fromTo(
+        const tween = gsap.fromTo(
           imgElement,
           { scale: 1.4 },
           {
@@ -135,14 +153,17 @@ export default function BenefitsSection() {
             },
           },
         );
+        // Save tween to ref for React 19.2 memory management
+        quintaScaleTweensRef.current.push(tween);
       }
     }
 
     // ✅ OPTIMIZED: TrustedUsers restart trigger (Card 6 - Desktop)
+    // React 19.2 + GSAP: Save ScrollTrigger in ref for memory management
     // Use ref for tracking, setState only once for React re-render
     // Context7 best practice: Avoid setState in scroll callbacks to prevent re-render storms
     if (trustedUsersDesktopRef.current) {
-      ScrollTrigger.create({
+      const trigger = ScrollTrigger.create({
         trigger: trustedUsersDesktopRef.current,
         start: 'top 80%',
         onEnter: () => {
@@ -154,11 +175,14 @@ export default function BenefitsSection() {
           setRestartTrigger(restartTriggerRef.current);
         },
       });
+      // Save ScrollTrigger to ref for React 19.2 memory management
+      trustedUsersTriggersRef.current.push(trigger);
     }
 
     // ✅ OPTIMIZED: TrustedUsers restart trigger (Card 6 - Mobile)
+    // React 19.2 + GSAP: Save ScrollTrigger in ref for memory management
     if (trustedUsersMobileRef.current) {
-      ScrollTrigger.create({
+      const trigger = ScrollTrigger.create({
         trigger: trustedUsersMobileRef.current,
         start: 'top 80%',
         onEnter: () => {
@@ -170,9 +194,12 @@ export default function BenefitsSection() {
           setRestartTrigger(restartTriggerRef.current);
         },
       });
+      // Save ScrollTrigger to ref for React 19.2 memory management
+      trustedUsersTriggersRef.current.push(trigger);
     }
 
     // ✅ OPTIMIZED: Helper for polaroid scatter animations
+    // React 19.2 + GSAP: Save tween in ref for memory management
     const createPolaroidScatter = (
       ref: React.RefObject<HTMLDivElement | null>,
       positions: Array<{ x: number; y: number; rotation: number }>,
@@ -192,7 +219,7 @@ export default function BenefitsSection() {
         zIndex: i => polaroids.length - i,
       });
 
-      gsap.to(polaroids, {
+      const tween = gsap.to(polaroids, {
         rotation: i => positions[i]?.rotation || 0,
         x: i => positions[i]?.x || 0,
         y: i => positions[i]?.y || 0,
@@ -206,6 +233,9 @@ export default function BenefitsSection() {
           toggleActions: 'play none none reverse',
         },
       });
+
+      // Save tween to ref for React 19.2 memory management
+      polaroidTweensRef.current.push(tween);
     };
 
     // ✅ OPTIMIZED: Polaroid animations - using helper
@@ -225,8 +255,60 @@ export default function BenefitsSection() {
       { x: 50, y: 60, rotation: 16 },
     ]);
 
-    // No manual cleanup needed! useGSAP automatically kills all tweens and ScrollTriggers
-    // when the component unmounts or dependencies change. This prevents memory leaks.
+    // CRITICAL: Complete cleanup to prevent DOM errors during navigation
+    // React 19.2 + GSAP: Kill all tweens and ScrollTriggers BEFORE React unmounts
+    return () => {
+      // Kill all scroll animation tweens
+      scrollAnimationsRef.current.forEach((tween) => {
+        try {
+          if (tween.scrollTrigger) {
+            tween.scrollTrigger.kill();
+          }
+          tween.kill();
+        } catch {
+          // Silently ignore if already killed
+        }
+      });
+
+      // Kill all quinta scale tweens
+      quintaScaleTweensRef.current.forEach((tween) => {
+        try {
+          if (tween.scrollTrigger) {
+            tween.scrollTrigger.kill();
+          }
+          tween.kill();
+        } catch {
+          // Silently ignore if already killed
+        }
+      });
+
+      // Kill all TrustedUsers ScrollTriggers
+      trustedUsersTriggersRef.current.forEach((trigger) => {
+        try {
+          trigger.kill();
+        } catch {
+          // Silently ignore if already killed
+        }
+      });
+
+      // Kill all polaroid animation tweens
+      polaroidTweensRef.current.forEach((tween) => {
+        try {
+          if (tween.scrollTrigger) {
+            tween.scrollTrigger.kill();
+          }
+          tween.kill();
+        } catch {
+          // Silently ignore if already killed
+        }
+      });
+
+      // Clear all ref arrays
+      scrollAnimationsRef.current = [];
+      quintaScaleTweensRef.current = [];
+      trustedUsersTriggersRef.current = [];
+      polaroidTweensRef.current = [];
+    };
   }, {
     // Empty dependencies array - animations only run once on mount
     dependencies: [],
