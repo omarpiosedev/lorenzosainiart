@@ -1,18 +1,18 @@
 'use client';
 
+import type { PhotographyProject } from '@/data/photographyProjects';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
-import type { PhotographyProject } from '@/data/photographyProjects';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-interface Photography2DCarouselProps {
+type Photography2DCarouselProps = {
   projects: PhotographyProject[];
-}
+};
 
 export default function Photography2DCarousel({
   projects,
@@ -24,15 +24,21 @@ export default function Photography2DCarousel({
 
   useGSAP(
     () => {
-      if (!slidesRef.current || !containerRef.current) return;
+      if (!slidesRef.current || !containerRef.current) {
+        return;
+      }
 
       const slides = gsap.utils.toArray<HTMLElement>('.carousel-slide');
-      if (slides.length === 0) return;
+      if (slides.length === 0) {
+        return;
+      }
 
-      // Position slides horizontally
+      // Position slides diagonally (top-left to bottom-right)
+      const diagonalOffset = 600; // Distance along diagonal
       slides.forEach((slide, i) => {
         gsap.set(slide, {
-          x: i * window.innerWidth,
+          x: i * diagonalOffset,
+          y: i * diagonalOffset,
           opacity: i === 0 ? 1 : 0.3,
         });
       });
@@ -70,9 +76,10 @@ export default function Photography2DCarousel({
         },
       });
 
-      // Animate horizontal scroll
+      // Animate diagonal scroll (both x and y)
       tl.to(slides, {
-        x: (i) => (i - (slides.length - 1)) * window.innerWidth,
+        x: i => (i - (slides.length - 1)) * diagonalOffset,
+        y: i => (i - (slides.length - 1)) * diagonalOffset,
         ease: 'none',
       });
     },
@@ -81,7 +88,7 @@ export default function Photography2DCarousel({
 
   return (
     <div ref={containerRef} className="relative w-full h-screen bg-black">
-      {/* 2D Horizontal Carousel Container */}
+      {/* 2D Diagonal Carousel Container */}
       <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
         <div
           ref={slidesRef}
@@ -100,7 +107,7 @@ export default function Photography2DCarousel({
                   maxWidth: '900px',
                   height: '65vh',
                   maxHeight: '700px',
-                  transform: 'rotate(15deg)',
+                  transform: 'rotate(-15deg)',
                   transformOrigin: 'center center',
                 }}
               >
