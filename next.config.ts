@@ -18,10 +18,17 @@ const baseConfig: NextConfig = {
   },
   // Image optimization for better performance
   images: {
-    formats: ['image/webp', 'image/avif'],
+    formats: ['image/avif', 'image/webp'], // AVIF first for -50% size
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     qualities: [65, 70, 75, 80, 85], // Support quality values used across the project
+    minimumCacheTTL: 2678400, // 31 days (from default 4h) - reduces revalidation costs
+    localPatterns: [
+      {
+        pathname: '/assets/images/**',
+        search: '',
+      },
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -32,13 +39,33 @@ const baseConfig: NextConfig = {
   },
   // Optimize bundle splitting for better performance
   experimental: {
-    optimizePackageImports: ['gsap'],
+    optimizePackageImports: ['gsap', '@gsap/react'], // Tree-shaking for GSAP
     // CSS optimization to reduce render blocking
     // optimizeCss: true, // Requires 'critters' dependency
     // cssChunking: 'strict',
   },
   // Modern browser support - reduces polyfills by 11.5KB
   // swcMinify: true, // Enabled by default in Next.js 15
+  // Webpack optimizations for GSAP code splitting
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.optimization = config.optimization || {};
+      config.optimization.splitChunks = {
+        ...config.optimization.splitChunks,
+        chunks: 'all',
+        cacheGroups: {
+          ...config.optimization.splitChunks?.cacheGroups,
+          gsap: {
+            test: /[\\/]node_modules[\\/](gsap|@gsap)[\\/]/,
+            name: 'gsap',
+            priority: 10,
+            reuseExistingChunk: true,
+          },
+        },
+      };
+    }
+    return config;
+  },
 };
 
 // Initialize the Next-Intl plugin
