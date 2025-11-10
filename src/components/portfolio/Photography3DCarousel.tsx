@@ -139,7 +139,7 @@ export default function Photography3DCarousel({
               >
                 <Image
                   src={project.image}
-                  alt={t(project.titleKey)}
+                  alt={t(project.titleKey as never)}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 90vw, 60vw"
@@ -156,7 +156,7 @@ export default function Photography3DCarousel({
                       letterSpacing: '0.15em',
                     }}
                   >
-                    {t(project.labelKey)}
+                    {t(project.labelKey as never)}
                   </p>
                   <h2
                     className="text-white font-bold text-center px-8"
@@ -167,7 +167,7 @@ export default function Photography3DCarousel({
                       lineHeight: 1,
                     }}
                   >
-                    {t(project.titleKey)}
+                    {t(project.titleKey as never)}
                   </h2>
                 </div>
               </div>

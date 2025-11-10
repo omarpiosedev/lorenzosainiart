@@ -33,121 +33,80 @@ export default function Photography2DCarousel({
         return;
       }
 
-      // Position slides diagonally (top-left to bottom-right)
-      const diagonalOffset = 600; // Distance along diagonal
+      // Track scroll progress for navigation dots
       slides.forEach((slide, i) => {
-        gsap.set(slide, {
-          x: i * diagonalOffset,
-          y: i * diagonalOffset,
-          opacity: i === 0 ? 1 : 0.3,
+        ScrollTrigger.create({
+          trigger: slide,
+          start: 'top center',
+          end: 'bottom center',
+          onEnter: () => setCurrentIndex(i),
+          onEnterBack: () => setCurrentIndex(i),
         });
-      });
-
-      const totalScrollDistance = slides.length * 1000;
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: `+=${totalScrollDistance}`,
-          scrub: 1.5,
-          pin: true,
-          snap: {
-            snapTo: 1 / (slides.length - 1),
-            duration: 0.5,
-            ease: 'power2.inOut',
-          },
-          onUpdate: (self) => {
-            const progress = self.progress;
-            const newIndex = Math.round(progress * (slides.length - 1));
-            setCurrentIndex(newIndex);
-
-            // Update opacity based on position
-            slides.forEach((slide, i) => {
-              const isCurrent = i === newIndex;
-              gsap.to(slide, {
-                opacity: isCurrent ? 1 : 0.3,
-                scale: isCurrent ? 1 : 0.9,
-                duration: 0.4,
-                overwrite: 'auto',
-              });
-            });
-          },
-        },
-      });
-
-      // Animate diagonal scroll (both x and y)
-      tl.to(slides, {
-        x: i => (i - (slides.length - 1)) * diagonalOffset,
-        y: i => (i - (slides.length - 1)) * diagonalOffset,
-        ease: 'none',
       });
     },
     { scope: containerRef, dependencies: [projects] },
   );
 
   return (
-    <div ref={containerRef} className="relative w-full h-screen bg-black">
-      {/* 2D Diagonal Carousel Container */}
-      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div
-          ref={slidesRef}
-          className="relative w-full h-full"
-        >
-          {projects.map((project, index) => (
+    <div ref={containerRef} className="relative w-full bg-black">
+      {/* 2D Vertical Stack - All slides visible and aligned */}
+      <div ref={slidesRef} className="relative w-full">
+        {projects.map((project, index) => (
+          <div
+            key={project.id}
+            className="carousel-slide relative flex items-center justify-center"
+            style={{
+              minHeight: '120vh',
+            }}
+          >
+            {/* Project Card with diagonal rotation */}
             <div
-              key={project.id}
-              className="carousel-slide absolute inset-0 flex items-center justify-center"
+              className="relative"
+              style={{
+                width: '60vw',
+                maxWidth: '900px',
+                height: '65vh',
+                maxHeight: '700px',
+                transform: 'rotate(-15deg)',
+                transformOrigin: 'center center',
+              }}
             >
-              {/* Project Card with diagonal rotation */}
-              <div
-                className="relative"
-                style={{
-                  width: '60vw',
-                  maxWidth: '900px',
-                  height: '65vh',
-                  maxHeight: '700px',
-                  transform: 'rotate(-15deg)',
-                  transformOrigin: 'center center',
-                }}
-              >
-                <Image
-                  src={project.image}
-                  alt={t(project.titleKey)}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 90vw, 60vw"
-                  priority={index === 0}
-                />
+              <Image
+                src={project.image}
+                alt={t(project.titleKey as never)}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 90vw, 60vw"
+                priority={index === 0}
+              />
 
-                {/* Project Title Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <p
-                    className="text-white/90 uppercase tracking-widest mb-4"
-                    style={{
-                      fontFamily: 'var(--font-lavener)',
-                      fontSize: 'clamp(0.75rem, 1.5vw, 1rem)',
-                      letterSpacing: '0.15em',
-                    }}
-                  >
-                    {t(project.labelKey)}
-                  </p>
-                  <h2
-                    className="text-white font-bold text-center px-8"
-                    style={{
-                      fontFamily: '"Cormorant Garamond", serif',
-                      fontSize: 'clamp(3rem, 10vw, 8rem)',
-                      letterSpacing: '-0.02em',
-                      lineHeight: 1,
-                    }}
-                  >
-                    {t(project.titleKey)}
-                  </h2>
-                </div>
+              {/* Project Title Overlay */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <p
+                  className="text-white/90 uppercase tracking-widest mb-4"
+                  style={{
+                    fontFamily: 'var(--font-lavener)',
+                    fontSize: 'clamp(0.75rem, 1.5vw, 1rem)',
+                    letterSpacing: '0.15em',
+                  }}
+                >
+                  {t(project.labelKey as never)}
+                </p>
+                <h2
+                  className="text-white font-bold text-center px-8"
+                  style={{
+                    fontFamily: '"Cormorant Garamond", serif',
+                    fontSize: 'clamp(3rem, 10vw, 8rem)',
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1,
+                  }}
+                >
+                  {t(project.titleKey as never)}
+                </h2>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
       {/* Navigation Dots */}
