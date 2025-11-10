@@ -4,9 +4,9 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import dynamic from 'next/dynamic';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import FloatingNavBar from '@/components/ui/FloatingNavBar';
 import Footer from '@/components/ui/Footer';
 import SettingsModal from '@/components/ui/SettingsModal';
 import { useHomeLoading } from '@/contexts/HomeLoadingContext';
@@ -14,29 +14,18 @@ import { useHomeLoading } from '@/contexts/HomeLoadingContext';
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP);
 
-// Lazy load NavBar since it's not critical for first paint
-const NavBar = dynamic(() => import('@/components/ui/NavBar'), {
-  loading: () => null, // No loading spinner for smoother experience
-});
-
 type LayoutClientProps = {
-  navItems: Array<{ label: string; href: string; ariaLabel?: string }>;
   children: React.ReactNode;
+  navItems: Array<{ label: string; href: string; ariaLabel?: string }>;
 };
 
-const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
+const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const previousPathnameRef = useRef<string | null>(null);
   const isInitialMountRef = useRef(true);
   const { isHomeLoading } = useHomeLoading();
-
-  // CRITICAL: Track if we're on initial home page mount to prevent footer flash
-  // Initialize to true if current path is home, false otherwise
-  const [isHomeInitialMount, setIsHomeInitialMount] = useState(() => {
-    return pathname.match(/^\/(it|en)(\/home)?$/) !== null;
-  });
 
   // ScrollSmoother refs
   const smoothWrapperRef = useRef<HTMLDivElement>(null);
@@ -48,24 +37,6 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoEndHandlerRef = useRef<(() => void) | null>(null);
   const isVideoTransitionActiveRef = useRef(false);
-
-  // CRITICAL: Reset home initial mount flag when navigating TO home
-  // This prevents footer flash when navigating from other pages to home
-  useEffect(() => {
-    const isHomePage = pathname.match(/^\/(it|en)(\/home)?$/) !== null;
-    if (isHomePage && !isHomeInitialMount) {
-      setIsHomeInitialMount(true);
-    }
-  }, [pathname, isHomeInitialMount]);
-
-  // CRITICAL: Clear home initial mount flag when loading finishes
-  // This allows footer to appear after LoadingScreen completes
-  useEffect(() => {
-    if (isHomeInitialMount && !isHomeLoading) {
-      setIsHomeInitialMount(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHomeLoading]);
 
   // Listen for video transition events from child components
   useEffect(() => {
@@ -353,24 +324,16 @@ const LayoutClient = ({ navItems, children }: LayoutClientProps) => {
 
           {/* Footer - Inside smooth-content but OUTSIDE data-main-content */}
           {/* This prevents footer from being animated during page transitions */}
-          {/* CRITICAL: Exclude footer from portfolio page */}
-          {/* For home page: hide footer during initial mount AND during LoadingScreen */}
-          {/* isHomeInitialMount prevents footer flash on page reload */}
-          {!pathname.includes('/portfolio') && !isHomeLoading && !isHomeInitialMount && <Footer />}
+          {/* CRITICAL: Exclude footer from portfolio page and hide during home LoadingScreen */}
+          {!pathname.includes('/portfolio') && !isHomeLoading && <Footer />}
         </div>
 
-        {/* NavBar - OUTSIDE smooth-content so fixed positioning works */}
+        {/* FloatingNavBar - OUTSIDE smooth-content so fixed positioning works */}
         {/* GSAP ScrollSmoother best practice: fixed elements must be siblings to smooth-content, not children */}
-        <NavBar
+        <FloatingNavBar
           logo="/assets/images/LogoBianco.webp"
           logoAlt="Lorenzo Saini Art"
           items={navItems}
-          baseColor="#060010"
-          pillColor="#fff"
-          hoveredPillTextColor="#fff"
-          pillTextColor="#060010"
-          initialLoadAnimation={true}
-          onSettingsClick={() => setIsSettingsOpen(true)}
         />
 
         {/* Settings Modal - Also outside smooth-content for proper fixed positioning */}

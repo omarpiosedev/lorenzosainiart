@@ -411,7 +411,7 @@ export default function ServicesSection() {
             muted
             loop
             playsInline
-            preload="none"
+            preload="metadata"
             aria-hidden="true"
           >
             <source src="/assets/videos/videomdesktop.webm" type="video/webm" />
@@ -423,7 +423,7 @@ export default function ServicesSection() {
             muted
             loop
             playsInline
-            preload="none"
+            preload="metadata"
             aria-hidden="true"
           >
             <source src="/assets/videos/videommobile.webm" type="video/webm" />
@@ -479,7 +479,7 @@ export default function ServicesSection() {
             muted
             loop
             playsInline
-            preload="none"
+            preload="metadata"
             aria-hidden="true"
           >
             <source src="/assets/videos/dronedesktop.webm" type="video/webm" />
@@ -491,7 +491,7 @@ export default function ServicesSection() {
             muted
             loop
             playsInline
-            preload="none"
+            preload="metadata"
             aria-hidden="true"
           >
             <source src="/assets/videos/dronemobile.webm" type="video/webm" />

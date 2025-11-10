@@ -40,6 +40,7 @@
     "@sanity/image-url": "^1.2.0",
     "@sanity/vision": "^4.14.2",
     "@t3-oss/env-nextjs": "^0.13.8",
+    "@tabler/icons-react": "^3.35.0",
     "clsx": "^2.1.1",
     "gsap": "^3.13.0",
     "lottie-react": "^2.4.1",

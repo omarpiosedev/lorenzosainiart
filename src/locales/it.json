@@ -261,6 +261,43 @@
         "photography": "Fotografia",
         "video": "Video"
       }
+    },
+    "photography": {
+      "header": {
+        "name": "Lorenzo Saini",
+        "role": "Fotografo & Creative Developer"
+      },
+      "footer": {
+        "availability": {
+          "text": "Disponibile per lavoro",
+          "date": "Dic 2025"
+        }
+      },
+      "cta": {
+        "ariaLabel": "Esplora il progetto"
+      },
+      "projects": {
+        "wildBloom": {
+          "title": "Wild Bloom",
+          "label": "Fashion & Editorial"
+        },
+        "softMetals": {
+          "title": "Soft Metals",
+          "label": "Brand & Commercial"
+        },
+        "urbanEssence": {
+          "title": "Urban Essence",
+          "label": "Ritratto & Studio"
+        },
+        "lightForms": {
+          "title": "Light Forms",
+          "label": "Fashion & Editorial"
+        },
+        "timelessMoments": {
+          "title": "Timeless Moments",
+          "label": "Fashion & Editorial"
+        }
+      }
     }
   },
   "BlogPage": {

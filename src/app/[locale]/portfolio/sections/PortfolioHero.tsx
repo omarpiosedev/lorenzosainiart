@@ -616,7 +616,8 @@ export default function PortfolioHero() {
             style={{
               filter: 'saturate(0.7) contrast(0.9)',
             }}
-            priority
+            priority={['img-1', 'img-2', 'img-3', 'img-8'].includes(image.id)}
+            loading={['img-1', 'img-2', 'img-3', 'img-8'].includes(image.id) ? undefined : 'lazy'}
           />
 
           {/* Dark desaturation overlay */}

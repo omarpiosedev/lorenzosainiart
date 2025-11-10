@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 import pick from 'lodash/pick';
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, useTranslations } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
+import Link from 'next/link';
+import Photography2DCarousel from '@/components/portfolio/Photography2DCarousel';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { photographyProjects } from '@/data/photographyProjects';
 import { getBaseUrl } from '@/utils/AppConfig';
 
 type Props = {
@@ -46,6 +49,118 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+function PhotographyHeader({ locale }: { locale: string }) {
+  const t = useTranslations('PortfolioPage.photography');
+  const tNav = useTranslations('PortfolioPage.hero.navigation');
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 md:px-8 md:py-8">
+      <div className="flex items-start justify-between">
+        {/* Left: Signature */}
+        <div>
+          <h1
+            className="text-white leading-tight"
+            style={{
+              fontFamily: 'var(--font-lavener)',
+              fontSize: 'clamp(0.875rem, 1.2vw, 1rem)',
+              fontWeight: 400,
+              letterSpacing: '0.02em',
+            }}
+          >
+            {t('header.name')}
+          </h1>
+          <p
+            className="text-white/80 mt-1"
+            style={{
+              fontFamily: 'var(--font-lavener)',
+              fontSize: 'clamp(0.75rem, 1vw, 0.875rem)',
+              fontWeight: 300,
+              letterSpacing: '0.05em',
+            }}
+          >
+            {t('header.role')}
+          </p>
+        </div>
+
+        {/* Right: Navigation */}
+        <nav className="flex items-center gap-6">
+          <Link
+            href={`/${locale}/portfolio`}
+            className="text-white hover:text-white/70 transition-colors"
+            style={{
+              fontFamily: 'var(--font-lavener)',
+              fontSize: 'clamp(0.875rem, 1vw, 1rem)',
+              fontWeight: 400,
+            }}
+          >
+            {tNav('index')}
+          </Link>
+          <Link
+            href={`/${locale}/aboutme`}
+            className="text-white hover:text-white/70 transition-colors"
+            style={{
+              fontFamily: 'var(--font-lavener)',
+              fontSize: 'clamp(0.875rem, 1vw, 1rem)',
+              fontWeight: 400,
+            }}
+          >
+            {tNav('about')}
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+function PhotographyFooter() {
+  const t = useTranslations('PortfolioPage.photography');
+
+  return (
+    <footer className="fixed bottom-0 left-0 right-0 z-50 px-6 py-6 md:px-8 md:py-8 pointer-events-none">
+      <div className="flex items-end justify-between">
+        {/* Left: Availability */}
+        <div className="flex items-center gap-3 pointer-events-auto">
+          <p
+            className="text-white"
+            style={{
+              fontFamily: 'var(--font-lavener)',
+              fontSize: 'clamp(0.875rem, 1vw, 1rem)',
+              fontWeight: 400,
+            }}
+          >
+            {t('footer.availability.text')}
+          </p>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            className="text-white"
+          >
+            <path
+              d="M7 17L17 7M17 7H7M17 7V17"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <p
+            className="text-white/70"
+            style={{
+              fontFamily: 'var(--font-lavener)',
+              fontSize: 'clamp(0.875rem, 1vw, 1rem)',
+              fontWeight: 300,
+            }}
+          >
+            {t('footer.availability.date')}
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 export default async function PhotographyPortfolioPage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
@@ -62,35 +177,11 @@ export default async function PhotographyPortfolioPage(props: Props) {
   return (
     <NextIntlClientProvider messages={pick(messages, ['PortfolioPage'])}>
       <BreadcrumbJsonLd items={breadcrumbItems} />
-      <main className="min-h-screen bg-white">
-        {/* Photography Portfolio Content */}
-        <section className="relative w-full min-h-screen flex items-center justify-center">
-          <div className="container mx-auto px-4 py-24 lg:py-32">
-            <h1
-              className="text-center text-black"
-              style={{
-                fontFamily: '"Cormorant Garamond", serif',
-                fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-                fontWeight: 300,
-                letterSpacing: '0.02em',
-              }}
-            >
-              Photography Portfolio
-            </h1>
-            <p
-              className="text-center text-black/70 mt-6 max-w-2xl mx-auto"
-              style={{
-                fontFamily: '"Cormorant Garamond", serif',
-                fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)',
-                fontWeight: 300,
-                lineHeight: 1.6,
-              }}
-            >
-              Content coming soon
-            </p>
-          </div>
-        </section>
-      </main>
+      <div className="relative min-h-screen bg-black overflow-hidden">
+        <PhotographyHeader locale={locale} />
+        <Photography2DCarousel projects={photographyProjects} />
+        <PhotographyFooter />
+      </div>
     </NextIntlClientProvider>
   );
 }

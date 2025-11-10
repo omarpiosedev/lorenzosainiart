@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lottie from 'lottie-react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 import { TrustedUsers } from '@/components/lightswind/trustedusers';
@@ -397,57 +398,77 @@ export default function BenefitsSection() {
           >
             {/* Polaroid 1 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
-              <img
-                src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.webp"
-                alt="Portfolio work 1"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.webp"
+                  alt="Portfolio work 1"
+                  fill
+                  sizes="(max-width: 1024px) 40vw, 15vw"
+                  className="object-cover"
+                  loading="lazy"
+                  quality={85}
+                />
+              </div>
             </div>
 
             {/* Polaroid 2 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
-              <img
-                src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.webp"
-                alt="Portfolio work 2"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.webp"
+                  alt="Portfolio work 2"
+                  fill
+                  sizes="(max-width: 1024px) 40vw, 15vw"
+                  className="object-cover"
+                  loading="lazy"
+                  quality={85}
+                />
+              </div>
             </div>
 
             {/* Polaroid 3 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
-              <img
-                src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.webp"
-                alt="Portfolio work 3"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.webp"
+                  alt="Portfolio work 3"
+                  fill
+                  sizes="(max-width: 1024px) 40vw, 15vw"
+                  className="object-cover"
+                  loading="lazy"
+                  quality={85}
+                />
+              </div>
             </div>
 
             {/* Polaroid 4 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
-              <img
-                src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.webp"
-                alt="Portfolio work 4"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.webp"
+                  alt="Portfolio work 4"
+                  fill
+                  sizes="(max-width: 1024px) 40vw, 15vw"
+                  className="object-cover"
+                  loading="lazy"
+                  quality={85}
+                />
+              </div>
             </div>
 
             {/* Polaroid 5 */}
             <div className="polaroid absolute bg-white p-2 shadow-lg transform-gpu" style={{ width: '60%', height: '40%' }}>
-              <img
-                src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.webp"
-                alt="Portfolio work 5"
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.webp"
+                  alt="Portfolio work 5"
+                  fill
+                  sizes="(max-width: 1024px) 40vw, 15vw"
+                  className="object-cover"
+                  loading="lazy"
+                  quality={85}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -495,13 +516,17 @@ export default function BenefitsSection() {
               height: '50vh', // Increased height for larger image
             }}
           >
-            <img
-              src="/assets/images/camera-lens.webp"
-              alt="Professional Camera Lens"
-              className="w-full h-full object-contain"
-              loading="lazy"
-              decoding="async"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src="/assets/images/camera-lens.webp"
+                alt="Professional Camera Lens"
+                fill
+                sizes="20vw"
+                className="object-contain"
+                loading="lazy"
+                quality={90}
+              />
+            </div>
           </div>
         </div>
 
@@ -643,16 +668,20 @@ export default function BenefitsSection() {
               height: '80%',
             }}
           >
-            <img
-              src="/assets/images/quintacard.webp"
-              alt="Portrait Photography - Eyes"
-              className="w-full h-full object-contain transform-gpu"
-              loading="lazy"
-              decoding="async"
-              style={{
-                transformOrigin: 'center center',
-              }}
-            />
+            <div className="relative w-full h-full" style={{ transformOrigin: 'center center' }}>
+              <Image
+                src="/assets/images/quintacard.webp"
+                alt="Portrait Photography - Eyes"
+                fill
+                sizes="35vw"
+                className="object-contain transform-gpu"
+                loading="lazy"
+                quality={90}
+                style={{
+                  transformOrigin: 'center center',
+                }}
+              />
+            </div>
           </div>
 
           {/* Text Overlay */}
@@ -801,57 +830,77 @@ export default function BenefitsSection() {
               >
                 {/* Polaroid 1 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
-                  <img
-                    src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.webp"
-                    alt="Portfolio work 1"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src="/assets/images/BenefitsCard/0540d16f-f5f9-4418-be0b-8aef4fe3b5465ecb.webp"
+                      alt="Portfolio work 1"
+                      fill
+                      sizes="(max-width: 768px) 50vw, 40vw"
+                      className="object-cover"
+                      loading="lazy"
+                      quality={85}
+                    />
+                  </div>
                 </div>
 
                 {/* Polaroid 2 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
-                  <img
-                    src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.webp"
-                    alt="Portfolio work 2"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src="/assets/images/BenefitsCard/17703902-a4f5-480c-9e90-262e76cd18c1_rw_1920e304.webp"
+                      alt="Portfolio work 2"
+                      fill
+                      sizes="(max-width: 768px) 50vw, 40vw"
+                      className="object-cover"
+                      loading="lazy"
+                      quality={85}
+                    />
+                  </div>
                 </div>
 
                 {/* Polaroid 3 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
-                  <img
-                    src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.webp"
-                    alt="Portfolio work 3"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src="/assets/images/BenefitsCard/bed90b78-ab84-4521-8013-884324b73e5f_car_3x4f19e.webp"
+                      alt="Portfolio work 3"
+                      fill
+                      sizes="(max-width: 768px) 50vw, 40vw"
+                      className="object-cover"
+                      loading="lazy"
+                      quality={85}
+                    />
+                  </div>
                 </div>
 
                 {/* Polaroid 4 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
-                  <img
-                    src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.webp"
-                    alt="Portfolio work 4"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src="/assets/images/BenefitsCard/fca350ae-e988-408f-b48d-295c227f5627a5a0.webp"
+                      alt="Portfolio work 4"
+                      fill
+                      sizes="(max-width: 768px) 50vw, 40vw"
+                      className="object-cover"
+                      loading="lazy"
+                      quality={85}
+                    />
+                  </div>
                 </div>
 
                 {/* Polaroid 5 */}
                 <div className="polaroid absolute bg-white p-1.5 shadow-lg transform-gpu" style={{ width: '65%', height: '35%' }}>
-                  <img
-                    src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.webp"
-                    alt="Portfolio work 5"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src="/assets/images/BenefitsCard/fe12425f-7171-410c-83c1-8d41fd8b0887ac62.webp"
+                      alt="Portfolio work 5"
+                      fill
+                      sizes="(max-width: 768px) 50vw, 40vw"
+                      className="object-cover"
+                      loading="lazy"
+                      quality={85}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -890,13 +939,17 @@ export default function BenefitsSection() {
                   height: '93.9%', // 490px / 522px = 93.9% della card mobile
                 }}
               >
-                <img
-                  src="/assets/images/camera-lens.webp"
-                  alt="Professional Camera Lens"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/assets/images/camera-lens.webp"
+                    alt="Professional Camera Lens"
+                    fill
+                    sizes="(max-width: 768px) 80vw, 50vw"
+                    className="object-cover"
+                    loading="lazy"
+                    quality={90}
+                  />
+                </div>
               </div>
             </div>
 
@@ -1015,13 +1068,17 @@ export default function BenefitsSection() {
                   height: '160%',
                 }}
               >
-                <img
-                  src="/assets/images/quintacard.webp"
-                  alt="Portrait Photography - Eyes"
-                  className="w-full h-full object-contain"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/assets/images/quintacard.webp"
+                    alt="Portrait Photography - Eyes"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                    className="object-contain"
+                    loading="lazy"
+                    quality={90}
+                  />
+                </div>
               </div>
 
               {/* Text - Top positioned and centered */}
