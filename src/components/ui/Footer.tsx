@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useRef } from 'react';
 import { ScreenFitText } from './ScreenFitText';
 
@@ -14,11 +15,15 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 export default function Footer() {
   const t = useTranslations('Footer');
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
 
   // Refs for GSAP animations
   const footerRef = useRef<HTMLElement>(null);
   const mainGridRef = useRef<HTMLDivElement>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
+
+  // Check if we're on home page
+  const isHomePage = pathname.includes('/home') || pathname.match(/^\/(it|en)\/?$/);
 
   const pagesLinks = [
     { key: 'home', href: '/' },
@@ -33,7 +38,7 @@ export default function Footer() {
     { key: 'terms', href: '/terms' },
   ];
 
-  // GSAP entrance animations with ScrollTrigger
+  // GSAP entrance animations
   useGSAP(
     () => {
       if (!mainGridRef.current || !bannerRef.current) {
@@ -53,34 +58,60 @@ export default function Footer() {
         force3D: true,
       });
 
-      // Main grid animation - fade-in + slide-up when entering viewport
-      gsap.to(mainGridRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: 'top 90%', // Start when footer is 90% from top of viewport
-          toggleActions: 'play none none none',
-        },
-      });
+      // CRITICAL FIX: On home page, animate immediately without ScrollTrigger
+      // This prevents Footer from staying invisible after LoadingScreen
+      // because ScrollTrigger waits for scroll, but user is at top of page
+      if (isHomePage) {
+        // Immediate animation on mount (home page only)
+        const tl = gsap.timeline({ delay: 0.3 });
 
-      // Banner animation - scale-up + fade-in with delay
-      gsap.to(bannerRef.current, {
-        opacity: 1,
-        scale: 1,
-        duration: 1.0,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: 'top 85%', // Start slightly after main grid
-          toggleActions: 'play none none none',
-        },
-      });
+        tl.to(mainGridRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: 'power3.out',
+        });
+
+        tl.to(
+          bannerRef.current,
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 1.0,
+            ease: 'power3.out',
+          },
+          '-=0.8', // Start 0.8s before previous animation ends (overlap)
+        );
+      } else {
+        // Other pages: use ScrollTrigger (animate when scrolling into view)
+        gsap.to(mainGridRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+          },
+        });
+
+        gsap.to(bannerRef.current, {
+          opacity: 1,
+          scale: 1,
+          duration: 1.0,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        });
+      }
     },
     {
       scope: footerRef,
+      dependencies: [isHomePage],
     },
   );
 
