@@ -58,7 +58,8 @@ export default function Photography2DCarousel({
 
     // ✅ SIMPLIFIED: Linear scroll-to-rotation mapping
     // Each project gets equal angle spacing in the cylinder
-    const anglePerProject = 360 / numProjects;
+    const baseAngle = 360 / numProjects;
+    const anglePerProject = baseAngle * 0.75; // Balanced spacing: not too tight, not too far
     // Total rotation needed to show all projects (from first to last)
     const totalRotation = anglePerProject * (numProjects - 1);
     // Scroll distance: exactly 1 screen (100vh) per project
@@ -153,8 +154,9 @@ export default function Photography2DCarousel({
         >
           {projects.map((project, index) => {
             // ✅ SIMPLIFIED: Equal angle spacing for all projects in the cylinder
-            // Each project occupies 360°/numProjects of the cylinder
-            const angle = (360 / numProjects) * index;
+            // Balanced spacing for optimal visual separation
+            const baseAngle = 360 / numProjects;
+            const angle = baseAngle * 0.75 * index;
 
             return (
               <div
