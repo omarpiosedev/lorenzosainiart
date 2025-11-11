@@ -51,6 +51,7 @@ export default function ServicesSection() {
             pin: true,
             pinSpacing: false,
             anticipatePin: 1, // CRITICAL: Prevents pin jitter on fast scroll (mobile)
+            invalidateOnRefresh: true,
           });
         }
       });

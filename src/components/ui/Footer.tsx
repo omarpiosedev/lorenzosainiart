@@ -1,12 +1,24 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { useRef } from 'react';
 import { ScreenFitText } from './ScreenFitText';
+
+// Register GSAP plugins at module level
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Footer() {
   const t = useTranslations('Footer');
   const currentYear = new Date().getFullYear();
+
+  // Refs for GSAP animations
+  const footerRef = useRef<HTMLElement>(null);
+  const mainGridRef = useRef<HTMLDivElement>(null);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   const pagesLinks = [
     { key: 'home', href: '/' },
@@ -21,11 +33,62 @@ export default function Footer() {
     { key: 'terms', href: '/terms' },
   ];
 
+  // GSAP entrance animations with ScrollTrigger
+  useGSAP(
+    () => {
+      if (!mainGridRef.current || !bannerRef.current) {
+        return;
+      }
+
+      // Set initial states
+      gsap.set(mainGridRef.current, {
+        opacity: 0,
+        y: 50,
+        force3D: true,
+      });
+
+      gsap.set(bannerRef.current, {
+        opacity: 0,
+        scale: 0.9,
+        force3D: true,
+      });
+
+      // Main grid animation - fade-in + slide-up when entering viewport
+      gsap.to(mainGridRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: 'top 90%', // Start when footer is 90% from top of viewport
+          toggleActions: 'play none none none',
+        },
+      });
+
+      // Banner animation - scale-up + fade-in with delay
+      gsap.to(bannerRef.current, {
+        opacity: 1,
+        scale: 1,
+        duration: 1.0,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: 'top 85%', // Start slightly after main grid
+          toggleActions: 'play none none none',
+        },
+      });
+    },
+    {
+      scope: footerRef,
+    },
+  );
+
   return (
-    <footer className="relative bg-white border-t border-gray-200">
+    <footer ref={footerRef} className="relative bg-white border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16 lg:py-20">
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-12">
+        <div ref={mainGridRef} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-12">
           {/* Left Section - Logo & Description */}
           <div className="lg:col-span-7">
             {/* Logo with corner frames */}
@@ -167,7 +230,7 @@ export default function Footer() {
       </div>
 
       {/* Full-width brand name section - OUTSIDE max-w-7xl container */}
-      <div className="w-full border-t border-gray-200 px-4">
+      <div ref={bannerRef} className="w-full border-t border-gray-200 px-4">
         <ScreenFitText
           text="LORENZOSAINI"
           className="text-black"
