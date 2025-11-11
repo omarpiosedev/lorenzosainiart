@@ -128,7 +128,7 @@ export default async function PhotographyPortfolioPage(props: Props) {
   return (
     <NextIntlClientProvider messages={pick(messages, ['PortfolioPage'])}>
       <BreadcrumbJsonLd items={breadcrumbItems} />
-      <div className="relative min-h-screen bg-black overflow-hidden">
+      <div className="relative min-h-screen bg-white overflow-hidden">
         <PhotographyHeader locale={locale} />
         <Photography2DCarousel projects={photographyProjects} />
       </div>

@@ -8,6 +8,8 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
+import { PhotographyTitleEffect } from './PhotographyTitleEffect';
+
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 // Isomorphic layout effect for SSR safety (pattern from NavBar.tsx)
@@ -37,6 +39,10 @@ export default function Photography2DCarousel({
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const currentIndexRef = useRef(0);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Refs for text elements animation (title uses PhotographyTitleEffect, no ref needed)
+  const textRefsLabel = useRef<(HTMLParagraphElement | null)[]>([]);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   // Cylinder configuration
   const numProjects = projects.length;
@@ -106,6 +112,49 @@ export default function Photography2DCarousel({
     };
   }, [projects, numProjects]);
 
+  // ✅ BEST PRACTICE: Animate label and button when currentIndex changes
+  // Title uses PhotographyTitleEffect with motion/react
+  useGSAP(
+    () => {
+      // Set all elements to hidden initially
+      textRefsLabel.current.forEach((el) => {
+        if (el) {
+          gsap.set(el, { opacity: 0, y: 30 });
+        }
+      });
+      buttonRefs.current.forEach((el) => {
+        if (el) {
+          gsap.set(el, { opacity: 0, scale: 0.8 });
+        }
+      });
+
+      // Animate current project elements
+      const label = textRefsLabel.current[currentIndex];
+      const button = buttonRefs.current[currentIndex];
+
+      if (label) {
+        gsap.to(label, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          delay: 0.1,
+        });
+      }
+
+      if (button) {
+        gsap.to(button, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: 'back.out(1.7)',
+          delay: 0.8, // After title animation completes
+        });
+      }
+    },
+    { dependencies: [currentIndex], scope: containerRef },
+  );
+
   // ✅ Context-safe CTA button click handler
   const handleCTAClick = contextSafe(() => {
     if (projects.length > 0 && projects[currentIndex]) {
@@ -118,7 +167,7 @@ export default function Photography2DCarousel({
   return (
     <div
       ref={containerRef}
-      className="relative w-full bg-black overflow-hidden"
+      className="relative w-full bg-white overflow-hidden"
       style={{
         height: '100vh',
       }}
@@ -188,29 +237,72 @@ export default function Photography2DCarousel({
                     priority={index === 0}
                   />
 
-                  {/* Project Title Overlay */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  {/* Project Title Overlay - Counter-rotate to keep text horizontal */}
+                  <div
+                    className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-6"
+                    style={{
+                      transform: 'rotateZ(8deg)', // Counter-rotate to compensate cylinder's -8deg
+                    }}
+                  >
                     <p
-                      className="text-white/90 uppercase tracking-widest mb-4"
+                      ref={(el) => {
+                        textRefsLabel.current[index] = el;
+                      }}
+                      className="text-black uppercase tracking-widest"
                       style={{
                         fontFamily: 'var(--font-lavener)',
-                        fontSize: 'clamp(0.75rem, 1.5vw, 1rem)',
-                        letterSpacing: '0.15em',
+                        fontSize: 'clamp(0.75rem, 1.2vw, 0.9rem)',
+                        letterSpacing: '0.2em',
+                        fontWeight: 400,
                       }}
                     >
                       {t(project.labelKey as never)}
                     </p>
-                    <h2
-                      className="text-white font-bold text-center px-8"
+                    <PhotographyTitleEffect
+                      words={t(project.titleKey as never)}
+                      isActive={index === currentIndex}
+                      className="text-black text-center px-8"
                       style={{
                         fontFamily: '"Cormorant Garamond", serif',
-                        fontSize: 'clamp(3rem, 10vw, 8rem)',
-                        letterSpacing: '-0.02em',
+                        fontSize: 'clamp(5rem, 14vw, 12rem)',
+                        letterSpacing: '0',
                         lineHeight: 1,
+                        fontWeight: 400,
                       }}
+                      filter={true}
+                      duration={0.6}
+                      staggerDelay={0.08}
+                    />
+                    {/* CTA Button per progetto */}
+                    <button
+                      ref={(el) => {
+                        buttonRefs.current[index] = el;
+                      }}
+                      type="button"
+                      onClick={handleCTAClick}
+                      className="group pointer-events-auto flex items-center justify-center border-2 border-black rounded-full transition-all duration-300 hover:scale-110 mt-4"
+                      style={{
+                        width: 'clamp(60px, 8vw, 80px)',
+                        height: 'clamp(60px, 8vw, 80px)',
+                      }}
+                      aria-label={t('PortfolioPage.photography.cta.ariaLabel')}
                     >
-                      {t(project.titleKey as never)}
-                    </h2>
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                      >
+                        <path
+                          d="M5 12H19M19 12L12 5M19 12L12 19"
+                          stroke="black"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -231,7 +323,7 @@ export default function Photography2DCarousel({
             style={{
               width: currentIndex === index ? '12px' : '10px',
               height: currentIndex === index ? '12px' : '10px',
-              backgroundColor: currentIndex === index ? '#fff' : '#fff6',
+              backgroundColor: currentIndex === index ? '#000' : '#0006',
               borderRadius: '2px',
             }}
             role="img"
@@ -239,36 +331,6 @@ export default function Photography2DCarousel({
           />
         ))}
       </nav>
-
-      {/* Circular CTA Button */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
-        <button
-          type="button"
-          onClick={handleCTAClick}
-          className="group pointer-events-auto flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 hover:scale-110"
-          style={{
-            width: 'clamp(60px, 8vw, 80px)',
-            height: 'clamp(60px, 8vw, 80px)',
-          }}
-          aria-label={t('PortfolioPage.photography.cta.ariaLabel')}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="transition-transform duration-300 group-hover:translate-x-1"
-          >
-            <path
-              d="M5 12H19M19 12L12 5M19 12L12 19"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
     </div>
   );
 }
