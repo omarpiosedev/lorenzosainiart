@@ -112,55 +112,6 @@ function PhotographyHeader({ locale }: { locale: string }) {
   );
 }
 
-function PhotographyFooter() {
-  const t = useTranslations('PortfolioPage.photography');
-
-  return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50 px-6 py-6 md:px-8 md:py-8 pointer-events-none">
-      <div className="flex items-end justify-between">
-        {/* Left: Availability */}
-        <div className="flex items-center gap-3 pointer-events-auto">
-          <p
-            className="text-white"
-            style={{
-              fontFamily: 'var(--font-lavener)',
-              fontSize: 'clamp(0.875rem, 1vw, 1rem)',
-              fontWeight: 400,
-            }}
-          >
-            {t('footer.availability.text')}
-          </p>
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="text-white"
-          >
-            <path
-              d="M7 17L17 7M17 7H7M17 7V17"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <p
-            className="text-white/70"
-            style={{
-              fontFamily: 'var(--font-lavener)',
-              fontSize: 'clamp(0.875rem, 1vw, 1rem)',
-              fontWeight: 300,
-            }}
-          >
-            {t('footer.availability.date')}
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 export default async function PhotographyPortfolioPage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
@@ -180,7 +131,6 @@ export default async function PhotographyPortfolioPage(props: Props) {
       <div className="relative min-h-screen bg-black overflow-hidden">
         <PhotographyHeader locale={locale} />
         <Photography2DCarousel projects={photographyProjects} />
-        <PhotographyFooter />
       </div>
     </NextIntlClientProvider>
   );
