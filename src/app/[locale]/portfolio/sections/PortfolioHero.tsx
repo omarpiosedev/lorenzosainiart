@@ -251,6 +251,40 @@ export default function PortfolioHero() {
     },
   );
 
+  // Prevent scroll during entrance animation to avoid pin jumping bug
+  // Critical fix for mobile: ScrollTrigger pin is created AFTER entrance completes
+  // If user scrolls during entrance, pin starts from wrong position causing white screen
+  useGSAP(
+    () => {
+      // Only apply scroll lock during entrance animation
+      if (!isEntranceComplete) {
+        // Save original scroll position
+        const scrollY = window.scrollY;
+
+        // Lock body scroll (iOS Safari compatible)
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
+
+        return () => {
+          // Restore scroll when entrance completes
+          document.body.style.overflow = '';
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.width = '';
+
+          // Restore scroll position
+          window.scrollTo(0, scrollY);
+        };
+      }
+      return undefined;
+    },
+    {
+      dependencies: [isEntranceComplete], // Re-run when entrance state changes
+    },
+  );
+
   // Mouse parallax effect (delayed until entrance completes, excluding img-3, desktop only)
   // React 19.2 + GSAP: Use state dependency instead of setInterval polling
   useGSAP(

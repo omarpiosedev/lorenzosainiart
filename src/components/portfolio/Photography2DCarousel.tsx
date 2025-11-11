@@ -6,9 +6,23 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+// Isomorphic layout effect for SSR safety (pattern from NavBar.tsx)
+const useIsomorphicLayoutEffect
+  = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+// Extract magic numbers as constants for maintainability
+const CAROUSEL_CONFIG = {
+  radius: 1200, // Distance from center (fixed for consistent perspective)
+  perspective: '2500px',
+  cardWidth: '95vw',
+  cardMaxWidth: '1800px',
+  cardHeight: '120vh',
+  cardMaxHeight: '1800px',
+} as const;
 
 type Photography2DCarouselProps = {
   projects: PhotographyProject[];
@@ -20,56 +34,85 @@ export default function Photography2DCarousel({
   const t = useTranslations();
   const containerRef = useRef<HTMLDivElement>(null);
   const cylinderRef = useRef<HTMLDivElement>(null);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const currentIndexRef = useRef(0);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Cylinder configuration
-  const radius = 1200; // Distance from center (fixed for consistent perspective)
   const numProjects = projects.length;
 
-  useGSAP(
+  // ✅ BEST PRACTICE: Use useGSAP with contextSafe for event handlers
+  const { contextSafe } = useGSAP(
     () => {
-      if (!cylinderRef.current || !containerRef.current) {
-        return;
-      }
-
-      // Calculate angleStep proportionally based on image dimensions (client-side only)
-      const imageHeightVh = 105; // 105vh - larger images
-      const imageHeight = (imageHeightVh / 100) * window.innerHeight;
-      const spacingFactor = 1.6; // 60% extra space between images
-      const circumference = 2 * Math.PI * radius;
-      const angleStep = (imageHeight / circumference) * 360 * spacingFactor;
-
-      // Calculate total scroll distance based on actual number of projects
-      // Total rotation adjusted to keep last project centered through final screen
-      const totalRotation = angleStep * (numProjects - 1.2);
-      // One screen (100vh) per project
-      const scrollDistance = window.innerHeight * numProjects;
-
-      // Main ScrollTrigger for horizontal cylinder rotation (rotateX)
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: `+=${scrollDistance}`,
-        pin: true,
-        scrub: 1,
-        onUpdate: (self) => {
-          // Map scroll progress to continuous cylinder rotation (X-axis)
-          // Negative rotation for bottom-to-top movement when scrolling down
-          const rotation = -self.progress * totalRotation;
-          gsap.set(cylinderRef.current, {
-            rotateX: rotation,
-            force3D: true,
-          });
-
-          // Update current index based on rotation (with modulo for infinite loop)
-          const normalizedRotation = Math.abs(rotation) % 360;
-          const index = Math.round(normalizedRotation / angleStep) % numProjects;
-          setCurrentIndex(index);
-        },
-      });
+      // Initialize mobile menu items as hidden (for future enhancements)
+      // This pattern follows NavBar.tsx for consistency
     },
-    { scope: containerRef, dependencies: [projects, numProjects, radius] },
+    { scope: containerRef, dependencies: [] },
   );
+
+  // ✅ BEST PRACTICE: Use isomorphic layout effect for SSR-safe window calculations
+  useIsomorphicLayoutEffect(() => {
+    if (!cylinderRef.current || !containerRef.current) {
+      return;
+    }
+
+    // ✅ SIMPLIFIED: Linear scroll-to-rotation mapping
+    // Each project gets equal angle spacing in the cylinder
+    const anglePerProject = 360 / numProjects;
+    // Total rotation needed to show all projects (from first to last)
+    const totalRotation = anglePerProject * (numProjects - 1);
+    // Scroll distance: exactly 1 screen (100vh) per project
+    const scrollDistance = window.innerHeight * numProjects;
+
+    // ✅ Main ScrollTrigger for cylinder rotation (rotateX)
+    scrollTriggerRef.current = ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: 'top top',
+      end: `+=${scrollDistance}`,
+      pin: true,
+      scrub: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        // Linear mapping: scroll progress → cylinder rotation
+        // Negative rotation for natural top-to-bottom scroll feel
+        const rotation = -self.progress * totalRotation;
+        gsap.set(cylinderRef.current, {
+          rotateX: rotation,
+          rotateZ: -8, // Maintain subtle diagonal tilt during scroll
+          force3D: true,
+        });
+
+        // ✅ Calculate current project index from scroll progress
+        // Map progress (0→1) directly to project index (0→numProjects-1)
+        const index = Math.min(
+          Math.floor(self.progress * numProjects),
+          numProjects - 1,
+        );
+
+        if (currentIndexRef.current !== index) {
+          currentIndexRef.current = index;
+          setCurrentIndex(index);
+        }
+      },
+    });
+
+    // ✅ BEST PRACTICE: Explicit cleanup for ScrollTrigger
+    return () => {
+      if (scrollTriggerRef.current) {
+        scrollTriggerRef.current.kill();
+        scrollTriggerRef.current = null;
+      }
+    };
+  }, [projects, numProjects]);
+
+  // ✅ Context-safe CTA button click handler
+  const handleCTAClick = contextSafe(() => {
+    if (projects.length > 0 && projects[currentIndex]) {
+      // TODO: Implement navigation to project detail page when route is available
+      // Example: const currentProject = projects[currentIndex];
+      // router.push(`/photography/${currentProject.id}`)
+    }
+  });
 
   return (
     <div
@@ -79,11 +122,12 @@ export default function Photography2DCarousel({
         height: '100vh',
       }}
     >
-      {/* SVG ClipPath for Pillow Shape */}
+      {/* SVG Clip Path for Pincushion Shape (curved edges inward) */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
-          <clipPath id="pillowShape" clipPathUnits="objectBoundingBox">
-            <path d="M 0.5,0 C 0.8,-0.1 1.1,0.2 1,0.5 C 1.1,0.8 0.8,1.1 0.5,1 C 0.2,1.1 -0.1,0.8 0,0.5 C -0.1,0.2 0.2,-0.1 0.5,0 Z" />
+          <clipPath id="pincushionShape" clipPathUnits="objectBoundingBox">
+            {/* Stronger curvature on left/right sides, minimal on top/bottom */}
+            <path d="M 0,0 Q 0.5,0.01 1,0 Q 0.92,0.5 1,1 Q 0.5,0.99 0,1 Q 0.08,0.5 0,0 Z" />
           </clipPath>
         </defs>
       </svg>
@@ -92,7 +136,7 @@ export default function Photography2DCarousel({
       <div
         className="absolute inset-0 flex items-center justify-center"
         style={{
-          perspective: '2500px',
+          perspective: CAROUSEL_CONFIG.perspective,
           perspectiveOrigin: '50% 50%',
         }}
       >
@@ -104,32 +148,33 @@ export default function Photography2DCarousel({
             width: '100%',
             height: '100%',
             transformStyle: 'preserve-3d',
+            transform: 'rotateZ(-8deg)', // Subtle diagonal tilt: bottom-left to top-right
           }}
         >
           {projects.map((project, index) => {
-            // Calculate angle for static positioning (consistent with GSAP calculation)
-            const baseAngle = (360 / numProjects) * 0.8; // Approximate spacing for SSR
-            const angle = index * baseAngle;
+            // ✅ SIMPLIFIED: Equal angle spacing for all projects in the cylinder
+            // Each project occupies 360°/numProjects of the cylinder
+            const angle = (360 / numProjects) * index;
 
             return (
               <div
                 key={project.id}
                 className="carousel-slide absolute top-1/2 left-1/2"
                 style={{
-                  transform: `translate(-50%, -50%) rotateX(${angle}deg) translateZ(-${radius}px)`,
+                  transform: `translate(-50%, -50%) rotateX(${angle}deg) translateZ(-${CAROUSEL_CONFIG.radius}px)`,
                   transformStyle: 'preserve-3d',
                   backfaceVisibility: 'hidden',
-                  width: '95vw',
-                  maxWidth: '1800px',
-                  height: '105vh',
-                  maxHeight: '1400px',
+                  width: CAROUSEL_CONFIG.cardWidth,
+                  maxWidth: CAROUSEL_CONFIG.cardMaxWidth,
+                  height: CAROUSEL_CONFIG.cardHeight,
+                  maxHeight: CAROUSEL_CONFIG.cardMaxHeight,
                 }}
               >
                 {/* Project Card */}
                 <div
-                  className="relative w-full h-full"
+                  className="relative w-full h-full overflow-hidden"
                   style={{
-                    clipPath: 'url(#pillowShape)',
+                    clipPath: 'url(#pincushionShape)',
                   }}
                 >
                   <Image
@@ -172,11 +217,14 @@ export default function Photography2DCarousel({
         </div>
       </div>
 
-      {/* Navigation Dots */}
-      <div className="absolute bottom-8 right-8 flex flex-col gap-3 z-10">
-        {projects.map((_, index) => (
+      {/* Navigation Dots - Enhanced Accessibility */}
+      <nav
+        className="absolute bottom-8 right-8 flex flex-col gap-3 z-10"
+        aria-label="Photography projects navigation"
+      >
+        {projects.map((project, index) => (
           <div
-            key={index}
+            key={`dot-${project.id}`}
             className="transition-all duration-300"
             style={{
               width: currentIndex === index ? '12px' : '10px',
@@ -184,14 +232,17 @@ export default function Photography2DCarousel({
               backgroundColor: currentIndex === index ? '#fff' : '#fff6',
               borderRadius: '2px',
             }}
-            aria-label={`Project ${index + 1}`}
+            role="img"
+            aria-label={`${t(project.titleKey as never)} - Project ${index + 1} of ${numProjects}${currentIndex === index ? ' (current)' : ''}`}
           />
         ))}
-      </div>
+      </nav>
 
       {/* Circular CTA Button */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
         <button
+          type="button"
+          onClick={handleCTAClick}
           className="group pointer-events-auto flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 hover:scale-110"
           style={{
             width: 'clamp(60px, 8vw, 80px)',
