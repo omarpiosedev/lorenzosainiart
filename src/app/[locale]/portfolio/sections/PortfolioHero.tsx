@@ -278,6 +278,14 @@ export default function PortfolioHero() {
           window.scrollTo(0, scrollY);
         };
       }
+
+      // When entrance completes, ensure body is unlocked
+      // This handles the case where the cleanup might not have run
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+
       return undefined;
     },
     {
