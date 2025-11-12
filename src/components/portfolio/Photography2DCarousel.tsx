@@ -43,6 +43,7 @@ export default function Photography2DCarousel({
   // Refs for text elements animation (title uses PhotographyTitleEffect, no ref needed)
   const textRefsLabel = useRef<(HTMLParagraphElement | null)[]>([]);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const projectCardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Cylinder configuration
   const numProjects = projects.length;
@@ -155,6 +156,66 @@ export default function Photography2DCarousel({
     { dependencies: [currentIndex], scope: containerRef },
   );
 
+  // ✅ Mouse parallax effect on ALL projects (desktop only, matches PortfolioHero pattern)
+  useGSAP(
+    () => {
+      if (!containerRef.current) {
+        return;
+      }
+
+      // Only enable mouse parallax on desktop (>= 1024px)
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        return;
+      }
+
+      const handleMouseMove = (e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+
+        // Normalize mouse coordinates from -1 to 1 (PortfolioHero pattern)
+        const xPercent = (clientX / innerWidth - 0.5) * 2;
+        const yPercent = (clientY / innerHeight - 0.5) * 2;
+
+        // Apply parallax to ALL cards with varying speeds for depth effect
+        projectCardRefs.current.forEach((card, index) => {
+          if (!card) {
+            return;
+          }
+
+          // Different speeds for each card to create depth (like PortfolioHero)
+          const speeds = [0.8, 0.5, 1.0, 0.6, 0.9, 0.55, 0.75, 0.85];
+          const speed = speeds[index % speeds.length] || 0.7;
+
+          // Movement (max 100px with varying speed)
+          const xMove = xPercent * 100 * speed;
+          const yMove = yPercent * 100 * speed;
+
+          gsap.to(card, {
+            x: xMove,
+            y: yMove,
+            duration: 1.2,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
+        });
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        // Kill parallax tweens and reset position for all cards
+        projectCardRefs.current.forEach((card) => {
+          if (card) {
+            gsap.killTweensOf(card);
+            gsap.set(card, { x: 0, y: 0 });
+          }
+        });
+      };
+    },
+    { dependencies: [], scope: containerRef },
+  );
+
   // ✅ Context-safe CTA button click handler
   const handleCTAClick = contextSafe(() => {
     if (projects.length > 0 && projects[currentIndex]) {
@@ -214,7 +275,6 @@ export default function Photography2DCarousel({
                 style={{
                   transform: `translate(-50%, -50%) rotateX(${angle}deg) translateZ(-${CAROUSEL_CONFIG.radius}px)`,
                   transformStyle: 'preserve-3d',
-                  backfaceVisibility: 'hidden',
                   width: CAROUSEL_CONFIG.cardWidth,
                   maxWidth: CAROUSEL_CONFIG.cardMaxWidth,
                   height: CAROUSEL_CONFIG.cardHeight,
@@ -223,9 +283,13 @@ export default function Photography2DCarousel({
               >
                 {/* Project Card */}
                 <div
+                  ref={(el) => {
+                    projectCardRefs.current[index] = el;
+                  }}
                   className="relative w-full h-full overflow-hidden"
                   style={{
                     clipPath: 'url(#pincushionShape)',
+                    backfaceVisibility: 'hidden',
                   }}
                 >
                   <Image
@@ -331,6 +395,22 @@ export default function Photography2DCarousel({
           />
         ))}
       </nav>
+
+      {/* Fade gradients - top and bottom */}
+      <div
+        className="absolute top-0 left-0 right-0 pointer-events-none z-30"
+        style={{
+          height: '12vh',
+          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 100%)',
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 pointer-events-none z-30"
+        style={{
+          height: '12vh',
+          background: 'linear-gradient(to top, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 100%)',
+        }}
+      />
     </div>
   );
 }
