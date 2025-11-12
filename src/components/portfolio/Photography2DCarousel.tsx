@@ -18,12 +18,12 @@ const useIsomorphicLayoutEffect
 
 // Extract magic numbers as constants for maintainability
 const CAROUSEL_CONFIG = {
-  radius: 1200, // Distance from center (fixed for consistent perspective)
-  perspective: '2500px',
-  cardWidth: '95vw',
-  cardMaxWidth: '1800px',
-  cardHeight: '120vh',
-  cardMaxHeight: '1800px',
+  // radius is now calculated dynamically - see calculateDynamicRadius() function
+  perspective: '4000px', // Increased to compensate for reduced radius
+  cardWidth: '98vw',
+  cardMaxWidth: '3200px', // Wider for horizontal emphasis
+  cardHeight: '135vh',
+  cardMaxHeight: '2900px',
 } as const;
 
 type Photography2DCarouselProps = {
@@ -39,6 +39,7 @@ export default function Photography2DCarousel({
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const currentIndexRef = useRef(0);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [dynamicRadius, setDynamicRadius] = useState(2500); // State triggers re-render with calculated radius
 
   // Refs for text elements animation (title uses PhotographyTitleEffect, no ref needed)
   const textRefsLabel = useRef<(HTMLParagraphElement | null)[]>([]);
@@ -47,6 +48,16 @@ export default function Photography2DCarousel({
 
   // Cylinder configuration
   const numProjects = projects.length;
+
+  // ✅ DYNAMIC: Calculate cylinder radius based on number of projects to prevent overlap
+  // Formula: radius = (cardMaxWidth / 2) / tan(angle/2) + safety margin
+  // Reduced margin allows cards to appear MUCH larger by bringing them closer to camera
+  const calculateDynamicRadius = (projectCount: number, cardMaxWidthPx: number): number => {
+    const anglePerProject = (360 / projectCount) * (Math.PI / 180); // Convert to radians
+    const minRadius = (cardMaxWidthPx / 2) / Math.tan(anglePerProject / 2);
+    const safetyMargin = 0.65; // 65% of minimum - very close to camera for maximum size
+    return Math.round(minRadius * safetyMargin);
+  };
 
   // ✅ BEST PRACTICE: Use useGSAP with contextSafe for event handlers
   const { contextSafe } = useGSAP(
@@ -63,10 +74,16 @@ export default function Photography2DCarousel({
       return;
     }
 
+    // ✅ DYNAMIC: Calculate radius automatically based on project count
+    const calculatedRadius = calculateDynamicRadius(numProjects, 3200); // 3200px = cardMaxWidth
+
+    // Update state to trigger re-render with correct radius
+    setDynamicRadius(calculatedRadius);
+
     // ✅ SIMPLIFIED: Linear scroll-to-rotation mapping
     // Each project gets equal angle spacing in the cylinder
     const baseAngle = 360 / numProjects;
-    const anglePerProject = baseAngle * 0.75; // Balanced spacing: not too tight, not too far
+    const anglePerProject = baseAngle * 0.7; // Reduced by 30% for tighter spacing between projects
     // Total rotation needed to show all projects (from first to last)
     const totalRotation = anglePerProject * (numProjects - 1);
     // Scroll distance: exactly 1 screen (100vh) per project
@@ -263,18 +280,19 @@ export default function Photography2DCarousel({
           }}
         >
           {projects.map((project, index) => {
-            // ✅ SIMPLIFIED: Equal angle spacing for all projects in the cylinder
-            // Balanced spacing for optimal visual separation
+            // ✅ REDUCED: Tighter angle spacing for projects (70% of full circle)
+            // Brings projects closer together in the cylinder
             const baseAngle = 360 / numProjects;
-            const angle = baseAngle * 0.75 * index;
+            const angle = baseAngle * 0.7 * index;
 
             return (
               <div
                 key={project.id}
                 className="carousel-slide absolute top-1/2 left-1/2"
                 style={{
-                  transform: `translate(-50%, -50%) rotateX(${angle}deg) translateZ(-${CAROUSEL_CONFIG.radius}px)`,
+                  transform: `translate(-50%, -50%) rotateX(${angle}deg) translateZ(-${dynamicRadius}px)`,
                   transformStyle: 'preserve-3d',
+                  backfaceVisibility: 'hidden',
                   width: CAROUSEL_CONFIG.cardWidth,
                   maxWidth: CAROUSEL_CONFIG.cardMaxWidth,
                   height: CAROUSEL_CONFIG.cardHeight,
@@ -286,10 +304,11 @@ export default function Photography2DCarousel({
                   ref={(el) => {
                     projectCardRefs.current[index] = el;
                   }}
-                  className="relative w-full h-full overflow-hidden"
+                  className="relative w-full h-full overflow-hidden bg-black"
                   style={{
                     clipPath: 'url(#pincushionShape)',
                     backfaceVisibility: 'hidden',
+                    willChange: 'transform',
                   }}
                 >
                   <Image
@@ -297,8 +316,9 @@ export default function Photography2DCarousel({
                     alt={t(project.titleKey as never)}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 90vw, 60vw"
-                    priority={index === 0}
+                    sizes="(max-width: 768px) 95vw, 80vw"
+                    priority={index < 2}
+                    loading={index < 2 ? 'eager' : 'lazy'}
                   />
 
                   {/* Project Title Overlay - Counter-rotate to keep text horizontal */}

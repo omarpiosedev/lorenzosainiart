@@ -42,12 +42,6 @@ tools to resolve library id and get library docs without me having to explicitly
 1. **Deep Analysis**: Thoroughly analyze the image (positions, sizes, proportions, elements, spacing, colors)
 2. **Element Inventory**: List all identified elements with their exact properties
 3. **1:1 Implementation**: Create the exact layout using project's tech stack (Tailwind, GSAP, fluid tokens)
-4. **Visual Verification**: ALWAYS use Playwright MCP after implementation to verify 1:1 accuracy
-   - Start dev server and navigate to the page
-   - Take screenshot of ONLY the specific section/component implemented
-   - Compare screenshot with original image/requirements
-   - Verify pixel-perfect matching of positions, sizes, spacing, colors
-   - Fix any discrepancies found
 
 ---
 
@@ -92,12 +86,7 @@ After implementing complex code changes (new features, refactoring, component lo
 - State management changes
 - Routing or i18n modifications
 
-**IMPORTANT - Visual Layout Verification:**
-After implementing specific layouts (from image cloning OR textual requirements), ALWAYS use Playwright MCP to verify visual accuracy:
-- ✅ Use `browser_navigate` to reach the page
-- ✅ Use `browser_take_screenshot` with `element` parameter to capture ONLY the specific section
-- ✅ Verify 1:1 pixel-perfect matching with requirements
-- ✅ Fix any visual discrepancies immediately
+
 
 ## 🚫 ANTI-PATTERNS (ABSOLUTELY FORBIDDEN)
 

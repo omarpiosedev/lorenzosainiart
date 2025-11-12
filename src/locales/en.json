@@ -277,25 +277,37 @@
         "ariaLabel": "Explore project"
       },
       "projects": {
-        "wildBloom": {
-          "title": "Wild Bloom",
-          "label": "Fashion & Editorial"
+        "shooting": {
+          "title": "Shooting",
+          "label": "Photo Services"
         },
-        "softMetals": {
-          "title": "Soft Metals",
-          "label": "Brand & Commercial"
+        "foodDrink": {
+          "title": "Food & Drink",
+          "label": "Food Photography"
         },
-        "urbanEssence": {
-          "title": "Urban Essence",
-          "label": "Portrait & Studio"
+        "matrimoni": {
+          "title": "Weddings",
+          "label": "Wedding Photography"
         },
-        "lightForms": {
-          "title": "Light Forms",
-          "label": "Fashion & Editorial"
+        "drone": {
+          "title": "Drone",
+          "label": "Aerial Shots"
         },
-        "timelessMoments": {
-          "title": "Timeless Moments",
-          "label": "Fashion & Editorial"
+        "allestimenti": {
+          "title": "Setups",
+          "label": "Interior Photography"
+        },
+        "eventi": {
+          "title": "Events",
+          "label": "Event Photography"
+        },
+        "party": {
+          "title": "Party",
+          "label": "Party Photography"
+        },
+        "sport": {
+          "title": "Sport",
+          "label": "Sports Photography"
         }
       }
     }

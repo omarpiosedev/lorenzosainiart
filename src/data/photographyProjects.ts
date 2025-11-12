@@ -3,43 +3,55 @@ export type PhotographyProject = {
   titleKey: string;
   labelKey: string;
   image: string;
-  category: 'fashion' | 'editorial' | 'portrait' | 'commercial';
 };
 
 export const photographyProjects: PhotographyProject[] = [
   {
-    id: 'wild-bloom',
-    titleKey: 'PortfolioPage.photography.projects.wildBloom.title',
-    labelKey: 'PortfolioPage.photography.projects.wildBloom.label',
+    id: 'shooting',
+    titleKey: 'PortfolioPage.photography.projects.shooting.title',
+    labelKey: 'PortfolioPage.photography.projects.shooting.label',
     image: '/assets/images/PortfolioHero/62a73e53-e709-445b-83b3-ec4283ab3fe7_rw_19205948.webp',
-    category: 'fashion',
   },
   {
-    id: 'soft-metals',
-    titleKey: 'PortfolioPage.photography.projects.softMetals.title',
-    labelKey: 'PortfolioPage.photography.projects.softMetals.label',
+    id: 'food-drink',
+    titleKey: 'PortfolioPage.photography.projects.foodDrink.title',
+    labelKey: 'PortfolioPage.photography.projects.foodDrink.label',
     image: '/assets/images/PortfolioHero/53c9c768-8380-4850-8b3f-b43f6cf07b8f_rw_1920c93c.webp',
-    category: 'commercial',
   },
   {
-    id: 'urban-essence',
-    titleKey: 'PortfolioPage.photography.projects.urbanEssence.title',
-    labelKey: 'PortfolioPage.photography.projects.urbanEssence.label',
+    id: 'matrimoni',
+    titleKey: 'PortfolioPage.photography.projects.matrimoni.title',
+    labelKey: 'PortfolioPage.photography.projects.matrimoni.label',
     image: '/assets/images/PortfolioHero/0df95003-185c-4339-9b8c-d4b673e48b974bde.webp',
-    category: 'portrait',
   },
   {
-    id: 'light-forms',
-    titleKey: 'PortfolioPage.photography.projects.lightForms.title',
-    labelKey: 'PortfolioPage.photography.projects.lightForms.label',
+    id: 'drone',
+    titleKey: 'PortfolioPage.photography.projects.drone.title',
+    labelKey: 'PortfolioPage.photography.projects.drone.label',
     image: '/assets/images/PortfolioHero/6ff895bc-e829-44ab-8895-d5e2c069ff6a_rw_38400696.webp',
-    category: 'editorial',
   },
   {
-    id: 'timeless-moments',
-    titleKey: 'PortfolioPage.photography.projects.timelessMoments.title',
-    labelKey: 'PortfolioPage.photography.projects.timelessMoments.label',
+    id: 'allestimenti',
+    titleKey: 'PortfolioPage.photography.projects.allestimenti.title',
+    labelKey: 'PortfolioPage.photography.projects.allestimenti.label',
     image: '/assets/images/PortfolioHero/521bf560-6b45-43d3-8f20-b22d725c5dee_rw_3840ff89.webp',
-    category: 'fashion',
+  },
+  {
+    id: 'eventi',
+    titleKey: 'PortfolioPage.photography.projects.eventi.title',
+    labelKey: 'PortfolioPage.photography.projects.eventi.label',
+    image: '/assets/images/PortfolioHero/62a73e53-e709-445b-83b3-ec4283ab3fe7_rw_19205948.webp',
+  },
+  {
+    id: 'party',
+    titleKey: 'PortfolioPage.photography.projects.party.title',
+    labelKey: 'PortfolioPage.photography.projects.party.label',
+    image: '/assets/images/PortfolioHero/53c9c768-8380-4850-8b3f-b43f6cf07b8f_rw_1920c93c.webp',
+  },
+  {
+    id: 'sport',
+    titleKey: 'PortfolioPage.photography.projects.sport.title',
+    labelKey: 'PortfolioPage.photography.projects.sport.label',
+    image: '/assets/images/PortfolioHero/0df95003-185c-4339-9b8c-d4b673e48b974bde.webp',
   },
 ];
