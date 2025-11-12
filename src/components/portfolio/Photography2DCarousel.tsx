@@ -42,7 +42,6 @@ export default function Photography2DCarousel({
   const [dynamicRadius, setDynamicRadius] = useState(2500); // State triggers re-render with calculated radius
 
   // Refs for text elements animation (title uses PhotographyTitleEffect, no ref needed)
-  const textRefsLabel = useRef<(HTMLParagraphElement | null)[]>([]);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const projectCardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -167,35 +166,19 @@ export default function Photography2DCarousel({
     };
   }, [projects, numProjects]);
 
-  // ✅ BEST PRACTICE: Animate label and button when currentIndex changes
+  // ✅ BEST PRACTICE: Animate button when currentIndex changes
   // Title uses PhotographyTitleEffect with motion/react
   useGSAP(
     () => {
-      // Set all elements to hidden initially
-      textRefsLabel.current.forEach((el) => {
-        if (el) {
-          gsap.set(el, { opacity: 0, y: 30 });
-        }
-      });
+      // Set all buttons to hidden initially
       buttonRefs.current.forEach((el) => {
         if (el) {
           gsap.set(el, { opacity: 0, scale: 0.8 });
         }
       });
 
-      // Animate current project elements
-      const label = textRefsLabel.current[currentIndex];
+      // Animate current project button
       const button = buttonRefs.current[currentIndex];
-
-      if (label) {
-        gsap.to(label, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          delay: 0.1,
-        });
-      }
 
       if (button) {
         gsap.to(button, {
@@ -368,20 +351,6 @@ export default function Photography2DCarousel({
                       transform: 'rotateZ(8deg)', // Counter-rotate to compensate cylinder's -8deg
                     }}
                   >
-                    <p
-                      ref={(el) => {
-                        textRefsLabel.current[index] = el;
-                      }}
-                      className="text-black uppercase tracking-widest"
-                      style={{
-                        fontFamily: 'var(--font-lavener)',
-                        fontSize: 'clamp(0.75rem, 1.2vw, 0.9rem)',
-                        letterSpacing: '0.2em',
-                        fontWeight: 400,
-                      }}
-                    >
-                      {t(project.labelKey as never)}
-                    </p>
                     <PhotographyTitleEffect
                       words={t(project.titleKey as never)}
                       isActive={index === currentIndex}
