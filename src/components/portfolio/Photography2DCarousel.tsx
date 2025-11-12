@@ -43,8 +43,7 @@ export default function Photography2DCarousel({
 
   // Refs for text elements animation (title uses PhotographyTitleEffect, no ref needed)
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const projectCardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const imageRefs = useRef<(HTMLDivElement | null)[]>([]); // For parallax effect on images only
+  const projectCardRefs = useRef<(HTMLDivElement | null)[]>([]); // For parallax effect on project cards
 
   // Cylinder configuration
   const numProjects = projects.length;
@@ -194,8 +193,8 @@ export default function Photography2DCarousel({
     { dependencies: [currentIndex], scope: containerRef },
   );
 
-  // ✅ Mouse parallax effect on ALL images ONLY (desktop only, matches PortfolioHero pattern)
-  // Text overlays remain stationary
+  // ✅ Mouse parallax effect on project cards (desktop only, matches PortfolioHero pattern)
+  // Applies to entire card (image + overlay), text overlays remain stationary
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -215,9 +214,9 @@ export default function Photography2DCarousel({
         const xPercent = (clientX / innerWidth - 0.5) * 2;
         const yPercent = (clientY / innerHeight - 0.5) * 2;
 
-        // Apply parallax to ALL images with varying speeds for depth effect
-        imageRefs.current.forEach((image, index) => {
-          if (!image) {
+        // Apply parallax to project cards (image + overlay) with varying speeds for depth effect
+        projectCardRefs.current.forEach((card, index) => {
+          if (!card) {
             return;
           }
 
@@ -229,7 +228,7 @@ export default function Photography2DCarousel({
           const xMove = xPercent * 100 * speed;
           const yMove = yPercent * 100 * speed;
 
-          gsap.to(image, {
+          gsap.to(card, {
             x: xMove,
             y: yMove,
             duration: 1.2,
@@ -243,11 +242,11 @@ export default function Photography2DCarousel({
 
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
-        // Kill parallax tweens and reset position for all images
-        imageRefs.current.forEach((image) => {
-          if (image) {
-            gsap.killTweensOf(image);
-            gsap.set(image, { x: 0, y: 0 });
+        // Kill parallax tweens and reset position for all cards
+        projectCardRefs.current.forEach((card) => {
+          if (card) {
+            gsap.killTweensOf(card);
+            gsap.set(card, { x: 0, y: 0 });
           }
         });
       };
@@ -321,7 +320,7 @@ export default function Photography2DCarousel({
                   maxHeight: CAROUSEL_CONFIG.cardMaxHeight,
                 }}
               >
-                {/* Project Card */}
+                {/* Project Card - Gets parallax effect */}
                 <div
                   ref={(el) => {
                     projectCardRefs.current[index] = el;
@@ -330,85 +329,75 @@ export default function Photography2DCarousel({
                   style={{
                     clipPath: 'url(#pincushionShape)',
                     backfaceVisibility: 'hidden',
+                    willChange: 'transform',
                   }}
                 >
-                  {/* Image Container - Gets parallax effect */}
-                  <div
+                  <Image
+                    src={project.image}
+                    alt={t(project.titleKey as never)}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 95vw, 80vw"
+                    priority={index < 2}
+                    loading={index < 2 ? 'eager' : 'lazy'}
+                  />
+
+                  {/* Dark overlay for better text contrast - inherits clipPath from parent */}
+                  <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+                </div>
+
+                {/* Project Title Overlay - Counter-rotate to keep text horizontal - Completely static */}
+                <div
+                  className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-6"
+                  style={{
+                    transform: 'rotateZ(8deg)', // Counter-rotate to compensate cylinder's -8deg
+                  }}
+                >
+                  <PhotographyTitleEffect
+                    words={t(project.titleKey as never)}
+                    isActive={index === currentIndex}
+                    className="text-black text-center px-8"
+                    style={{
+                      fontFamily: '"Playfair Display", serif',
+                      fontSize: 'clamp(5rem, 14vw, 12rem)',
+                      letterSpacing: '0',
+                      lineHeight: 1,
+                      fontWeight: 400,
+                    }}
+                    filter={true}
+                    duration={0.6}
+                    staggerDelay={0.08}
+                  />
+                  {/* CTA Button per progetto */}
+                  <button
                     ref={(el) => {
-                      imageRefs.current[index] = el;
+                      buttonRefs.current[index] = el;
                     }}
-                    className="absolute inset-0"
+                    type="button"
+                    onClick={handleCTAClick}
+                    className="group pointer-events-auto flex items-center justify-center border-2 border-black rounded-full transition-all duration-300 hover:scale-110 mt-4"
                     style={{
-                      willChange: 'transform',
+                      width: 'clamp(60px, 8vw, 80px)',
+                      height: 'clamp(60px, 8vw, 80px)',
                     }}
+                    aria-label={t('PortfolioPage.photography.cta.ariaLabel')}
                   >
-                    <Image
-                      src={project.image}
-                      alt={t(project.titleKey as never)}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 95vw, 80vw"
-                      priority={index < 2}
-                      loading={index < 2 ? 'eager' : 'lazy'}
-                    />
-
-                    {/* Dark overlay for better text contrast - inherits clipPath from parent */}
-                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-                  </div>
-
-                  {/* Project Title Overlay - Counter-rotate to keep text horizontal - NO PARALLAX */}
-                  <div
-                    className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-6"
-                    style={{
-                      transform: 'rotateZ(8deg)', // Counter-rotate to compensate cylinder's -8deg
-                    }}
-                  >
-                    <PhotographyTitleEffect
-                      words={t(project.titleKey as never)}
-                      isActive={index === currentIndex}
-                      className="text-black text-center px-8"
-                      style={{
-                        fontFamily: '"Playfair Display", serif',
-                        fontSize: 'clamp(5rem, 14vw, 12rem)',
-                        letterSpacing: '0',
-                        lineHeight: 1,
-                        fontWeight: 400,
-                      }}
-                      filter={true}
-                      duration={0.6}
-                      staggerDelay={0.08}
-                    />
-                    {/* CTA Button per progetto */}
-                    <button
-                      ref={(el) => {
-                        buttonRefs.current[index] = el;
-                      }}
-                      type="button"
-                      onClick={handleCTAClick}
-                      className="group pointer-events-auto flex items-center justify-center border-2 border-black rounded-full transition-all duration-300 hover:scale-110 mt-4"
-                      style={{
-                        width: 'clamp(60px, 8vw, 80px)',
-                        height: 'clamp(60px, 8vw, 80px)',
-                      }}
-                      aria-label={t('PortfolioPage.photography.cta.ariaLabel')}
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="transition-transform duration-300 group-hover:translate-x-1"
                     >
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        className="transition-transform duration-300 group-hover:translate-x-1"
-                      >
-                        <path
-                          d="M5 12H19M19 12L12 5M19 12L12 19"
-                          stroke="black"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+                      <path
+                        d="M5 12H19M19 12L12 5M19 12L12 19"
+                        stroke="black"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
             );
