@@ -356,13 +356,13 @@ export default function Photography2DCarousel({
                   <PhotographyTitleEffect
                     words={t(project.titleKey as never)}
                     isActive={index === currentIndex}
-                    className="text-black text-center px-8"
+                    className="text-white text-center px-8"
                     style={{
                       fontFamily: '"Playfair Display", serif',
                       fontSize: 'clamp(5rem, 14vw, 12rem)',
                       letterSpacing: '0',
                       lineHeight: 1,
-                      fontWeight: 400,
+                      fontWeight: 900,
                     }}
                     filter={true}
                     duration={0.6}
@@ -375,7 +375,7 @@ export default function Photography2DCarousel({
                     }}
                     type="button"
                     onClick={handleCTAClick}
-                    className="group pointer-events-auto flex items-center justify-center border-2 border-black rounded-full transition-all duration-300 hover:scale-110 mt-4"
+                    className="group pointer-events-auto flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 hover:scale-110 mt-4"
                     style={{
                       width: 'clamp(60px, 8vw, 80px)',
                       height: 'clamp(60px, 8vw, 80px)',
@@ -391,7 +391,7 @@ export default function Photography2DCarousel({
                     >
                       <path
                         d="M5 12H19M19 12L12 5M19 12L12 19"
-                        stroke="black"
+                        stroke="white"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
