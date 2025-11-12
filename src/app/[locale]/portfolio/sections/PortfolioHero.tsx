@@ -13,10 +13,17 @@ import Noise from '@/components/Noise';
 gsap.registerPlugin(useGSAP, ScrollTrigger, MotionPathPlugin);
 
 // Configure ScrollTrigger for mobile iOS Safari fixes
-// - normalizeScroll: fixes iOS Safari bugs with position reporting and pin jumping
+// - normalizeScroll: ONLY on desktop (>= 1024px) to avoid mobile lag
+//   Mobile devices benefit from native scroll performance over forced JS thread
+//   Research: ScrollSmoother with normalizeScroll causes lag/stuttering on mobile
 // - ignoreMobileResize: prevents refresh when iOS address bar shows/hides
 if (typeof window !== 'undefined') {
-  ScrollTrigger.normalizeScroll(true);
+  // Only enable normalizeScroll on desktop to prevent mobile performance issues
+  // Mobile browsers handle scroll optimization better natively
+  if (window.innerWidth >= 1024) {
+    ScrollTrigger.normalizeScroll(true);
+  }
+
   ScrollTrigger.config({
     ignoreMobileResize: true,
   });
@@ -400,166 +407,94 @@ export default function PortfolioHero() {
 
       video.addEventListener('timeupdate', handleTimeUpdate);
 
-      // Use matchMedia for different mobile/desktop configurations
+      // Reusable timeline factory to avoid code duplication (DRY principle)
+      // Creates the same animation sequence for both mobile and desktop
+      // Optimized: 2.5vh scroll distance (was 4vh) for faster, more responsive experience
+      const createScrollTimeline = () => {
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: () => `+=${window.innerHeight * 2.5}`, // Reduced from 4vh to 2.5vh
+            scrub: 1, // Reduced from 1.5 for more immediate response
+            pin: containerRef.current,
+            pinSpacing: true,
+            anticipatePin: 1,
+            preventOverlaps: true,
+          },
+        });
+
+        // Save timeline to ref for React 19.2 memory management
+        scrollTimelineRef.current = timeline;
+
+        // Phase 1: Move and zoom img3 to fullscreen (faster)
+        timeline.to(img3, {
+          left: '0',
+          top: '0',
+          width: '100vw',
+          height: '100vh',
+          ease: 'power1.inOut',
+          duration: 1.5, // Reduced from 2.8 for snappier feel
+        });
+
+        // Phase 2: Fade in video over image (starts slightly before fullscreen completes)
+        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
+        timeline.to(
+          video,
+          {
+            autoAlpha: 1,
+            duration: 1, // Reduced from 1.5 for faster transition
+            ease: 'power1.inOut',
+            onStart: () => {
+              // Play video when it starts appearing
+              if (video.paused) {
+                video.play().catch((err) => {
+                  console.error('Video autoplay failed:', err);
+                });
+              }
+            },
+            onReverseComplete: () => {
+              // Pause and reset video when scrolling back
+              video.pause();
+              video.currentTime = 0;
+            },
+          },
+          '-=0.3', // Slight overlap: video starts 0.3s before img3 completes
+        );
+
+        // Phase 3: Show buttons at the end (faster)
+        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
+        if (buttonsRef.current) {
+          timeline.fromTo(
+            buttonsRef.current,
+            {
+              autoAlpha: 0,
+              y: 40,
+              scale: 0.95,
+            },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.8, // Reduced from 1.2 for snappier appearance
+              ease: 'expo.out',
+            },
+            '-=0.4', // Slight overlap with video for smoother flow
+          );
+        }
+
+        return () => {}; // Cleanup for matchMedia
+      };
+
+      // Use matchMedia for responsive behavior
+      // Both breakpoints use the same timeline configuration
       const mm = gsap.matchMedia();
 
-      // Mobile configuration (with pin - overflow hidden prevents scrolling issues)
-      mm.add('(max-width: 1023px)', () => {
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: () => `+=${window.innerHeight * 4}`,
-            scrub: 1.5,
-            pin: containerRef.current,
-            pinSpacing: true,
-            anticipatePin: 1,
-            preventOverlaps: true,
-          },
-        });
+      // Mobile configuration
+      mm.add('(max-width: 1023px)', createScrollTimeline);
 
-        // Save timeline to ref for React 19.2 memory management
-        scrollTimelineRef.current = timeline;
-
-        const tl = timeline;
-
-        // Single fluid animation: move + zoom to fullscreen simultaneously
-        tl.to(img3, {
-          left: '0',
-          top: '0',
-          width: '100vw',
-          height: '100vh',
-          ease: 'power1.inOut',
-          duration: 2.8,
-        });
-
-        // Fade in video over image (starts AFTER fullscreen is reached)
-        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
-        tl.to(
-          video,
-          {
-            autoAlpha: 1,
-            duration: 1.5,
-            ease: 'power1.inOut',
-            onStart: () => {
-              // Play video when it starts appearing
-              if (video.paused) {
-                video.play().catch((err) => {
-                  console.error('Video autoplay failed:', err);
-                });
-              }
-            },
-            onReverseComplete: () => {
-              // Pause and reset video when scrolling back
-              video.pause();
-              video.currentTime = 0;
-            },
-          },
-          '>',
-        );
-
-        // Phase 4: Show buttons at the end
-        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
-        if (buttonsRef.current) {
-          tl.fromTo(
-            buttonsRef.current,
-            {
-              autoAlpha: 0,
-              y: 40,
-              scale: 0.95,
-            },
-            {
-              autoAlpha: 1,
-              y: 0,
-              scale: 1,
-              duration: 1.2,
-              ease: 'expo.out',
-            },
-            '-=0.5',
-          );
-        }
-
-        return () => {}; // Cleanup for mobile matchMedia
-      });
-
-      // Desktop configuration (with pin)
-      mm.add('(min-width: 1024px)', () => {
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top top',
-            end: () => `+=${window.innerHeight * 4}`,
-            scrub: 1.5,
-            pin: containerRef.current,
-            pinSpacing: true,
-            anticipatePin: 1,
-            preventOverlaps: true,
-          },
-        });
-
-        // Save timeline to ref for React 19.2 memory management
-        scrollTimelineRef.current = timeline;
-
-        const tl = timeline;
-
-        // Single fluid animation: move + zoom to fullscreen simultaneously
-        tl.to(img3, {
-          left: '0',
-          top: '0',
-          width: '100vw',
-          height: '100vh',
-          ease: 'power1.inOut',
-          duration: 2.8,
-        });
-
-        // Fade in video over image (starts AFTER fullscreen is reached)
-        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
-        tl.to(
-          video,
-          {
-            autoAlpha: 1,
-            duration: 1.5,
-            ease: 'power1.inOut',
-            onStart: () => {
-              // Play video when it starts appearing
-              if (video.paused) {
-                video.play().catch((err) => {
-                  console.error('Video autoplay failed:', err);
-                });
-              }
-            },
-            onReverseComplete: () => {
-              // Pause and reset video when scrolling back
-              video.pause();
-              video.currentTime = 0;
-            },
-          },
-          '>',
-        );
-
-        // Phase 4: Show buttons at the end
-        // autoAlpha controls both opacity and visibility for proper bidirectional scroll
-        if (buttonsRef.current) {
-          tl.fromTo(
-            buttonsRef.current,
-            {
-              autoAlpha: 0,
-              y: 40,
-              scale: 0.95,
-            },
-            {
-              autoAlpha: 1,
-              y: 0,
-              scale: 1,
-              duration: 1.2,
-              ease: 'expo.out',
-            },
-            '-=0.5',
-          );
-        }
-
-        return () => {}; // Cleanup for desktop matchMedia
-      });
+      // Desktop configuration
+      mm.add('(min-width: 1024px)', createScrollTimeline);
 
       // CRITICAL: Complete cleanup to prevent DOM errors during navigation
       // Kill timeline, ScrollTriggers, and event listeners BEFORE React unmounts
@@ -627,7 +562,7 @@ export default function PortfolioHero() {
         style={{
           opacity: 0,
           visibility: 'hidden',
-          zIndex: 10000,
+          zIndex: 'var(--z-video-overlay)',
         }}
         muted
         playsInline
@@ -645,7 +580,7 @@ export default function PortfolioHero() {
           style={{
             willChange: 'transform',
             opacity: 0,
-            zIndex: image.id === 'img-3' ? 9999 : 10,
+            zIndex: image.id === 'img-3' ? 'var(--z-image-focus)' : 'var(--z-elements)',
           }}
         >
           {/* Image */}
@@ -710,7 +645,7 @@ export default function PortfolioHero() {
           paddingTop: 'clamp(6rem, 12vh, 10rem)',
           opacity: 0,
           visibility: 'hidden',
-          zIndex: 10001,
+          zIndex: 'var(--z-buttons)',
         }}
       >
         <button

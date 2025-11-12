@@ -106,6 +106,17 @@ section.w-screen {
   --space-20: 80px;
   --space-24: 96px;
 
+  /* Z-Index Scale (organized by layer hierarchy) */
+  --z-base: 1;
+  --z-elements: 10;
+  --z-noise: 20;
+  --z-content: 30;
+  --z-navbar: 9998;
+  --z-image-focus: 9999;
+  --z-video-overlay: 10000;
+  --z-buttons: 10001;
+  --z-modal: 10002;
+
   /* iOS Safe Areas */
   --safe-area-inset-top: env(safe-area-inset-top);
   --safe-area-inset-right: env(safe-area-inset-right);
