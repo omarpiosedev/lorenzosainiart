@@ -85,9 +85,13 @@ export default function Photography2DCarousel({
       // ✅ RESPONSIVE: Calculate effective card width based on viewport
       // cardWidth is '98vw' with max-width of 3200px
       const viewportWidth = window.innerWidth;
-      const effectiveCardWidth = Math.min(viewportWidth * 0.98, 3200);
+      const viewportCardWidth = viewportWidth * 0.98;
 
-      // ✅ DYNAMIC: Calculate radius using actual card width for current viewport
+      // ✅ HYBRID APPROACH: Use actual viewport width only on large screens (>2200px)
+      // This prevents overlap on 2K/4K while maintaining proper spacing on MacBook
+      const effectiveCardWidth = viewportCardWidth > 2200 ? Math.min(viewportCardWidth, 3200) : 3200;
+
+      // ✅ DYNAMIC: Calculate radius using effective card width
       const calculatedRadius = calculateDynamicRadius(numProjects, effectiveCardWidth);
 
       // Update state to trigger re-render with correct radius
