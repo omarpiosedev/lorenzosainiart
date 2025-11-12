@@ -358,6 +358,9 @@ export default function Photography2DCarousel({
                     loading={index < 2 ? 'eager' : 'lazy'}
                   />
 
+                  {/* Dark overlay for better text contrast - inherits clipPath from parent */}
+                  <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+
                   {/* Project Title Overlay - Counter-rotate to keep text horizontal */}
                   <div
                     className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-6"
