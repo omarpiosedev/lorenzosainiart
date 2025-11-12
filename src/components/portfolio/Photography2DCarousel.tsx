@@ -44,7 +44,8 @@ export default function Photography2DCarousel({
   // Refs for text elements animation (title uses PhotographyTitleEffect, no ref needed)
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const projectCardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const imageRefs = useRef<(HTMLDivElement | null)[]>([]); // For parallax effect on images only
+  const carouselSlideRefs = useRef<(HTMLDivElement | null)[]>([]); // For parallax on entire project
+  const textOverlayRefs = useRef<(HTMLDivElement | null)[]>([]); // For inverse transform to keep text fixed
 
   // Cylinder configuration
   const numProjects = projects.length;
@@ -194,8 +195,8 @@ export default function Photography2DCarousel({
     { dependencies: [currentIndex], scope: containerRef },
   );
 
-  // ✅ Mouse parallax effect on ALL images ONLY (desktop only, matches PortfolioHero pattern)
-  // Text overlays remain stationary
+  // ✅ Mouse parallax effect on entire project containers (desktop only, matches PortfolioHero pattern)
+  // Applies to whole screen except text, which uses inverse transform to stay fixed
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -215,9 +216,9 @@ export default function Photography2DCarousel({
         const xPercent = (clientX / innerWidth - 0.5) * 2;
         const yPercent = (clientY / innerHeight - 0.5) * 2;
 
-        // Apply parallax to ALL images with varying speeds for depth effect
-        imageRefs.current.forEach((image, index) => {
-          if (!image) {
+        // Apply parallax to ALL project containers with varying speeds for depth effect
+        carouselSlideRefs.current.forEach((slide, index) => {
+          if (!slide) {
             return;
           }
 
@@ -229,13 +230,25 @@ export default function Photography2DCarousel({
           const xMove = xPercent * 100 * speed;
           const yMove = yPercent * 100 * speed;
 
-          gsap.to(image, {
+          gsap.to(slide, {
             x: xMove,
             y: yMove,
             duration: 1.2,
             ease: 'power2.out',
             overwrite: 'auto',
           });
+
+          // Apply inverse transform to text overlay to keep it stationary
+          const textOverlay = textOverlayRefs.current[index];
+          if (textOverlay) {
+            gsap.to(textOverlay, {
+              x: -xMove,
+              y: -yMove,
+              duration: 1.2,
+              ease: 'power2.out',
+              overwrite: 'auto',
+            });
+          }
         });
       };
 
@@ -243,11 +256,18 @@ export default function Photography2DCarousel({
 
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
-        // Kill parallax tweens and reset position for all images
-        imageRefs.current.forEach((image) => {
-          if (image) {
-            gsap.killTweensOf(image);
-            gsap.set(image, { x: 0, y: 0 });
+        // Kill parallax tweens and reset position for all projects
+        carouselSlideRefs.current.forEach((slide) => {
+          if (slide) {
+            gsap.killTweensOf(slide);
+            gsap.set(slide, { x: 0, y: 0 });
+          }
+        });
+        // Reset text overlays
+        textOverlayRefs.current.forEach((text) => {
+          if (text) {
+            gsap.killTweensOf(text);
+            gsap.set(text, { x: 0, y: 0 });
           }
         });
       };
@@ -310,6 +330,9 @@ export default function Photography2DCarousel({
             return (
               <div
                 key={project.id}
+                ref={(el) => {
+                  carouselSlideRefs.current[index] = el;
+                }}
                 className="carousel-slide absolute top-1/2 left-1/2"
                 style={{
                   transform: `translate(-50%, -50%) rotateX(${angle}deg) translateZ(-${dynamicRadius}px)`,
@@ -319,6 +342,7 @@ export default function Photography2DCarousel({
                   maxWidth: CAROUSEL_CONFIG.cardMaxWidth,
                   height: CAROUSEL_CONFIG.cardHeight,
                   maxHeight: CAROUSEL_CONFIG.cardMaxHeight,
+                  willChange: 'transform', // For parallax effect
                 }}
               >
                 {/* Project Card */}
@@ -332,35 +356,28 @@ export default function Photography2DCarousel({
                     backfaceVisibility: 'hidden',
                   }}
                 >
-                  {/* Image Container - Gets parallax effect */}
+                  <Image
+                    src={project.image}
+                    alt={t(project.titleKey as never)}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 95vw, 80vw"
+                    priority={index < 2}
+                    loading={index < 2 ? 'eager' : 'lazy'}
+                  />
+
+                  {/* Dark overlay for better text contrast - inherits clipPath from parent */}
+                  <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+
+                  {/* Project Title Overlay - Counter-rotate to keep text horizontal - Uses inverse parallax to stay fixed */}
                   <div
                     ref={(el) => {
-                      imageRefs.current[index] = el;
+                      textOverlayRefs.current[index] = el;
                     }}
-                    className="absolute inset-0"
-                    style={{
-                      willChange: 'transform',
-                    }}
-                  >
-                    <Image
-                      src={project.image}
-                      alt={t(project.titleKey as never)}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 95vw, 80vw"
-                      priority={index < 2}
-                      loading={index < 2 ? 'eager' : 'lazy'}
-                    />
-
-                    {/* Dark overlay for better text contrast - inherits clipPath from parent */}
-                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-                  </div>
-
-                  {/* Project Title Overlay - Counter-rotate to keep text horizontal - NO PARALLAX */}
-                  <div
                     className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-6"
                     style={{
                       transform: 'rotateZ(8deg)', // Counter-rotate to compensate cylinder's -8deg
+                      willChange: 'transform', // For inverse parallax
                     }}
                   >
                     <PhotographyTitleEffect
