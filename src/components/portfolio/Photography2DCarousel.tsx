@@ -44,6 +44,7 @@ export default function Photography2DCarousel({
   // Refs for text elements animation (title uses PhotographyTitleEffect, no ref needed)
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const projectCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]); // For parallax effect on images only
 
   // Cylinder configuration
   const numProjects = projects.length;
@@ -193,7 +194,8 @@ export default function Photography2DCarousel({
     { dependencies: [currentIndex], scope: containerRef },
   );
 
-  // ✅ Mouse parallax effect on ALL projects (desktop only, matches PortfolioHero pattern)
+  // ✅ Mouse parallax effect on ALL images ONLY (desktop only, matches PortfolioHero pattern)
+  // Text overlays remain stationary
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -213,9 +215,9 @@ export default function Photography2DCarousel({
         const xPercent = (clientX / innerWidth - 0.5) * 2;
         const yPercent = (clientY / innerHeight - 0.5) * 2;
 
-        // Apply parallax to ALL cards with varying speeds for depth effect
-        projectCardRefs.current.forEach((card, index) => {
-          if (!card) {
+        // Apply parallax to ALL images with varying speeds for depth effect
+        imageRefs.current.forEach((image, index) => {
+          if (!image) {
             return;
           }
 
@@ -227,7 +229,7 @@ export default function Photography2DCarousel({
           const xMove = xPercent * 100 * speed;
           const yMove = yPercent * 100 * speed;
 
-          gsap.to(card, {
+          gsap.to(image, {
             x: xMove,
             y: yMove,
             duration: 1.2,
@@ -241,11 +243,11 @@ export default function Photography2DCarousel({
 
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
-        // Kill parallax tweens and reset position for all cards
-        projectCardRefs.current.forEach((card) => {
-          if (card) {
-            gsap.killTweensOf(card);
-            gsap.set(card, { x: 0, y: 0 });
+        // Kill parallax tweens and reset position for all images
+        imageRefs.current.forEach((image) => {
+          if (image) {
+            gsap.killTweensOf(image);
+            gsap.set(image, { x: 0, y: 0 });
           }
         });
       };
@@ -328,23 +330,33 @@ export default function Photography2DCarousel({
                   style={{
                     clipPath: 'url(#pincushionShape)',
                     backfaceVisibility: 'hidden',
-                    willChange: 'transform',
                   }}
                 >
-                  <Image
-                    src={project.image}
-                    alt={t(project.titleKey as never)}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 95vw, 80vw"
-                    priority={index < 2}
-                    loading={index < 2 ? 'eager' : 'lazy'}
-                  />
+                  {/* Image Container - Gets parallax effect */}
+                  <div
+                    ref={(el) => {
+                      imageRefs.current[index] = el;
+                    }}
+                    className="absolute inset-0"
+                    style={{
+                      willChange: 'transform',
+                    }}
+                  >
+                    <Image
+                      src={project.image}
+                      alt={t(project.titleKey as never)}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 95vw, 80vw"
+                      priority={index < 2}
+                      loading={index < 2 ? 'eager' : 'lazy'}
+                    />
 
-                  {/* Dark overlay for better text contrast - inherits clipPath from parent */}
-                  <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+                    {/* Dark overlay for better text contrast - inherits clipPath from parent */}
+                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+                  </div>
 
-                  {/* Project Title Overlay - Counter-rotate to keep text horizontal */}
+                  {/* Project Title Overlay - Counter-rotate to keep text horizontal - NO PARALLAX */}
                   <div
                     className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-6"
                     style={{
