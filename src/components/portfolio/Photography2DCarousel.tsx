@@ -74,55 +74,88 @@ export default function Photography2DCarousel({
       return;
     }
 
-    // ✅ DYNAMIC: Calculate radius automatically based on project count
-    const calculatedRadius = calculateDynamicRadius(numProjects, 3200); // 3200px = cardMaxWidth
+    // Helper function to setup ScrollTrigger with current dimensions
+    const setupScrollTrigger = () => {
+      // Kill existing ScrollTrigger if present
+      if (scrollTriggerRef.current) {
+        scrollTriggerRef.current.kill();
+        scrollTriggerRef.current = null;
+      }
 
-    // Update state to trigger re-render with correct radius
-    setDynamicRadius(calculatedRadius);
+      // ✅ RESPONSIVE: Calculate effective card width based on viewport
+      // cardWidth is '98vw' with max-width of 3200px
+      const viewportWidth = window.innerWidth;
+      const effectiveCardWidth = Math.min(viewportWidth * 0.98, 3200);
 
-    // ✅ SIMPLIFIED: Linear scroll-to-rotation mapping
-    // Each project gets equal angle spacing in the cylinder
-    const baseAngle = 360 / numProjects;
-    const anglePerProject = baseAngle * 0.7; // Reduced by 30% for tighter spacing between projects
-    // Total rotation needed to show all projects (from first to last)
-    const totalRotation = anglePerProject * (numProjects - 1);
-    // Scroll distance: exactly 1 screen (100vh) per project
-    const scrollDistance = window.innerHeight * numProjects;
+      // ✅ DYNAMIC: Calculate radius using actual card width for current viewport
+      const calculatedRadius = calculateDynamicRadius(numProjects, effectiveCardWidth);
 
-    // ✅ Main ScrollTrigger for cylinder rotation (rotateX)
-    scrollTriggerRef.current = ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: 'top top',
-      end: `+=${scrollDistance}`,
-      pin: true,
-      scrub: 1,
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        // Linear mapping: scroll progress → cylinder rotation
-        // Negative rotation for natural top-to-bottom scroll feel
-        const rotation = -self.progress * totalRotation;
-        gsap.set(cylinderRef.current, {
-          rotateX: rotation,
-          rotateZ: -8, // Maintain subtle diagonal tilt during scroll
-          force3D: true,
-        });
+      // Update state to trigger re-render with correct radius
+      setDynamicRadius(calculatedRadius);
 
-        // ✅ Calculate current project index from scroll progress
-        // Map progress (0→1) directly to project index (0→numProjects-1)
-        const index = Math.min(
-          Math.floor(self.progress * numProjects),
-          numProjects - 1,
-        );
+      // ✅ SIMPLIFIED: Linear scroll-to-rotation mapping
+      // Each project gets equal angle spacing in the cylinder
+      const baseAngle = 360 / numProjects;
+      const anglePerProject = baseAngle * 0.7; // Reduced by 30% for tighter spacing between projects
+      // Total rotation needed to show all projects (from first to last)
+      const totalRotation = anglePerProject * (numProjects - 1);
+      // Scroll distance: exactly 1 screen (100vh) per project
+      const scrollDistance = window.innerHeight * numProjects;
 
-        if (currentIndexRef.current !== index) {
-          currentIndexRef.current = index;
-          setCurrentIndex(index);
-        }
-      },
-    });
+      // ✅ Main ScrollTrigger for cylinder rotation (rotateX)
+      scrollTriggerRef.current = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: 'top top',
+        end: `+=${scrollDistance}`,
+        pin: true,
+        scrub: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          // Linear mapping: scroll progress → cylinder rotation
+          // Negative rotation for natural top-to-bottom scroll feel
+          const rotation = -self.progress * totalRotation;
+          gsap.set(cylinderRef.current, {
+            rotateX: rotation,
+            rotateZ: -8, // Maintain subtle diagonal tilt during scroll
+            force3D: true,
+          });
 
-    // ✅ BEST PRACTICE: Explicit cleanup for ScrollTrigger
+          // ✅ Calculate current project index from scroll progress
+          // Map progress (0→1) directly to project index (0→numProjects-1)
+          const index = Math.min(
+            Math.floor(self.progress * numProjects),
+            numProjects - 1,
+          );
+
+          if (currentIndexRef.current !== index) {
+            currentIndexRef.current = index;
+            setCurrentIndex(index);
+          }
+        },
+      });
+    };
+
+    // Initial setup
+    setupScrollTrigger();
+
+    // ✅ PRODUCTION FIX: Refresh ScrollTrigger after a short delay
+    // This ensures dimensions are calculated correctly on first load
+    const refreshTimeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+
+    // ✅ RESPONSIVE: Re-setup on window resize for different screen sizes
+    const handleResize = () => {
+      setupScrollTrigger();
+      ScrollTrigger.refresh();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // ✅ BEST PRACTICE: Explicit cleanup for ScrollTrigger and listeners
     return () => {
+      clearTimeout(refreshTimeout);
+      window.removeEventListener('resize', handleResize);
       if (scrollTriggerRef.current) {
         scrollTriggerRef.current.kill();
         scrollTriggerRef.current = null;
