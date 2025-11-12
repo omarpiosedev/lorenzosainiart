@@ -12,6 +12,7 @@ const baseConfig: NextConfig = {
   // React Compiler v1.0 (Stable) - Automatic memoization and optimization
   // Eliminates need for manual useMemo, useCallback, React.memo
   reactCompiler: true,
+  cacheComponents: true,
   // Performance optimizations - SWC minification is enabled by default in Next.js 15
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

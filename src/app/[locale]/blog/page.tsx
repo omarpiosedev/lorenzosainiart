@@ -1,39 +1,14 @@
 import type { Metadata } from 'next';
-import type { BlogPost } from '@/sanity/types';
 import { setRequestLocale } from 'next-intl/server';
-import { BlogFeed } from '@/components/blog/BlogFeed';
+import { Suspense } from 'react';
+import { BlogFeedContainer } from '@/components/blog/BlogFeedContainer';
 import { BlogHero } from '@/components/blog/BlogHero';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
-import { client } from '@/sanity/client';
 import { getBaseUrl } from '@/utils/AppConfig';
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
-
-const POSTS_QUERY = `*[_type == "blogPost"] | order(publishedAt desc) {
-  _id,
-  _type,
-  _createdAt,
-  title,
-  subtitle,
-  slug,
-  "author": author->{
-    _id,
-    _type,
-    name,
-    slug,
-    image,
-    bio,
-    role
-  },
-  featured,
-  category,
-  images,
-  content,
-  tags,
-  publishedAt
-}`;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -72,9 +47,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// Force dynamic rendering to ensure fresh data on every navigation
-// This prevents stale cached data during client-side navigation
-export const dynamic = 'force-dynamic';
+// In Cache Components mode (Next.js 16+), routes are dynamic by default
+// Data fetching is not cached unless explicitly marked with 'use cache'
+// This ensures fresh data on every navigation without needing dynamic = 'force-dynamic'
 
 export default async function BlogPage(props: Props) {
   const { locale } = await props.params;
@@ -86,15 +61,27 @@ export default async function BlogPage(props: Props) {
     { name: 'Blog', url: `${baseUrl}/${locale}/blog` },
   ];
 
-  // Fetch posts from Sanity (if configured)
-  const posts = client ? await client.fetch<BlogPost[]>(POSTS_QUERY) : [];
-
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbItems} />
       <div className="min-h-screen">
         <BlogHero />
-        <BlogFeed posts={posts} locale={locale} />
+        {/* Wrap data fetching in Suspense for Cache Components compatibility */}
+        <Suspense
+          fallback={(
+            <div className="w-full bg-white py-[var(--space-12)] md:py-[var(--space-16)]">
+              <div className="container mx-auto max-w-4xl px-[var(--space-4)] md:px-[var(--space-8)]">
+                <div className="animate-pulse space-y-8">
+                  {[...Array.from({ length: 3 })].map((_, i) => (
+                    <div key={i} className="h-64 bg-gray-200 rounded-lg" />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        >
+          <BlogFeedContainer locale={locale} />
+        </Suspense>
       </div>
     </>
   );

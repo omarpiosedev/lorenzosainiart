@@ -5,7 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import FloatingNavBar from '@/components/ui/FloatingNavBar';
 import Footer from '@/components/ui/Footer';
 import SettingsModal from '@/components/ui/SettingsModal';
@@ -325,7 +325,12 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
           {/* Footer - Inside smooth-content but OUTSIDE data-main-content */}
           {/* This prevents footer from being animated during page transitions */}
           {/* CRITICAL: Exclude footer from portfolio page and hide during home LoadingScreen */}
-          {!pathname.includes('/portfolio') && !isHomeLoading && <Footer />}
+          {/* Wrapped in Suspense for Cache Components compatibility (new Date() usage) */}
+          {!pathname.includes('/portfolio') && !isHomeLoading && (
+            <Suspense fallback={<div className="h-96" />}>
+              <Footer />
+            </Suspense>
+          )}
         </div>
 
         {/* FloatingNavBar - OUTSIDE smooth-content so fixed positioning works */}
