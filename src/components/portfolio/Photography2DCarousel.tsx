@@ -356,7 +356,7 @@ export default function Photography2DCarousel({
                       isActive={index === currentIndex}
                       className="text-black text-center px-8"
                       style={{
-                        fontFamily: '"Cormorant Garamond", serif',
+                        fontFamily: '"Playfair Display", serif',
                         fontSize: 'clamp(5rem, 14vw, 12rem)',
                         letterSpacing: '0',
                         lineHeight: 1,
