@@ -6,25 +6,233 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { PhotographyTitleEffect } from './PhotographyTitleEffect';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-// Isomorphic layout effect for SSR safety (pattern from NavBar.tsx)
+// ============================================================================
+// TYPES & CONSTANTS
+// ============================================================================
+
 const useIsomorphicLayoutEffect
   = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-// Extract magic numbers as constants for maintainability
-const CAROUSEL_CONFIG = {
-  // radius is now calculated dynamically - see calculateDynamicRadius() function
-  perspective: '4000px', // Increased to compensate for reduced radius
-  cardWidth: '98vw',
-  cardMaxWidth: '3200px', // Wider for horizontal emphasis
-  cardHeight: '135vh',
-  cardMaxHeight: '2900px',
+type Breakpoint = 'mobile' | 'tablet' | 'desktop';
+
+// Responsive breakpoints
+const BREAKPOINTS = {
+  mobile: 768,
+  tablet: 1024,
 } as const;
+
+// Carousel configuration with responsive variants
+const CAROUSEL_CONFIG = {
+  perspective: '4000px',
+  diagonalTilt: -8,
+  cylinderSafetyMargin: 0.65,
+  angleSpacing: 0.7,
+  scrubSmoothness: 0.8, // Lower = more responsive
+
+  // Responsive card sizes - ONE PROJECT = ONE SCREEN (100vh)
+  card: {
+    mobile: {
+      width: '95vw',
+      maxWidth: '600px',
+      height: '100vh',
+      maxHeight: '100vh',
+    },
+    tablet: {
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '100vh',
+      maxHeight: '100vh',
+    },
+    desktop: {
+      width: '85vw',
+      maxWidth: '2400px',
+      height: '100vh',
+      maxHeight: '100vh',
+    },
+  },
+} as const;
+
+// Text configuration with responsive scaling
+const TEXT_CONFIG = {
+  mobile: {
+    fontSize: 'clamp(2.5rem, 12vw, 4rem)', // 40px - 64px
+    padding: '1rem',
+    buttonSize: 'clamp(50px, 12vw, 60px)',
+    gap: 'clamp(1rem, 4vw, 1.5rem)',
+  },
+  tablet: {
+    fontSize: 'clamp(4rem, 14vw, 8rem)', // 64px - 128px
+    padding: '2rem',
+    buttonSize: 'clamp(60px, 10vw, 70px)',
+    gap: 'clamp(1.5rem, 5vw, 2rem)',
+  },
+  desktop: {
+    fontSize: 'clamp(6rem, 16vw, 16rem)', // 96px - 256px
+    padding: '3rem',
+    buttonSize: 'clamp(70px, 8vw, 80px)',
+    gap: 'clamp(2rem, 6vw, 3rem)',
+  },
+} as const;
+
+// Parallax configuration with reduced motion support
+const PARALLAX_CONFIG = {
+  // Mouse parallax (desktop only)
+  mouse: {
+    maxMovement: 50, // Reduced from 100px
+    speeds: [0.4, 0.25, 0.5, 0.3, 0.45, 0.28, 0.38, 0.43], // Reduced speeds
+    duration: 0.8, // Faster response (was 1.2)
+    ease: 'power2.out',
+  },
+
+  // Text scroll parallax
+  text: {
+    mobile: 30, // Reduced movement on mobile
+    tablet: 40,
+    desktop: 50, // Reduced from 60px
+  },
+} as const;
+
+// Fade configuration with extended ranges for smoother transitions
+const FADE_CONFIG = {
+  // Extended ranges for smoother fade
+  fadeInStart: -0.6, // Start earlier (was -0.5)
+  fadeInEnd: -0.15, // End later (was -0.2)
+  fadeOutStart: 0.15, // Start earlier (was 0.2)
+  fadeOutEnd: 0.6, // End later (was 0.5)
+  fullVisibilityStart: -0.15,
+  fullVisibilityEnd: 0.15,
+} as const;
+
+// Performance configuration
+const PERF_CONFIG = {
+  resizeDebounce: 150, // ms
+  scrollThrottle: 16, // ~60fps
+  refreshDelay: 100, // ms
+} as const;
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Debounce function for performance optimization
+ */
+function debounce<T extends (...args: unknown[]) => unknown>(
+  func: T,
+  wait: number,
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout | null = null;
+  return (...args: Parameters<T>) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
+
+/**
+ * Get current breakpoint based on window width
+ */
+function getBreakpoint(width: number): Breakpoint {
+  if (width < BREAKPOINTS.mobile) {
+    return 'mobile';
+  }
+  if (width < BREAKPOINTS.tablet) {
+    return 'tablet';
+  }
+  return 'desktop';
+}
+
+/**
+ * Check if user prefers reduced motion
+ */
+function prefersReducedMotion(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/**
+ * Calculate cylinder radius dynamically
+ */
+function calculateCylinderRadius(
+  projectCount: number,
+  cardMaxWidthPx: number,
+  safetyMargin: number = CAROUSEL_CONFIG.cylinderSafetyMargin,
+): number {
+  const anglePerProject = (360 / projectCount) * (Math.PI / 180);
+  const minRadius = (cardMaxWidthPx / 2) / Math.tan(anglePerProject / 2);
+  return Math.round(minRadius * safetyMargin);
+}
+
+/**
+ * Calculate effective card width based on viewport and breakpoint
+ */
+function calculateEffectiveCardWidth(
+  viewportWidth: number,
+  breakpoint: Breakpoint,
+): number {
+  const config = CAROUSEL_CONFIG.card[breakpoint];
+  const viewportCardWidth = viewportWidth * (breakpoint === 'mobile' ? 0.95 : breakpoint === 'tablet' ? 0.9 : 0.85);
+  const maxWidth = Number.parseInt(config.maxWidth);
+  return Math.min(viewportCardWidth, maxWidth);
+}
+
+/**
+ * Calculate opacity with extended fade ranges and smoothstep
+ */
+function calculateFadeOpacity(projectRelativeProgress: number): number {
+  const { fadeInStart, fadeInEnd, fadeOutStart, fadeOutEnd, fullVisibilityStart, fullVisibilityEnd }
+    = FADE_CONFIG;
+
+  // Outside visibility range
+  if (projectRelativeProgress < fadeInStart || projectRelativeProgress > fadeOutEnd) {
+    return 0;
+  }
+
+  // Fade IN zone (extended range)
+  if (projectRelativeProgress >= fadeInStart && projectRelativeProgress < fadeInEnd) {
+    const t = (projectRelativeProgress - fadeInStart) / (fadeInEnd - fadeInStart);
+    return t * t * (3 - 2 * t); // smoothstep
+  }
+
+  // Full VISIBILITY zone
+  if (projectRelativeProgress >= fullVisibilityStart && projectRelativeProgress <= fullVisibilityEnd) {
+    return 1;
+  }
+
+  // Fade OUT zone (extended range)
+  if (projectRelativeProgress > fadeOutStart && projectRelativeProgress <= fadeOutEnd) {
+    const t = (fadeOutEnd - projectRelativeProgress) / (fadeOutEnd - fadeOutStart);
+    return t * t * (3 - 2 * t); // smoothstep
+  }
+
+  return 0;
+}
+
+/**
+ * Calculate diagonal parallax offset for text with breakpoint-aware range
+ */
+function calculateTextParallaxOffset(
+  projectProgress: number,
+  breakpoint: Breakpoint,
+): { x: number; y: number } {
+  const range = PARALLAX_CONFIG.text[breakpoint];
+  const x = projectProgress * range * 2 - range;
+  const y = -(projectProgress * range * 2 - range);
+  return { x, y };
+}
+
+// ============================================================================
+// COMPONENT
+// ============================================================================
 
 type Photography2DCarouselProps = {
   projects: PhotographyProject[];
@@ -34,128 +242,185 @@ export default function Photography2DCarousel({
   projects,
 }: Photography2DCarouselProps) {
   const t = useTranslations();
+  const numProjects = projects.length;
+
+  // Refs
   const containerRef = useRef<HTMLDivElement>(null);
   const cylinderRef = useRef<HTMLDivElement>(null);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const projectCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const textOverlayRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // State
   const currentIndexRef = useRef(0);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [dynamicRadius, setDynamicRadius] = useState(2500); // State triggers re-render with calculated radius
+  const [dynamicRadius, setDynamicRadius] = useState(2500);
+  const [breakpoint, setBreakpoint] = useState<Breakpoint>('desktop');
+  const [reducedMotion, setReducedMotion] = useState(false);
 
-  // Refs for text elements animation (title uses PhotographyTitleEffect, no ref needed)
-  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const projectCardRefs = useRef<(HTMLDivElement | null)[]>([]); // For parallax effect on project cards
+  // Check for reduced motion preference
+  useEffect(() => {
+    setReducedMotion(prefersReducedMotion());
 
-  // Cylinder configuration
-  const numProjects = projects.length;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handleChange = () => setReducedMotion(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
 
-  // ✅ DYNAMIC: Calculate cylinder radius based on number of projects to prevent overlap
-  // Formula: radius = (cardMaxWidth / 2) / tan(angle/2) + safety margin
-  // Reduced margin allows cards to appear MUCH larger by bringing them closer to camera
-  const calculateDynamicRadius = (projectCount: number, cardMaxWidthPx: number): number => {
-    const anglePerProject = (360 / projectCount) * (Math.PI / 180); // Convert to radians
-    const minRadius = (cardMaxWidthPx / 2) / Math.tan(anglePerProject / 2);
-    const safetyMargin = 0.65; // 65% of minimum - very close to camera for maximum size
-    return Math.round(minRadius * safetyMargin);
-  };
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
-  // ✅ BEST PRACTICE: Use useGSAP with contextSafe for event handlers
+  // Update breakpoint on mount and resize
+  useEffect(() => {
+    const updateBreakpoint = () => {
+      setBreakpoint(getBreakpoint(window.innerWidth));
+    };
+
+    updateBreakpoint();
+    window.addEventListener('resize', updateBreakpoint);
+
+    return () => window.removeEventListener('resize', updateBreakpoint);
+  }, []);
+
+  // Memoized text and card configurations based on breakpoint
+  const textConfig = useMemo(() => TEXT_CONFIG[breakpoint], [breakpoint]);
+  const cardConfig = useMemo(() => CAROUSEL_CONFIG.card[breakpoint], [breakpoint]);
+
+  // Context-safe event handlers
   const { contextSafe } = useGSAP(
     () => {
-      // Initialize mobile menu items as hidden (for future enhancements)
-      // This pattern follows NavBar.tsx for consistency
+      // Initialize GSAP context
     },
     { scope: containerRef, dependencies: [] },
   );
 
-  // ✅ BEST PRACTICE: Use isomorphic layout effect for SSR-safe window calculations
+  // ============================================================================
+  // SCROLL TRIGGER SETUP
+  // ============================================================================
+
   useIsomorphicLayoutEffect(() => {
     if (!cylinderRef.current || !containerRef.current) {
       return;
     }
 
-    // Helper function to setup ScrollTrigger with current dimensions
-    const setupScrollTrigger = () => {
-      // Kill existing ScrollTrigger if present
+    function setupScrollTrigger() {
+      // Cleanup existing ScrollTrigger
       if (scrollTriggerRef.current) {
         scrollTriggerRef.current.kill();
         scrollTriggerRef.current = null;
       }
 
-      // ✅ RESPONSIVE: Calculate effective card width based on viewport
-      // cardWidth is '98vw' with max-width of 3200px
+      // Calculate cylinder dimensions
       const viewportWidth = window.innerWidth;
-      const viewportCardWidth = viewportWidth * 0.98;
-
-      // ✅ HYBRID APPROACH: Use actual viewport width only on large screens (>2200px)
-      // This prevents overlap on 2K/4K while maintaining proper spacing on MacBook
-      const effectiveCardWidth = viewportCardWidth > 2200 ? Math.min(viewportCardWidth, 3200) : 3200;
-
-      // ✅ DYNAMIC: Calculate radius using effective card width
-      const calculatedRadius = calculateDynamicRadius(numProjects, effectiveCardWidth);
-
-      // Update state to trigger re-render with correct radius
+      const effectiveCardWidth = calculateEffectiveCardWidth(viewportWidth, breakpoint);
+      const calculatedRadius = calculateCylinderRadius(numProjects, effectiveCardWidth);
       setDynamicRadius(calculatedRadius);
 
-      // ✅ SIMPLIFIED: Linear scroll-to-rotation mapping
-      // Each project gets equal angle spacing in the cylinder
+      // Calculate cylinder rotation parameters
       const baseAngle = 360 / numProjects;
-      const anglePerProject = baseAngle * 0.7; // Reduced by 30% for tighter spacing between projects
-      // Total rotation needed to show all projects (from first to last)
+      const anglePerProject = baseAngle * CAROUSEL_CONFIG.angleSpacing;
       const totalRotation = anglePerProject * (numProjects - 1);
-      // Scroll distance: exactly 1 screen (100vh) per project
       const scrollDistance = window.innerHeight * numProjects;
 
-      // ✅ Main ScrollTrigger for cylinder rotation (rotateX)
+      // Create ScrollTrigger with optimized scrub
       scrollTriggerRef.current = ScrollTrigger.create({
         trigger: containerRef.current,
         start: 'top top',
         end: `+=${scrollDistance}`,
         pin: true,
-        scrub: 1,
+        scrub: reducedMotion ? false : CAROUSEL_CONFIG.scrubSmoothness,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Linear mapping: scroll progress → cylinder rotation
-          // Negative rotation for natural top-to-bottom scroll feel
-          const rotation = -self.progress * totalRotation;
-          gsap.set(cylinderRef.current, {
-            rotateX: rotation,
-            rotateZ: -8, // Maintain subtle diagonal tilt during scroll
-            force3D: true,
-          });
-
-          // ✅ Calculate current project index from scroll progress
-          // Map progress (0→1) directly to project index (0→numProjects-1)
-          const index = Math.min(
-            Math.floor(self.progress * numProjects),
-            numProjects - 1,
-          );
-
-          if (currentIndexRef.current !== index) {
-            currentIndexRef.current = index;
-            setCurrentIndex(index);
-          }
+          handleScrollUpdate(self, totalRotation);
         },
       });
-    };
+    }
 
-    // Initial setup
+    function handleScrollUpdate(self: ScrollTrigger, totalRotation: number) {
+      if (!cylinderRef.current) {
+        return;
+      }
+
+      // Rotate cylinder (skip if reduced motion)
+      if (!reducedMotion) {
+        const rotation = -self.progress * totalRotation;
+        gsap.set(cylinderRef.current, {
+          rotateX: rotation,
+          rotateZ: CAROUSEL_CONFIG.diagonalTilt,
+          force3D: true,
+        });
+      }
+
+      // Update current project index
+      const index = Math.min(
+        Math.floor(self.progress * numProjects),
+        numProjects - 1,
+      );
+
+      if (currentIndexRef.current !== index) {
+        currentIndexRef.current = index;
+        setCurrentIndex(index);
+      }
+
+      // Calculate text parallax offset for current project
+      const projectProgress = (self.progress * numProjects) % 1;
+      const parallaxOffset = reducedMotion
+        ? { x: 0, y: 0 }
+        : calculateTextParallaxOffset(projectProgress, breakpoint);
+
+      // Apply fade and parallax to text overlays
+      applyTextEffects(self.progress, index, parallaxOffset);
+    }
+
+    function applyTextEffects(
+      scrollProgress: number,
+      currentProjectIndex: number,
+      parallaxOffset: { x: number; y: number },
+    ) {
+      textOverlayRefs.current.forEach((textOverlay, idx) => {
+        if (!textOverlay) {
+          return;
+        }
+
+        const projectRelativeProgress = (scrollProgress * numProjects) - idx;
+        const opacity = calculateFadeOpacity(projectRelativeProgress);
+
+        // Apply parallax only to current project text (skip if reduced motion)
+        if (idx === currentProjectIndex && !reducedMotion) {
+          gsap.set(textOverlay, {
+            x: parallaxOffset.x,
+            y: parallaxOffset.y,
+            opacity,
+            force3D: true,
+          });
+        } else {
+          gsap.set(textOverlay, {
+            x: 0,
+            y: 0,
+            opacity,
+            force3D: true,
+          });
+        }
+      });
+    }
+
+    // Initialize
     setupScrollTrigger();
 
-    // ✅ PRODUCTION FIX: Refresh ScrollTrigger after a short delay
-    // This ensures dimensions are calculated correctly on first load
+    // Refresh ScrollTrigger after delay
     const refreshTimeout = setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 100);
+    }, PERF_CONFIG.refreshDelay);
 
-    // ✅ RESPONSIVE: Re-setup on window resize for different screen sizes
-    const handleResize = () => {
+    // Debounced resize handler
+    const handleResize = debounce(() => {
       setupScrollTrigger();
       ScrollTrigger.refresh();
-    };
+    }, PERF_CONFIG.resizeDebounce);
 
     window.addEventListener('resize', handleResize);
 
-    // ✅ BEST PRACTICE: Explicit cleanup for ScrollTrigger and listeners
+    // Cleanup
     return () => {
       clearTimeout(refreshTimeout);
       window.removeEventListener('resize', handleResize);
@@ -164,85 +429,55 @@ export default function Photography2DCarousel({
         scrollTriggerRef.current = null;
       }
     };
-  }, [projects, numProjects]);
+  }, [projects, numProjects, breakpoint, reducedMotion]);
 
-  // ✅ BEST PRACTICE: Animate button when currentIndex changes
-  // Title uses PhotographyTitleEffect with motion/react
+  // ============================================================================
+  // MOUSE PARALLAX (Desktop Only, Respects Reduced Motion)
+  // ============================================================================
+
   useGSAP(
     () => {
-      // Set all buttons to hidden initially
-      buttonRefs.current.forEach((el) => {
-        if (el) {
-          gsap.set(el, { opacity: 0, scale: 0.8 });
-        }
-      });
-
-      // Animate current project button
-      const button = buttonRefs.current[currentIndex];
-
-      if (button) {
-        gsap.to(button, {
-          opacity: 1,
-          scale: 1,
-          duration: 0.6,
-          ease: 'back.out(1.7)',
-          delay: 0.8, // After title animation completes
-        });
-      }
-    },
-    { dependencies: [currentIndex], scope: containerRef },
-  );
-
-  // ✅ Mouse parallax effect on project cards (desktop only, matches PortfolioHero pattern)
-  // Applies to entire card (image + overlay), text overlays remain stationary
-  useGSAP(
-    () => {
-      if (!containerRef.current) {
+      if (!containerRef.current || reducedMotion) {
         return;
       }
 
-      // Only enable mouse parallax on desktop (>= 1024px)
-      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      // Only enable on desktop
+      if (typeof window !== 'undefined' && window.innerWidth < BREAKPOINTS.tablet) {
         return;
       }
 
-      const handleMouseMove = (e: MouseEvent) => {
+      function handleMouseMove(e: MouseEvent) {
         const { clientX, clientY } = e;
         const { innerWidth, innerHeight } = window;
 
-        // Normalize mouse coordinates from -1 to 1 (PortfolioHero pattern)
+        // Normalize to -1 to 1
         const xPercent = (clientX / innerWidth - 0.5) * 2;
         const yPercent = (clientY / innerHeight - 0.5) * 2;
 
-        // Apply parallax to project cards (image + overlay) with varying speeds for depth effect
         projectCardRefs.current.forEach((card, index) => {
           if (!card) {
             return;
           }
 
-          // Different speeds for each card to create depth (like PortfolioHero)
-          const speeds = [0.8, 0.5, 1.0, 0.6, 0.9, 0.55, 0.75, 0.85];
-          const speed = speeds[index % speeds.length] || 0.7;
-
-          // Movement (max 100px with varying speed)
-          const xMove = xPercent * 100 * speed;
-          const yMove = yPercent * 100 * speed;
+          // Reduced speeds for smoother, less aggressive parallax
+          const speed = PARALLAX_CONFIG.mouse.speeds[index % PARALLAX_CONFIG.mouse.speeds.length] || 0.35;
+          const xMove = xPercent * PARALLAX_CONFIG.mouse.maxMovement * speed;
+          const yMove = yPercent * PARALLAX_CONFIG.mouse.maxMovement * speed;
 
           gsap.to(card, {
             x: xMove,
             y: yMove,
-            duration: 1.2,
-            ease: 'power2.out',
+            duration: PARALLAX_CONFIG.mouse.duration,
+            ease: PARALLAX_CONFIG.mouse.ease,
             overwrite: 'auto',
           });
         });
-      };
+      }
 
       window.addEventListener('mousemove', handleMouseMove);
 
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
-        // Kill parallax tweens and reset position for all cards
         projectCardRefs.current.forEach((card) => {
           if (card) {
             gsap.killTweensOf(card);
@@ -251,37 +486,43 @@ export default function Photography2DCarousel({
         });
       };
     },
-    { dependencies: [], scope: containerRef },
+    { dependencies: [reducedMotion], scope: containerRef },
   );
 
-  // ✅ Context-safe CTA button click handler
-  const handleCTAClick = contextSafe(() => {
-    if (projects.length > 0 && projects[currentIndex]) {
-      // TODO: Implement navigation to project detail page when route is available
-      // Example: const currentProject = projects[currentIndex];
-      // router.push(`/photography/${currentProject.id}`)
-    }
-  });
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
+
+  const handleCTAClick = useCallback(
+    contextSafe(() => {
+      if (projects.length > 0 && projects[currentIndex]) {
+        // TODO: Navigate to project detail page
+        // router.push(`/portfolio/photography/${projects[currentIndex].id}`)
+      }
+    }),
+    [contextSafe, projects, currentIndex],
+  );
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
     <div
       ref={containerRef}
       className="relative w-full bg-white overflow-hidden"
-      style={{
-        height: '100vh',
-      }}
+      style={{ height: '100vh' }}
     >
-      {/* SVG Clip Path for Pincushion Shape (curved edges inward) */}
+      {/* SVG Clip Path */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
           <clipPath id="pincushionShape" clipPathUnits="objectBoundingBox">
-            {/* Stronger curvature on left/right sides, minimal on top/bottom */}
             <path d="M 0,0 Q 0.5,0.01 1,0 Q 0.92,0.5 1,1 Q 0.5,0.99 0,1 Q 0.08,0.5 0,0 Z" />
           </clipPath>
         </defs>
       </svg>
 
-      {/* Perspective Container */}
+      {/* 3D Perspective Container */}
       <div
         className="absolute inset-0 flex items-center justify-center"
         style={{
@@ -297,14 +538,12 @@ export default function Photography2DCarousel({
             width: '100%',
             height: '100%',
             transformStyle: 'preserve-3d',
-            transform: 'rotateZ(-8deg)', // Subtle diagonal tilt: bottom-left to top-right
+            transform: `rotateZ(${CAROUSEL_CONFIG.diagonalTilt}deg)`,
           }}
         >
           {projects.map((project, index) => {
-            // ✅ REDUCED: Tighter angle spacing for projects (70% of full circle)
-            // Brings projects closer together in the cylinder
             const baseAngle = 360 / numProjects;
-            const angle = baseAngle * 0.7 * index;
+            const angle = baseAngle * CAROUSEL_CONFIG.angleSpacing * index;
 
             return (
               <div
@@ -314,13 +553,13 @@ export default function Photography2DCarousel({
                   transform: `translate(-50%, -50%) rotateX(${angle}deg) translateZ(-${dynamicRadius}px)`,
                   transformStyle: 'preserve-3d',
                   backfaceVisibility: 'hidden',
-                  width: CAROUSEL_CONFIG.cardWidth,
-                  maxWidth: CAROUSEL_CONFIG.cardMaxWidth,
-                  height: CAROUSEL_CONFIG.cardHeight,
-                  maxHeight: CAROUSEL_CONFIG.cardMaxHeight,
+                  width: cardConfig.width,
+                  maxWidth: cardConfig.maxWidth,
+                  height: cardConfig.height,
+                  maxHeight: cardConfig.maxHeight,
                 }}
               >
-                {/* Project Card - Gets parallax effect */}
+                {/* Project Card (Image + Overlay) */}
                 <div
                   ref={(el) => {
                     projectCardRefs.current[index] = el;
@@ -329,7 +568,7 @@ export default function Photography2DCarousel({
                   style={{
                     clipPath: 'url(#pincushionShape)',
                     backfaceVisibility: 'hidden',
-                    willChange: 'transform',
+                    willChange: reducedMotion ? 'auto' : 'transform',
                   }}
                 >
                   <Image
@@ -337,48 +576,52 @@ export default function Photography2DCarousel({
                     alt={t(project.titleKey as never)}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 95vw, 80vw"
+                    sizes={`(max-width: ${BREAKPOINTS.mobile}px) 95vw, (max-width: ${BREAKPOINTS.tablet}px) 90vw, 85vw`}
                     priority={index < 2}
                     loading={index < 2 ? 'eager' : 'lazy'}
                   />
-
-                  {/* Dark overlay for better text contrast - inherits clipPath from parent */}
                   <div className="absolute inset-0 bg-black/30 pointer-events-none" />
                 </div>
 
-                {/* Project Title Overlay - Counter-rotate to keep text horizontal - Completely static */}
+                {/* Text Overlay (Title + CTA) */}
                 <div
-                  className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none gap-6"
+                  ref={(el) => {
+                    textOverlayRefs.current[index] = el;
+                  }}
+                  className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
                   style={{
-                    transform: 'rotateZ(8deg)', // Counter-rotate to compensate cylinder's -8deg
+                    transform: `rotateZ(${-CAROUSEL_CONFIG.diagonalTilt}deg)`,
+                    willChange: reducedMotion ? 'auto' : 'transform, opacity',
+                    gap: textConfig.gap,
                   }}
                 >
                   <PhotographyTitleEffect
                     words={t(project.titleKey as never)}
-                    isActive={index === currentIndex}
-                    className="text-white text-center px-8"
+                    isActive={true}
+                    className="text-white text-center"
                     style={{
                       fontFamily: '"Playfair Display", serif',
-                      fontSize: 'clamp(5rem, 14vw, 12rem)',
+                      fontSize: textConfig.fontSize,
                       letterSpacing: '0',
                       lineHeight: 1,
                       fontWeight: 900,
+                      padding: textConfig.padding,
                     }}
-                    filter={true}
-                    duration={0.6}
-                    staggerDelay={0.08}
+                    filter={!reducedMotion}
+                    duration={reducedMotion ? 0 : 0.6}
+                    staggerDelay={reducedMotion ? 0 : 0.08}
                   />
-                  {/* CTA Button per progetto */}
+
                   <button
                     ref={(el) => {
                       buttonRefs.current[index] = el;
                     }}
                     type="button"
                     onClick={handleCTAClick}
-                    className="group pointer-events-auto flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 hover:scale-110 mt-4"
+                    className="group pointer-events-auto flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 hover:scale-110"
                     style={{
-                      width: 'clamp(60px, 8vw, 80px)',
-                      height: 'clamp(60px, 8vw, 80px)',
+                      width: textConfig.buttonSize,
+                      height: textConfig.buttonSize,
                     }}
                     aria-label={t('PortfolioPage.photography.cta.ariaLabel')}
                   >
@@ -405,7 +648,7 @@ export default function Photography2DCarousel({
         </div>
       </div>
 
-      {/* Navigation Dots - Enhanced Accessibility */}
+      {/* Navigation Dots */}
       <nav
         className="absolute bottom-8 right-8 flex flex-col gap-3 z-10"
         aria-label="Photography projects navigation"
@@ -426,7 +669,7 @@ export default function Photography2DCarousel({
         ))}
       </nav>
 
-      {/* Fade gradients - top and bottom */}
+      {/* Fade Gradients */}
       <div
         className="absolute top-0 left-0 right-0 pointer-events-none z-30"
         style={{
