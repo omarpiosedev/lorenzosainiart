@@ -1,5 +1,6 @@
 'use client';
 
+import type { LoadingScreenHandle } from '@/components/ui/LoadingScreen';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
@@ -8,8 +9,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import FloatingNavBar from '@/components/ui/FloatingNavBar';
 import Footer from '@/components/ui/Footer';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import SettingsModal from '@/components/ui/SettingsModal';
 import { useHomeLoading } from '@/contexts/HomeLoadingContext';
+import { useResourcesLoaded } from '@/hooks/useResourcesLoaded';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP);
@@ -27,10 +30,24 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
   const isInitialMountRef = useRef(true);
   const { isHomeLoading } = useHomeLoading();
 
+  // Real loading screen: waits for all critical resources to load
+  const loadingScreenRef = useRef<LoadingScreenHandle>(null);
+  const isResourcesLoaded = useResourcesLoaded();
+  const [hasHiddenLoadingScreen, setHasHiddenLoadingScreen] = useState(false);
+
   // ScrollSmoother refs
   const smoothWrapperRef = useRef<HTMLDivElement>(null);
   const smoothContentRef = useRef<HTMLDivElement>(null);
   const smootherInstanceRef = useRef<ScrollSmoother | null>(null);
+
+  // Hide LoadingScreen when all resources are loaded
+  useEffect(() => {
+    if (isResourcesLoaded && !hasHiddenLoadingScreen && loadingScreenRef.current) {
+      loadingScreenRef.current.hide().then(() => {
+        setHasHiddenLoadingScreen(true);
+      });
+    }
+  }, [isResourcesLoaded, hasHiddenLoadingScreen]);
 
   // Video transition refs
   const videoTransitionRef = useRef<HTMLDivElement>(null);
@@ -302,6 +319,9 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
 
   return (
     <>
+      {/* Real Loading Screen - Shows until all critical resources are loaded */}
+      <LoadingScreen ref={loadingScreenRef} />
+
       {/* Main Content Wrapper with Smooth Scrolling */}
       <div
         id="smooth-wrapper"
