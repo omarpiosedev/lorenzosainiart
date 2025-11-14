@@ -39,6 +39,18 @@ const CarouselPhoto = ({ photos, className = '' }: CarouselPhotoProps) => {
           transformOrigin: '0px 0px',
         });
       }
+
+      // ✅ CRITICAL FIX: Cleanup scroll lock on unmount
+      // If user navigates away while zoomed, restore scroll
+      return () => {
+        if (galleryContainerRef.current) {
+          galleryContainerRef.current.style.overflow = '';
+          galleryContainerRef.current.style.height = '';
+        }
+        if (galleryRef.current) {
+          galleryRef.current.style.top = '';
+        }
+      };
     },
     { scope: galleryContainerRef },
   );

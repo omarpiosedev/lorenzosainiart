@@ -22,12 +22,16 @@ export function HomeLoadingProvider({ children }: { children: ReactNode }) {
 
   // CRITICAL: Monitor pathname changes and set isHomeLoading immediately when navigating TO home
   // This prevents Footer flash when navigating from other pages (e.g., /portfolio) to /home
+  // CRITICAL FIX: Also reset to false when leaving home page (for blog/contact footer visibility)
   // IMPORTANT: Only triggers when pathname changes (NOT when isHomeLoading changes)
   useEffect(() => {
     const isCurrentlyHomePage = pathname.includes('/home') || pathname.match(/^\/(it|en)\/?$/);
     if (isCurrentlyHomePage) {
       // Entering home page - hide Footer immediately for LoadingScreen
       setIsHomeLoading(true);
+    } else {
+      // ✅ CRITICAL FIX: Leaving home page - show Footer for blog/contact/other pages
+      setIsHomeLoading(false);
     }
   }, [pathname]); // Only pathname, NOT isHomeLoading (to avoid loop)
 

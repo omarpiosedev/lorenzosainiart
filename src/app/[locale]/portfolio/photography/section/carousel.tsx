@@ -96,23 +96,53 @@ export default function Carousel() {
       return;
     }
 
-    const tlWatermark = gsap.timeline({
-      scrollTrigger: {
-        trigger: watermarkWrapRef.current,
-        start: 'top top',
-        end: '+=800%',
-        scrub: true,
-        pin: true,
-        pinSpacing: false,
-      },
-      defaults: { ease: 'none' },
+    // ✅ CRITICAL FIX: Delay ScrollTrigger creation to avoid conflicts with page transition
+    // Wait for page transition to complete before creating ScrollTrigger
+    // Triple RAF ensures ScrollSmoother is resumed and ready
+    let rafId1: number;
+    let rafId2: number;
+    let rafId3: number;
+
+    rafId1 = requestAnimationFrame(() => {
+      rafId2 = requestAnimationFrame(() => {
+        rafId3 = requestAnimationFrame(() => {
+          if (!watermarkWrapRef.current || !watermarkTextRef.current) {
+            return;
+          }
+
+          const tlWatermark = gsap.timeline({
+            scrollTrigger: {
+              trigger: watermarkWrapRef.current,
+              start: 'top top',
+              end: '+=800%',
+              scrub: true,
+              pin: true,
+              pinSpacing: false,
+            },
+            defaults: { ease: 'none' },
+          });
+
+          tlWatermark.fromTo(
+            watermarkTextRef.current,
+            { x: '20%' },
+            { x: '-60%' },
+          );
+        });
+      });
     });
 
-    tlWatermark.fromTo(
-      watermarkTextRef.current,
-      { x: '20%' },
-      { x: '-60%' },
-    );
+    // Cleanup RAF on unmount
+    return () => {
+      if (rafId1) {
+        cancelAnimationFrame(rafId1);
+      }
+      if (rafId2) {
+        cancelAnimationFrame(rafId2);
+      }
+      if (rafId3) {
+        cancelAnimationFrame(rafId3);
+      }
+    };
   }, { scope: watermarkWrapRef });
 
   // Set initial opacity for titles and buttons
@@ -362,12 +392,24 @@ export default function Carousel() {
 
     window.addEventListener('resize', resizeCanvas);
 
-    // ScrollTrigger for canvas pinning - create after scene is ready
-    scrollTrigger = ScrollTrigger.create({
-      trigger: wrap,
-      start: 'top top',
-      end: '+=800%',
-      pin: true,
+    // ✅ CRITICAL FIX: Delay ScrollTrigger creation to avoid conflicts with page transition
+    // Wait for page transition to complete before creating ScrollTrigger
+    // Triple RAF ensures ScrollSmoother is resumed and ready
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // ScrollTrigger for canvas pinning - create after scene is ready
+          scrollTrigger = ScrollTrigger.create({
+            trigger: wrap,
+            start: 'top top',
+            end: '+=800%',
+            pin: true,
+          });
+
+          // Force refresh to ensure correct calculations
+          ScrollTrigger.refresh();
+        });
+      });
     });
 
     // Start render loop
