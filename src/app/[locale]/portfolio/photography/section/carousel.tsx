@@ -99,11 +99,11 @@ export default function Carousel() {
     // ✅ CRITICAL FIX: Delay ScrollTrigger creation to avoid conflicts with page transition
     // Wait for page transition to complete before creating ScrollTrigger
     // Triple RAF ensures ScrollSmoother is resumed and ready
-    let rafId1: number;
-    let rafId2: number;
-    let rafId3: number;
+    // Declare rafId2/rafId3 at outer scope so cleanup can access them
+    let rafId2: number | undefined;
+    let rafId3: number | undefined;
 
-    rafId1 = requestAnimationFrame(() => {
+    const rafId1 = requestAnimationFrame(() => {
       rafId2 = requestAnimationFrame(() => {
         rafId3 = requestAnimationFrame(() => {
           if (!watermarkWrapRef.current || !watermarkTextRef.current) {
@@ -133,13 +133,13 @@ export default function Carousel() {
 
     // Cleanup RAF on unmount
     return () => {
-      if (rafId1) {
+      if (rafId1 !== undefined) {
         cancelAnimationFrame(rafId1);
       }
-      if (rafId2) {
+      if (rafId2 !== undefined) {
         cancelAnimationFrame(rafId2);
       }
-      if (rafId3) {
+      if (rafId3 !== undefined) {
         cancelAnimationFrame(rafId3);
       }
     };
@@ -444,7 +444,7 @@ export default function Carousel() {
       >
         <span
           ref={watermarkTextRef}
-          className="inline-block text-[35vw] font-black leading-none uppercase opacity-[0.05] pointer-events-none"
+          className="inline-block text-[35vw] font-black leading-none uppercase opacity-[0.05] pointer-events-none whitespace-nowrap"
           style={{ fontFamily: 'var(--font-clash-display, sans-serif)' }}
         >
           PHOTOGRAPHY
@@ -459,7 +459,7 @@ export default function Carousel() {
             <h2
               key={index}
               data-project-index={index}
-              className="project-title absolute top-[35%] text-[var(--text-xl)] md:text-[var(--text-2xl)] font-black uppercase text-black whitespace-nowrap"
+              className="project-title absolute top-[35%] text-[var(--text-lg)] md:text-[var(--text-xl)] font-black uppercase text-black whitespace-nowrap text-wrap-balanced heading-compact"
               style={{
                 fontFamily: 'var(--font-clash-display, sans-serif)',
               }}
@@ -478,7 +478,7 @@ export default function Carousel() {
                     key={index}
                     href={`/${locale}/portfolio/photography/${project.slug}`}
                     data-project-button={index}
-                    className="project-button absolute w-14 h-14 flex items-center justify-center pointer-events-auto rounded-full border border-black/10 backdrop-blur-md bg-white/60 hover:bg-white/90 hover:border-black/30 hover:scale-105 group shadow-sm shadow-black/5 hover:shadow-md hover:shadow-black/10"
+                    className="project-button absolute w-14 h-14 flex items-center justify-center pointer-events-auto rounded-full border border-black/10 backdrop-blur-md bg-white/60 hover:bg-white/90 hover:border-black/30 hover:scale-105 group shadow-sm shadow-black/5 hover:shadow-md hover:shadow-black/10 btn-fluid"
                     style={{
                       opacity: 0,
                       transition: 'transform 0.4s ease-out, background-color 0.4s ease-out, border-color 0.4s ease-out, box-shadow 0.4s ease-out',

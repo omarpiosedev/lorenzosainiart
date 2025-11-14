@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-import { createContext, use, useEffect, useMemo, useState } from 'react';
+import { createContext, use, useLayoutEffect, useMemo, useState } from 'react';
 
 type HomeLoadingContextType = {
   isHomeLoading: boolean;
@@ -14,23 +14,22 @@ const HomeLoadingContext = createContext<HomeLoadingContextType | undefined>(und
 export function HomeLoadingProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
-  // CRITICAL FIX: Initialize isHomeLoading based on current pathname
-  // If we're on home page (/it/home, /en/home, /it, /en), start with loading=true
-  // This prevents Footer flash by hiding it BEFORE first render
-  const isHomePage = pathname.includes('/home') || pathname.match(/^\/(it|en)\/?$/);
-  const [isHomeLoading, setIsHomeLoading] = useState(Boolean(isHomePage));
+  // ✅ FIX: Always initialize to false (safe default)
+  // This ensures other pages (blog, contact, aboutme) render correctly on first client-side navigation
+  // Previous bug: initialized with Boolean(isHomePage) caused race condition during navigation
+  const [isHomeLoading, setIsHomeLoading] = useState(false);
 
-  // CRITICAL: Monitor pathname changes and set isHomeLoading immediately when navigating TO home
-  // This prevents Footer flash when navigating from other pages (e.g., /portfolio) to /home
-  // CRITICAL FIX: Also reset to false when leaving home page (for blog/contact footer visibility)
-  // IMPORTANT: Only triggers when pathname changes (NOT when isHomeLoading changes)
-  useEffect(() => {
+  // ✅ FIX: Use useLayoutEffect instead of useEffect for SYNCHRONOUS state updates
+  // React docs: "useLayoutEffect fires before the browser repaints the screen"
+  // This prevents race condition where components render with stale isHomeLoading value
+  // Critical for preventing blank pages on first navigation from Home → Blog/Contact/AboutMe
+  useLayoutEffect(() => {
     const isCurrentlyHomePage = pathname.includes('/home') || pathname.match(/^\/(it|en)\/?$/);
     if (isCurrentlyHomePage) {
       // Entering home page - hide Footer immediately for LoadingScreen
       setIsHomeLoading(true);
     } else {
-      // ✅ CRITICAL FIX: Leaving home page - show Footer for blog/contact/other pages
+      // Leaving home page - show Footer for blog/contact/other pages
       setIsHomeLoading(false);
     }
   }, [pathname]); // Only pathname, NOT isHomeLoading (to avoid loop)
