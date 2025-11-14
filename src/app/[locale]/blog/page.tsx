@@ -67,19 +67,8 @@ export default async function BlogPage(props: Props) {
       <div className="min-h-screen">
         <BlogHero />
         {/* Wrap data fetching in Suspense for Cache Components compatibility */}
-        <Suspense
-          fallback={(
-            <div className="w-full bg-white py-[var(--space-12)] md:py-[var(--space-16)]">
-              <div className="container mx-auto max-w-4xl px-[var(--space-4)] md:px-[var(--space-8)]">
-                <div className="animate-pulse space-y-8">
-                  {[...Array.from({ length: 3 })].map((_, i) => (
-                    <div key={i} className="h-64 bg-gray-200 rounded-lg" />
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        >
+        {/* Empty fallback: shows empty feed instead of skeleton during first load */}
+        <Suspense fallback={<div className="w-full bg-white py-[var(--space-12)] md:py-[var(--space-16)]" />}>
           <BlogFeedContainer locale={locale} />
         </Suspense>
       </div>

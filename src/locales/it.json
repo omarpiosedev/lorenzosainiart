@@ -354,5 +354,12 @@
       "privacy": "Privacy Policy",
       "terms": "Termini di Servizio"
     }
+  },
+  "BackgroundMusic": {
+    "play": "Riproduci musica",
+    "pause": "Metti in pausa",
+    "mute": "Silenzia",
+    "unmute": "Riattiva audio",
+    "volume": "Volume"
   }
 }

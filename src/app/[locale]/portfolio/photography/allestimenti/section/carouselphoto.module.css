@@ -1,0 +1,182 @@
+/* CSS Module for CarouselPhoto Component */
+
+/* Colors */
+.galleryContainer {
+  --clr-bg: hsl(36, 15%, 82%);
+  --clr-string: hsl(30, 50%, 93%);
+  --trans-dur: 0.8s;
+
+  margin: 0;
+  background: var(--clr-bg);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Gallery Grid */
+.gallery {
+  position: relative;
+  width: 100%;
+  display: grid;
+  justify-content: space-between;
+  justify-items: center;
+  align-items: center;
+  will-change: transform;
+}
+
+/* Gallery Item */
+.galleryItem {
+  position: relative;
+  grid-column-end: span 2;
+}
+
+/* Perspective for 3D effects */
+.galleryItemPerspective,
+.galleryItemStringsPerspective {
+  perspective: 800px;
+}
+
+.galleryItemPerspective {
+  position: relative;
+  z-index: 1;
+  display: block;
+  text-decoration: none;
+  outline: none;
+}
+
+/* Photo Frame/Wrap */
+.galleryItemWrap {
+  padding: 12px;
+  background: var(--frame);
+  cursor: pointer;
+  box-shadow: 4px 6px 6px rgba(0, 0, 0, 0.7);
+  transition: 0.25s;
+  z-index: 1;
+  will-change: transform;
+}
+
+/* Hanging Strings */
+.galleryItemStringsPerspective {
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  pointer-events: none;
+}
+
+.galleryItemStrings {
+  flex: auto;
+  will-change: transform;
+}
+
+.galleryItemStrings::before,
+.galleryItemStrings::after {
+  content: '';
+  position: absolute;
+  bottom: 50%;
+  width: 1px;
+  background: var(--clr-string);
+  box-shadow: 4px 0 3px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.galleryItemStrings::before {
+  left: 7%;
+}
+
+.galleryItemStrings::after {
+  right: 7%;
+}
+
+/* Overlay (fades out when zoomed) */
+.galleryItemOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.25);
+  transition: opacity var(--trans-dur);
+  pointer-events: none;
+}
+
+.galleryItem.current .galleryItemOverlay {
+  opacity: 0;
+  transition-duration: 0.8s;
+}
+
+/* Image Styling */
+.galleryImg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ========================================
+   RESPONSIVE LAYOUT
+   ======================================== */
+
+/* Mobile Layout (max-width: 899px) */
+@media (max-width: 899px) {
+  .gallery {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 13vw;
+    padding: 8% 8%;
+  }
+
+  /* Offset every 3rd item to 2nd column */
+  .galleryItem:nth-child(3n + 3) {
+    grid-column-start: 2;
+  }
+
+  /* String heights - default */
+  .galleryItem .galleryItemStrings::before,
+  .galleryItem .galleryItemStrings::after {
+    height: 57vw;
+  }
+
+  /* String heights - longer for specific items */
+  .galleryItem:nth-child(3n + 1) .galleryItemStrings::before,
+  .galleryItem:nth-child(3n + 2) .galleryItemStrings::after {
+    height: 125vw;
+  }
+}
+
+/* Desktop Layout (min-width: 900px) */
+@media (min-width: 900px) {
+  .gallery {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 9vw;
+    padding: 7% 18%;
+  }
+
+  /* Offset every 4th item (in 5n pattern) to 2nd column */
+  .galleryItem:nth-child(5n + 4) {
+    grid-column-start: 2;
+  }
+
+  /* String heights - default */
+  .galleryItem .galleryItemStrings::before,
+  .galleryItem .galleryItemStrings::after {
+    height: 31vw;
+  }
+
+  /* String heights - longer for specific items */
+  .galleryItem:nth-child(5n + 1) .galleryItemStrings::before,
+  .galleryItem:nth-child(5n + 3) .galleryItemStrings::after {
+    height: 63vw;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+.galleryItemPerspective:focus-visible {
+  outline: 2px solid hsl(30, 50%, 50%);
+  outline-offset: 4px;
+  border-radius: 2px;
+}

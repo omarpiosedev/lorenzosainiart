@@ -1,3 +1,5 @@
+'use cache';
+
 import type { BlogPost } from '@/sanity/types';
 import { client } from '@/sanity/client';
 import { BlogFeed } from './BlogFeed';
@@ -30,6 +32,9 @@ type BlogFeedContainerProps = {
   locale: string;
 };
 
+// Next.js 16 Cache Components: This component's data is now cached
+// First load: fetches from Sanity and caches the result
+// Subsequent loads: instant (served from cache)
 export async function BlogFeedContainer({ locale }: BlogFeedContainerProps) {
   // Fetch posts from Sanity (if configured)
   const posts = client ? await client.fetch<BlogPost[]>(POSTS_QUERY) : [];

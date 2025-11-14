@@ -354,5 +354,12 @@
       "privacy": "Privacy Policy",
       "terms": "Terms of Service"
     }
+  },
+  "BackgroundMusic": {
+    "play": "Play music",
+    "pause": "Pause music",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "volume": "Volume"
   }
 }

@@ -13,17 +13,8 @@ import Noise from '@/components/Noise';
 gsap.registerPlugin(useGSAP, ScrollTrigger, MotionPathPlugin);
 
 // Configure ScrollTrigger for mobile iOS Safari fixes
-// - normalizeScroll: ONLY on desktop (>= 1024px) to avoid mobile lag
-//   Mobile devices benefit from native scroll performance over forced JS thread
-//   Research: ScrollSmoother with normalizeScroll causes lag/stuttering on mobile
 // - ignoreMobileResize: prevents refresh when iOS address bar shows/hides
 if (typeof window !== 'undefined') {
-  // Only enable normalizeScroll on desktop to prevent mobile performance issues
-  // Mobile browsers handle scroll optimization better natively
-  if (window.innerWidth >= 1024) {
-    ScrollTrigger.normalizeScroll(true);
-  }
-
   ScrollTrigger.config({
     ignoreMobileResize: true,
   });
@@ -47,7 +38,6 @@ export default function PortfolioHero() {
   const buttonsRef = useRef<HTMLDivElement>(null);
   const noiseRef = useRef<HTMLDivElement>(null);
   const scrollTimelineRef = useRef<gsap.core.Timeline | null>(null);
-  const gsapContextRef = useRef<gsap.Context | null>(null);
 
   // React 19.2 compliant: use useState for boolean flags instead of useRef
   const [isEntranceComplete, setIsEntranceComplete] = useState(false);
@@ -55,6 +45,28 @@ export default function PortfolioHero() {
 
   // Get contextSafe from useGSAP for button handlers
   const { contextSafe } = useGSAP({ scope: containerRef });
+
+  // Responsive normalizeScroll management
+  // ONLY enable on desktop (>= 1024px) to avoid mobile lag
+  // Mobile devices benefit from native scroll performance over forced JS thread
+  // Research: ScrollSmoother with normalizeScroll causes lag/stuttering on mobile
+  useGSAP(() => {
+    const updateNormalizeScroll = () => {
+      const isDesktop = window.innerWidth >= 1024;
+      // Enable normalizeScroll on desktop, disable on mobile
+      ScrollTrigger.normalizeScroll(isDesktop);
+    };
+
+    // Set initial state
+    updateNormalizeScroll();
+
+    // Update on resize (debounced by browser's requestAnimationFrame)
+    window.addEventListener('resize', updateNormalizeScroll);
+
+    return () => {
+      window.removeEventListener('resize', updateNormalizeScroll);
+    };
+  }, { dependencies: [] }); // Run once on mount
 
   // Handle button click to trigger global video transition
   // React 19.2 + GSAP compliant: use contextSafe wrapper
@@ -68,12 +80,8 @@ export default function PortfolioHero() {
       });
     }
 
-    // Kill only GSAP animations scoped to this component
-    if (gsapContextRef.current) {
-      gsapContextRef.current.revert();
-    }
-
     // Kill only ScrollTriggers within this container
+    // contextSafe already manages GSAP context cleanup automatically
     ScrollTrigger.getAll().forEach((trigger) => {
       if (
         trigger.trigger
@@ -163,15 +171,12 @@ export default function PortfolioHero() {
   ];
 
   // Entrance animations
-  // React 19.2 + GSAP: Save context and use state callbacks
+  // React 19.2 + GSAP: Use state callbacks for completion tracking
   useGSAP(
-    (context) => {
+    () => {
       if (!titleRef.current || !subtitleRef.current) {
         return;
       }
-
-      // Save GSAP context for scoped cleanup
-      gsapContextRef.current = context;
 
       // Set initial states
       gsap.set(titleRef.current, {
@@ -497,7 +502,7 @@ export default function PortfolioHero() {
       mm.add('(min-width: 1024px)', createScrollTimeline);
 
       // CRITICAL: Complete cleanup to prevent DOM errors during navigation
-      // Kill timeline, ScrollTriggers, and event listeners BEFORE React unmounts
+      // Kill timeline, ScrollTriggers, event listeners, and matchMedia BEFORE React unmounts
       return () => {
         if (videoRef.current) {
           try {
@@ -527,6 +532,9 @@ export default function PortfolioHero() {
         if (videoRef.current) {
           gsap.killTweensOf(videoRef.current);
         }
+        // CRITICAL: Revert matchMedia to prevent memory leak
+        // This kills all animations/ScrollTriggers created by matchMedia
+        mm.revert();
       };
     },
     {

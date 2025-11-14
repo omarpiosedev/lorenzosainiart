@@ -6,6 +6,7 @@ import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePathname, useRouter } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
+import BackgroundMusic from '@/components/ui/BackgroundMusic';
 import FloatingNavBar from '@/components/ui/FloatingNavBar';
 import Footer from '@/components/ui/Footer';
 import SettingsModal from '@/components/ui/SettingsModal';
@@ -37,6 +38,7 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoEndHandlerRef = useRef<(() => void) | null>(null);
   const isVideoTransitionActiveRef = useRef(false);
+  const targetPathRef = useRef<string | null>(null);
 
   // Listen for video transition events from child components
   useEffect(() => {
@@ -72,38 +74,24 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
       // Show overlay with video IMMEDIATELY (no fade)
       gsap.set(overlay, { opacity: 1 });
 
-      // When video ends, navigate to new page then fade out overlay
+      // When video ends, navigate to new page (overlay stays SOLID)
+      // Fade-out happens ONLY when new page pathname is confirmed (see useEffect below)
       const handleVideoEnd = () => {
-        // Navigate to new page
+        // Save target path for later verification
+        targetPathRef.current = targetUrl;
+
+        // Navigate to new page (overlay remains opacity: 1)
         router.push(targetUrl);
 
-        // Check if refs still exist before animating
-        if (!videoTransitionRef.current) {
-          return;
+        // Clean up video event listener immediately
+        if (videoRef.current && videoEndHandlerRef.current) {
+          try {
+            videoRef.current.removeEventListener('ended', videoEndHandlerRef.current);
+          } catch {
+            // Silently ignore
+          }
+          videoEndHandlerRef.current = null;
         }
-
-        const currentOverlay = videoTransitionRef.current;
-
-        // Fade out overlay after navigation
-        gsap.to(currentOverlay, {
-          opacity: 0,
-          duration: 0.5,
-          ease: 'power2.inOut',
-          onComplete: () => {
-            // Mark video transition as complete
-            isVideoTransitionActiveRef.current = false;
-
-            // Final cleanup after animation completes
-            if (videoRef.current && videoEndHandlerRef.current) {
-              try {
-                videoRef.current.removeEventListener('ended', videoEndHandlerRef.current);
-              } catch {
-                // Silently ignore
-              }
-              videoEndHandlerRef.current = null;
-            }
-          },
-        });
       };
 
       videoEndHandlerRef.current = handleVideoEnd;
@@ -146,6 +134,51 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
     };
   }, [router]);
 
+  // CRITICAL: Video transition overlay fade-out
+  // Only fade out when new page pathname is confirmed and fully rendered
+  useEffect(() => {
+    // Check if video transition is active and pathname matches target
+    if (!isVideoTransitionActiveRef.current || !targetPathRef.current) {
+      return;
+    }
+
+    // Verify pathname matches target (navigation completed)
+    if (pathname !== targetPathRef.current) {
+      return;
+    }
+
+    // CRITICAL: Wait for new page to fully mount and render
+    // Triple requestAnimationFrame ensures browser has painted the new page
+    // Frame 1: Route change starts
+    // Frame 2: React mounts new page
+    // Frame 3: Browser paints new page
+    // Frame 4: NOW safe to fade out overlay
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // Final check that refs still exist
+          if (!videoTransitionRef.current) {
+            return;
+          }
+
+          const overlay = videoTransitionRef.current;
+
+          // NOW fade out overlay - new page is fully rendered
+          gsap.to(overlay, {
+            opacity: 0,
+            duration: 0.5,
+            ease: 'power2.inOut',
+            onComplete: () => {
+              // Mark video transition as complete
+              isVideoTransitionActiveRef.current = false;
+              targetPathRef.current = null;
+            },
+          });
+        });
+      });
+    });
+  }, [pathname]);
+
   // Page transition: animate content on route change
   useGSAP(
     () => {
@@ -177,6 +210,14 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
         }
       });
 
+      // CRITICAL: Pause ScrollSmoother during page transition
+      // This prevents ScrollSmoother from interfering with the page transition animation
+      // Context7 GSAP docs: ScrollSmoother.paused() prevents "catch up" during custom animations
+      const wasSmootherActive = !!smootherInstanceRef.current;
+      if (smootherInstanceRef.current) {
+        smootherInstanceRef.current.paused(true);
+      }
+
       // Animate new page entering from bottom - VERY SMOOTH
       if (smoothContentRef.current) {
         try {
@@ -207,11 +248,18 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
                 ease: 'expo.out', // Very smooth exponential easing
                 overwrite: true, // Cancel any previous animations
                 onComplete: () => {
-                  // CRITICAL iOS FIX: Refresh ScrollTrigger after page transition completes
-                  // This allows new page's ScrollTrigger instances to recalculate with correct layout
-                  setTimeout(() => {
+                  // CRITICAL: Use requestAnimationFrame for precise timing
+                  // Context7 GSAP docs: rAF ensures browser has painted before refresh/resume
+                  requestAnimationFrame(() => {
+                    // Resume ScrollSmoother FIRST (if it was active)
+                    if (wasSmootherActive && smootherInstanceRef.current) {
+                      smootherInstanceRef.current.paused(false);
+                    }
+
+                    // THEN refresh ScrollTrigger to recalculate positions
+                    // This allows new page's ScrollTrigger instances to work correctly
                     ScrollTrigger.refresh();
-                  }, 50);
+                  });
                 },
               },
             );
@@ -230,9 +278,16 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
                 ease: 'expo.out',
                 overwrite: true,
                 onComplete: () => {
-                  setTimeout(() => {
+                  // CRITICAL: Use requestAnimationFrame for precise timing
+                  requestAnimationFrame(() => {
+                    // Resume ScrollSmoother FIRST (if it was active)
+                    if (wasSmootherActive && smootherInstanceRef.current) {
+                      smootherInstanceRef.current.paused(false);
+                    }
+
+                    // THEN refresh ScrollTrigger
                     ScrollTrigger.refresh();
-                  }, 50);
+                  });
                 },
               },
             );
@@ -340,6 +395,9 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
           logoAlt="Lorenzo Saini Art"
           items={navItems}
         />
+
+        {/* Background Music Player - Fixed positioning outside smooth-content */}
+        <BackgroundMusic src="/assets/music/gymnopedie-n1-200688.mp3" />
 
         {/* Settings Modal - Also outside smooth-content for proper fixed positioning */}
         <SettingsModal
