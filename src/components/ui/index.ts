@@ -12,8 +12,6 @@ export * from './focus';
 export { default as Footer } from './Footer';
 export { default as GSAPScrollReveal } from './GSAPScrollReveal';
 
-export { LoadingScreen } from './LoadingScreen';
-
 // Loading
 export {
   AboutSkeleton,

@@ -18,7 +18,7 @@ const meta = {
     nextjs: {
       appDirectory: true,
       navigation: {
-        pathname: '/it/home',
+        pathname: '/it',
       },
     },
     viewport: {
@@ -38,7 +38,7 @@ type Story = StoryObj<typeof meta>;
 
 // Default navigation items for stories
 const defaultItems = [
-  { label: 'Home', href: '/it/home' },
+  { label: 'Home', href: '/it' },
   { label: 'Portfolio', href: '/it/portfolio' },
   { label: 'Blog', href: '/it/blog' },
   { label: 'About Me', href: '/it/aboutme' },

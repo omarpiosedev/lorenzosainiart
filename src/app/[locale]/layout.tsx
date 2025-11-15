@@ -5,7 +5,6 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { preload } from 'react-dom';
 import { PersonJsonLd, WebsiteJsonLd } from '@/components/seo/JsonLd';
-import { HomeLoadingProvider } from '@/contexts/HomeLoadingContext';
 import { routing } from '@/lib/i18n/routing';
 import { getBaseUrl } from '@/utils/AppConfig';
 import LayoutClient from './LayoutClient';
@@ -102,14 +101,6 @@ export default async function RootLayout(props: {
   preload('/assets/fonts/LAVENER.ttf', { as: 'font', type: 'font/ttf', crossOrigin: 'anonymous' });
   preload('/assets/fonts/Effloresce It.otf', { as: 'font', type: 'font/opentype', crossOrigin: 'anonymous' });
 
-  // CRITICAL: LoadingScreen images - must load IMMEDIATELY on page load
-  // Only preload assets that are actually used in LoadingScreen component
-  preload('/assets/images/LogoNero.webp', { as: 'image', fetchPriority: 'high' });
-
-  // NOTE: Page-specific images (image1.webp, image2.webp, image3.webp, background.webp, sposi.webp)
-  // are now preloaded in their respective pages to avoid loading 17MB on all routes
-  // See: src/app/[locale]/home/page.tsx for home-specific preloads
-
   const navItems = [
     { label: 'HOME', href: `/${paramLocale}` },
     { label: 'PORTFOLIO', href: `/${paramLocale}/portfolio` },
@@ -128,20 +119,17 @@ export default async function RootLayout(props: {
       <body>
         {/* ✅ BEST PRACTICE: Pass only necessary messages to client components
             This reduces client JS bundle and improves performance.
-            Includes 'loading' for LoadingScreen and 'HomePage' for main page.
             Other pages should wrap content in NextIntlClientProvider
             with their specific namespaces if needed.
             CRITICAL: Pass locale AND timeZone explicitly to prevent hydration mismatch. */}
         <NextIntlClientProvider
           locale={paramLocale}
           timeZone="Europe/Rome"
-          messages={pick(messages, ['loading', 'HomePage', 'Footer', 'BackgroundMusic'])}
+          messages={pick(messages, ['HomePage', 'Footer', 'BackgroundMusic'])}
         >
-          <HomeLoadingProvider>
-            <LayoutClient navItems={navItems}>
-              {props.children}
-            </LayoutClient>
-          </HomeLoadingProvider>
+          <LayoutClient navItems={navItems}>
+            {props.children}
+          </LayoutClient>
         </NextIntlClientProvider>
       </body>
     </html>

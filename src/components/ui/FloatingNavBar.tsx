@@ -31,15 +31,8 @@ export default function FloatingNavBar({
     const cleanPathname = pathname.replace(/^\/[a-z]{2}/, '') || '/';
     return items.find((item) => {
       const cleanItemHref = item.href.replace(/^\/[a-z]{2}/, '') || '/';
-      // Match exact path OR match home variants (/, /home)
-      if (cleanPathname === cleanItemHref) {
-        return true;
-      }
-      if ((cleanPathname === '/' || cleanPathname === '/home')
-        && (cleanItemHref === '/' || cleanItemHref === '/home')) {
-        return true;
-      }
-      return false;
+      // Match exact path
+      return cleanPathname === cleanItemHref;
     })?.href;
   };
 

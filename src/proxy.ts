@@ -17,17 +17,8 @@ export default function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Handle root redirect to default locale with /home
-  if (pathname === '/') {
-    return NextResponse.redirect(new URL(`/${routing.defaultLocale}/home`, request.url));
-  }
-
-  // Handle locale root redirects (e.g., /it -> /it/home, /en -> /en/home)
-  const localeMatch = pathname.match(/^\/([^/]+)$/);
-  if (localeMatch && localeMatch[1] && routing.locales.includes(localeMatch[1])) {
-    return NextResponse.redirect(new URL(`${pathname}/home`, request.url));
-  }
-
+  // Let next-intl handle all locale routing (including root redirects to default locale)
+  // Home page is now directly at /[locale] (no /home suffix needed)
   return handleI18nRouting(request);
 }
 

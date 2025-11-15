@@ -10,7 +10,6 @@ import BackgroundMusic from '@/components/ui/BackgroundMusic';
 import FloatingNavBar from '@/components/ui/FloatingNavBar';
 import Footer from '@/components/ui/Footer';
 import SettingsModal from '@/components/ui/SettingsModal';
-import { useHomeLoading } from '@/contexts/HomeLoadingContext';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother, useGSAP);
@@ -26,7 +25,6 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
   const pathname = usePathname();
   const previousPathnameRef = useRef<string | null>(null);
   const isInitialMountRef = useRef(true);
-  const { isHomeLoading } = useHomeLoading();
 
   // ScrollSmoother refs
   const smoothWrapperRef = useRef<HTMLDivElement>(null);
@@ -424,9 +422,9 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
 
           {/* Footer - Inside smooth-content but OUTSIDE data-main-content */}
           {/* This prevents footer from being animated during page transitions */}
-          {/* CRITICAL: Exclude footer from portfolio page and hide during home LoadingScreen */}
+          {/* CRITICAL: Exclude footer from portfolio page */}
           {/* Wrapped in Suspense for Cache Components compatibility (new Date() usage) */}
-          {!pathname.includes('/portfolio') && !isHomeLoading && (
+          {!pathname.includes('/portfolio') && (
             <Suspense fallback={<div className="h-96" />}>
               <Footer />
             </Suspense>
