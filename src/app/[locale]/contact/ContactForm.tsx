@@ -18,7 +18,7 @@ type FormErrors = {
 };
 
 export default function ContactForm() {
-  const t = useTranslations('ContactPage');
+  const t = useTranslations('ContactPage.form');
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -33,21 +33,21 @@ export default function ContactForm() {
     const newErrors: FormErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = t('form.name.error');
+      newErrors.name = t('name.error');
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = t('form.email.error');
+      newErrors.email = t('email.error');
     } else if (!/^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = t('form.email.error');
+      newErrors.email = t('email.error');
     }
 
     if (!formData.subject.trim()) {
-      newErrors.subject = t('form.subject.error');
+      newErrors.subject = t('subject.error');
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = t('form.message.error');
+      newErrors.message = t('message.error');
     }
 
     setErrors(newErrors);
@@ -108,7 +108,7 @@ export default function ContactForm() {
           htmlFor="name"
           className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 whitespace-nowrap"
         >
-          {t('form.name.label')}
+          {t('name.label')}
         </label>
         <input
           type="text"
@@ -116,7 +116,7 @@ export default function ContactForm() {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          placeholder={t('form.name.placeholder')}
+          placeholder={t('name.placeholder')}
           className={`w-full px-4 py-3 rounded-lg border ${
             errors.name
               ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -138,7 +138,7 @@ export default function ContactForm() {
           htmlFor="email"
           className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 whitespace-nowrap"
         >
-          {t('form.email.label')}
+          {t('email.label')}
         </label>
         <input
           type="email"
@@ -146,7 +146,7 @@ export default function ContactForm() {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder={t('form.email.placeholder')}
+          placeholder={t('email.placeholder')}
           className={`w-full px-4 py-3 rounded-lg border ${
             errors.email
               ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -168,7 +168,7 @@ export default function ContactForm() {
           htmlFor="subject"
           className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 whitespace-nowrap"
         >
-          {t('form.subject.label')}
+          {t('subject.label')}
         </label>
         <input
           type="text"
@@ -176,7 +176,7 @@ export default function ContactForm() {
           name="subject"
           value={formData.subject}
           onChange={handleChange}
-          placeholder={t('form.subject.placeholder')}
+          placeholder={t('subject.placeholder')}
           className={`w-full px-4 py-3 rounded-lg border ${
             errors.subject
               ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -198,14 +198,14 @@ export default function ContactForm() {
           htmlFor="message"
           className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 whitespace-nowrap"
         >
-          {t('form.message.label')}
+          {t('message.label')}
         </label>
         <textarea
           id="message"
           name="message"
           value={formData.message}
           onChange={handleChange}
-          placeholder={t('form.message.placeholder')}
+          placeholder={t('message.placeholder')}
           rows={6}
           className={`w-full px-4 py-3 rounded-lg border ${
             errors.message
@@ -221,7 +221,7 @@ export default function ContactForm() {
         )}
         {/* FIX 5: Help text with text-wrap-pretty */}
         <p className="text-sm text-neutral-500 dark:text-neutral-500 text-wrap-pretty">
-          {t('form.message.help')}
+          {t('message.help')}
         </p>
       </div>
 
@@ -232,14 +232,14 @@ export default function ContactForm() {
         disabled={isSubmitting}
         className="btn-fluid min-w-fit whitespace-nowrap w-full md:w-auto px-8 py-4 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 font-medium rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
       >
-        {isSubmitting ? t('form.sending') : t('form.submit')}
+        {isSubmitting ? t('sending') : t('submit')}
       </button>
 
       {/* Status Messages */}
       {submitStatus === 'success' && (
         <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
           <p className="text-sm text-green-800 dark:text-green-200 text-wrap-pretty">
-            {t('form.success')}
+            {t('success')}
           </p>
         </div>
       )}
@@ -247,7 +247,7 @@ export default function ContactForm() {
       {submitStatus === 'error' && (
         <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
           <p className="text-sm text-red-800 dark:text-red-200 text-wrap-pretty">
-            {t('form.error')}
+            {t('error')}
           </p>
         </div>
       )}
