@@ -71,53 +71,64 @@ export default function AboutContent() {
   );
 
   // ScrollTrigger animations for bio/testimonial section - sequential reveal
-  useGSAP(() => {
-    if (
-      !bioParagraph1Ref.current
-      || !bioParagraph2Ref.current
-      || !testimonialRef.current
-    ) {
-      return;
-    }
+  useGSAP(
+    () => {
+      if (
+        !bioParagraph1Ref.current
+        || !bioParagraph2Ref.current
+        || !testimonialRef.current
+      ) {
+        return;
+      }
 
-    // Create timeline triggered by first paragraph
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: bioParagraph1Ref.current,
-        start: 'top 80%',
-        toggleActions: 'play none none none',
-      },
-    });
+      // Create timeline triggered by first paragraph
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: bioParagraph1Ref.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+      });
 
-    // Sequential animations: paragraph 1 → paragraph 2 → testimonial
-    tl.from(bioParagraph1Ref.current, {
-      opacity: 0,
-      y: 40,
-      duration: 1,
-      ease: 'power3.out',
-    })
-      .from(
-        bioParagraph2Ref.current,
-        {
-          opacity: 0,
-          y: 40,
-          duration: 1,
-          ease: 'power3.out',
-        },
-        '-=0.5', // Start 0.5s before previous animation ends (overlap)
-      )
-      .from(
-        testimonialRef.current.children,
-        {
-          opacity: 0,
-          y: 40,
-          duration: 1,
-          stagger: 0.2,
-          ease: 'power3.out',
-        },
-        '-=0.5', // Start 0.5s before previous animation ends (overlap)
-      );
-  });
+      // Sequential animations: paragraph 1 → paragraph 2 → testimonial
+      tl.from(bioParagraph1Ref.current, {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: 'power3.out',
+      })
+        .from(
+          bioParagraph2Ref.current,
+          {
+            opacity: 0,
+            y: 40,
+            duration: 1,
+            ease: 'power3.out',
+          },
+          '-=0.5', // Start 0.5s before previous animation ends (overlap)
+        )
+        .from(
+          testimonialRef.current.children,
+          {
+            opacity: 0,
+            y: 40,
+            duration: 1,
+            stagger: 0.2,
+            ease: 'power3.out',
+          },
+          '-=0.5', // Start 0.5s before previous animation ends (overlap)
+        );
+
+      // Cleanup: Kill timeline and its ScrollTrigger on unmount
+      return () => {
+        if (tl.scrollTrigger) {
+          tl.scrollTrigger.kill();
+        }
+        tl.kill();
+      };
+    },
+    { dependencies: [] }, // Empty dependencies ensures this runs only once per mount
+  );
 
   return (
     <div

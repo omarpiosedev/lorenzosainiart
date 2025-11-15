@@ -259,6 +259,14 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
                     // THEN refresh ScrollTrigger to recalculate positions
                     // This allows new page's ScrollTrigger instances to work correctly
                     ScrollTrigger.refresh();
+
+                    // CRITICAL FIX: Second delayed refresh to catch late-mounting ScrollTriggers
+                    // Race condition fix: Some components create ScrollTriggers after initial refresh
+                    // This second refresh ensures all ScrollTriggers (especially from useGSAP hooks)
+                    // are properly initialized after client-side navigation
+                    setTimeout(() => {
+                      ScrollTrigger.refresh();
+                    }, 100); // 100ms delay ensures all components are mounted and useGSAP hooks executed
                   });
                 },
               },
@@ -287,6 +295,12 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
 
                     // THEN refresh ScrollTrigger
                     ScrollTrigger.refresh();
+
+                    // CRITICAL FIX: Second delayed refresh to catch late-mounting ScrollTriggers
+                    // Race condition fix: Some components create ScrollTriggers after initial refresh
+                    setTimeout(() => {
+                      ScrollTrigger.refresh();
+                    }, 100); // 100ms delay ensures all components are mounted and useGSAP hooks executed
                   });
                 },
               },
