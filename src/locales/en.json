@@ -343,6 +343,39 @@
       "name": "Taylor Morgan",
       "company": "Field & Form Studio",
       "avatar": "/assets/images/testimonials/placeholder-avatar.jpg"
+    },
+    "gear": {
+      "title": "Gear and tools I use",
+      "items": {
+        "camera": {
+          "name": "Sony A7 IV",
+          "description": "My go-to camera for most shoots — fast, sharp, and reliable"
+        },
+        "lens1": {
+          "name": "50mm f/1.4 lens",
+          "description": "Great for portraits with natural depth and soft background"
+        },
+        "lens2": {
+          "name": "24-70mm f/2.8 lens",
+          "description": "Ideal for versatility, fashion, and wider framing"
+        },
+        "gimbal": {
+          "name": "DJI Ronin RS3",
+          "description": "For smooth video, dynamic movements, and professional stabilization"
+        },
+        "tripod": {
+          "name": "Manfrotto tripod",
+          "description": "For still life, long exposures, and locked framing"
+        },
+        "editing1": {
+          "name": "Lightroom",
+          "description": "My main editing tool — I keep things clean and natural"
+        },
+        "editing2": {
+          "name": "Premiere Pro",
+          "description": "For video editing and color grading — where the story comes to life"
+        }
+      }
     }
   },
   "ContactPage": {

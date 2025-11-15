@@ -343,6 +343,39 @@
       "name": "Marco Bianchi",
       "company": "Studio Creativo Milano",
       "avatar": "/assets/images/testimonials/placeholder-avatar.jpg"
+    },
+    "gear": {
+      "title": "Attrezzatura e strumenti che uso",
+      "items": {
+        "camera": {
+          "name": "Sony A7 IV",
+          "description": "La mia camera principale per la maggior parte degli scatti — veloce, nitida e affidabile"
+        },
+        "lens1": {
+          "name": "50mm f/1.4 lens",
+          "description": "Perfetta per ritratti con profondità naturale e sfondo morbido"
+        },
+        "lens2": {
+          "name": "24-70mm f/2.8 lens",
+          "description": "Ideale per versatilità, moda e inquadrature più ampie"
+        },
+        "gimbal": {
+          "name": "DJI Ronin RS3",
+          "description": "Per video fluidi, movimenti dinamici e stabilizzazione professionale"
+        },
+        "tripod": {
+          "name": "Manfrotto tripod",
+          "description": "Per still life, lunghe esposizioni e inquadrature fisse"
+        },
+        "editing1": {
+          "name": "Lightroom",
+          "description": "Il mio strumento principale di editing — mantengo le cose pulite e naturali"
+        },
+        "editing2": {
+          "name": "Premiere Pro",
+          "description": "Per montaggio video e color grading — dove la storia prende vita"
+        }
+      }
     }
   },
   "ContactPage": {

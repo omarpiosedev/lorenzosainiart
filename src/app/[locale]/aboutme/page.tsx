@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { getBaseUrl } from '@/utils/AppConfig';
-import AboutContent from './AboutContent';
+import AboutContent from './section/AboutContent';
 
 type Props = {
   params: Promise<{ locale: string }>;

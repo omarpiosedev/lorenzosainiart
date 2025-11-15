@@ -2,6 +2,7 @@
 
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,7 +12,7 @@ import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
-  gsap.registerPlugin(useGSAP);
+  gsap.registerPlugin(useGSAP, ScrollTrigger);
 }
 
 export default function AboutContent() {
@@ -24,6 +25,9 @@ export default function AboutContent() {
   const imageRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
+  const bioParagraph1Ref = useRef<HTMLDivElement>(null);
+  const bioParagraph2Ref = useRef<HTMLParagraphElement>(null);
+  const testimonialRef = useRef<HTMLDivElement>(null);
 
   // GSAP animations using useGSAP hook
   useGSAP(
@@ -65,6 +69,55 @@ export default function AboutContent() {
     },
     { scope: containerRef },
   );
+
+  // ScrollTrigger animations for bio/testimonial section - sequential reveal
+  useGSAP(() => {
+    if (
+      !bioParagraph1Ref.current
+      || !bioParagraph2Ref.current
+      || !testimonialRef.current
+    ) {
+      return;
+    }
+
+    // Create timeline triggered by first paragraph
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: bioParagraph1Ref.current,
+        start: 'top 80%',
+        toggleActions: 'play none none none',
+      },
+    });
+
+    // Sequential animations: paragraph 1 → paragraph 2 → testimonial
+    tl.from(bioParagraph1Ref.current, {
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      ease: 'power3.out',
+    })
+      .from(
+        bioParagraph2Ref.current,
+        {
+          opacity: 0,
+          y: 40,
+          duration: 1,
+          ease: 'power3.out',
+        },
+        '-=0.5', // Start 0.5s before previous animation ends (overlap)
+      )
+      .from(
+        testimonialRef.current.children,
+        {
+          opacity: 0,
+          y: 40,
+          duration: 1,
+          stagger: 0.2,
+          ease: 'power3.out',
+        },
+        '-=0.5', // Start 0.5s before previous animation ends (overlap)
+      );
+  });
 
   return (
     <div
@@ -143,9 +196,9 @@ export default function AboutContent() {
               words={t('heading')}
               className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight text-wrap-balanced heading-compact"
               duration={0.8}
-              staggerDelay={0.3}
+              staggerDelay={0.08}
               initialDelay={0.8}
-              animateBy="word"
+              animateBy="letter"
             />
 
             {/* Description */}
@@ -171,7 +224,10 @@ export default function AboutContent() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Left: Biography */}
           <div className="flex flex-col space-y-6">
-            <div className="text-[15px] md:text-base text-black leading-relaxed">
+            <div
+              ref={bioParagraph1Ref}
+              className="text-[15px] md:text-base text-black leading-relaxed"
+            >
               <p className="text-wrap-pretty">
                 <span className="float-left text-[70px] md:text-[85px] font-bold leading-[0.8] mr-2 mt-1">
                   {t('bio.dropCap')}
@@ -179,13 +235,19 @@ export default function AboutContent() {
                 {t('bio.paragraph1')}
               </p>
             </div>
-            <p className="text-[15px] md:text-base text-black leading-relaxed text-wrap-pretty clear-both">
+            <p
+              ref={bioParagraph2Ref}
+              className="text-[15px] md:text-base text-black leading-relaxed text-wrap-pretty clear-both"
+            >
               {t('bio.paragraph2')}
             </p>
           </div>
 
           {/* Right: Testimonial */}
-          <div className="flex flex-col justify-center space-y-6 lg:pl-6">
+          <div
+            ref={testimonialRef}
+            className="flex flex-col justify-center space-y-6 lg:pl-6"
+          >
             <blockquote className="text-[15px] md:text-base text-black leading-relaxed text-wrap-pretty">
               "
               {t('testimonial.quote')}
@@ -209,6 +271,89 @@ export default function AboutContent() {
                   {t('testimonial.company')}
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Gear and Tools Section */}
+      <section className="w-full bg-white py-12 md:py-16 px-6 md:px-12 lg:px-24">
+        <div className="max-w-6xl mx-auto">
+          {/* Title */}
+          <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 md:mb-10">
+            {t('gear.title')}
+          </h2>
+
+          {/* Gear List */}
+          <div className="flex flex-col">
+            {/* Camera */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-4 md:py-5 border-b border-gray-200">
+              <h3 className="text-[15px] md:text-base font-medium text-black">
+                {t('gear.items.camera.name')}
+              </h3>
+              <p className="text-[15px] md:text-base text-gray-600">
+                {t('gear.items.camera.description')}
+              </p>
+            </div>
+
+            {/* Lens 1 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-4 md:py-5 border-b border-gray-200">
+              <h3 className="text-[15px] md:text-base font-medium text-black">
+                {t('gear.items.lens1.name')}
+              </h3>
+              <p className="text-[15px] md:text-base text-gray-600">
+                {t('gear.items.lens1.description')}
+              </p>
+            </div>
+
+            {/* Lens 2 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-4 md:py-5 border-b border-gray-200">
+              <h3 className="text-[15px] md:text-base font-medium text-black">
+                {t('gear.items.lens2.name')}
+              </h3>
+              <p className="text-[15px] md:text-base text-gray-600">
+                {t('gear.items.lens2.description')}
+              </p>
+            </div>
+
+            {/* Gimbal */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-4 md:py-5 border-b border-gray-200">
+              <h3 className="text-[15px] md:text-base font-medium text-black">
+                {t('gear.items.gimbal.name')}
+              </h3>
+              <p className="text-[15px] md:text-base text-gray-600">
+                {t('gear.items.gimbal.description')}
+              </p>
+            </div>
+
+            {/* Tripod */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-4 md:py-5 border-b border-gray-200">
+              <h3 className="text-[15px] md:text-base font-medium text-black">
+                {t('gear.items.tripod.name')}
+              </h3>
+              <p className="text-[15px] md:text-base text-gray-600">
+                {t('gear.items.tripod.description')}
+              </p>
+            </div>
+
+            {/* Editing 1 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-4 md:py-5 border-b border-gray-200">
+              <h3 className="text-[15px] md:text-base font-medium text-black">
+                {t('gear.items.editing1.name')}
+              </h3>
+              <p className="text-[15px] md:text-base text-gray-600">
+                {t('gear.items.editing1.description')}
+              </p>
+            </div>
+
+            {/* Editing 2 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 py-4 md:py-5 border-b border-gray-200">
+              <h3 className="text-[15px] md:text-base font-medium text-black">
+                {t('gear.items.editing2.name')}
+              </h3>
+              <p className="text-[15px] md:text-base text-gray-600">
+                {t('gear.items.editing2.description')}
+              </p>
             </div>
           </div>
         </div>
