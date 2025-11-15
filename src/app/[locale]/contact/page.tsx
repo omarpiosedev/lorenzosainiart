@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import pick from 'lodash/pick';
 import { NextIntlClientProvider, useTranslations } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { getBaseUrl } from '@/utils/AppConfig';
 import ContactForm from './ContactForm';
@@ -51,9 +50,6 @@ export default async function ContactPage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 
-  // Get messages for ContactPage namespace
-  const messages = await getMessages();
-
   const baseUrl = getBaseUrl();
   const breadcrumbItems = [
     { name: 'Home', url: `${baseUrl}/${locale}` },
@@ -61,7 +57,7 @@ export default async function ContactPage(props: Props) {
   ];
 
   return (
-    <NextIntlClientProvider messages={pick(messages, ['ContactPage'])}>
+    <NextIntlClientProvider>
       <BreadcrumbJsonLd items={breadcrumbItems} />
       <main className="min-h-screen safe-top safe-bottom">
         <div className="container mx-auto px-4 py-16 md:py-24">
