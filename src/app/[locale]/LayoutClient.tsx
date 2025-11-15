@@ -182,7 +182,8 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
     });
   }, { dependencies: [pathname], scope: videoTransitionRef });
 
-  // Page transition: animate content on route change
+  // Page transition: Smooth Crossfade with exit + enter animations
+  // GSAP Best Practice 2025: Cinematic crossfade for premium UX
   useGSAP(
     () => {
       // Skip animation on initial mount
@@ -211,7 +212,7 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
         smootherInstanceRef.current.paused(true);
       }
 
-      // Animate new page entering from bottom - VERY SMOOTH
+      // Smooth Crossfade Transition Implementation
       if (smoothContentRef.current) {
         try {
           // CRITICAL: Reset scroll position to top BEFORE animation for new page
@@ -233,55 +234,78 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
                 // Double rAF ensures React has painted the new content
-                // Animate ONLY main content, not footer
-                gsap.fromTo(
+
+                // SMOOTH CROSSFADE: Create master timeline for coordinated exit + enter
+                const masterTimeline = gsap.timeline({
+                  onComplete: () => {
+                    // CRITICAL: Use requestAnimationFrame for precise timing
+                    // Context7 GSAP docs: rAF ensures browser has painted before refresh/resume
+                    requestAnimationFrame(() => {
+                      // Resume ScrollSmoother FIRST (if it was active)
+                      if (wasSmootherActive && smootherInstanceRef.current) {
+                        smootherInstanceRef.current.paused(false);
+                      }
+
+                      // THEN refresh ScrollTrigger to recalculate positions
+                      // This allows new page's ScrollTrigger instances to work correctly
+                      ScrollTrigger.refresh();
+
+                      // CRITICAL FIX: Multi-stage refresh for production reliability
+                      // Race condition fix: Components create ScrollTriggers at different times
+                      // Production: lazy loading, code splitting, Suspense = variable timing
+                      // Solution: Multiple refreshes at strategic intervals to catch ALL ScrollTriggers
+
+                      // Stage 1: Immediate refresh for fast-mounting components (100ms)
+                      setTimeout(() => {
+                        ScrollTrigger.refresh();
+                      }, 100);
+
+                      // Stage 2: Medium delay for lazy-loaded components (300ms)
+                      setTimeout(() => {
+                        ScrollTrigger.refresh();
+                      }, 300);
+
+                      // Stage 3: Final safety net for very late components (600ms)
+                      // This ensures even the slowest-mounting ScrollTriggers work in production
+                      setTimeout(() => {
+                        ScrollTrigger.refresh();
+                      }, 600);
+                    });
+                  },
+                });
+
+                // ENTER ANIMATION: Pure fade with blur (no movement, no scale)
+                // GSAP Best Practice: Use opacity only (GPU accelerated)
+                // will-change hint for browser optimization
+                gsap.set(mainContent, { willChange: 'opacity' });
+
+                masterTimeline.fromTo(
                   mainContent,
                   {
-                    yPercent: 100, // Start below viewport
-                    opacity: 0.8,
+                    opacity: 0, // Start invisible
                   },
                   {
-                    yPercent: 0, // End at normal position
-                    opacity: 1,
-                    duration: 0.9, // Smooth, not too fast
-                    ease: 'expo.out', // Very smooth exponential easing
-                    overwrite: true, // Cancel any previous animations
-                    onComplete: () => {
-                      // CRITICAL: Use requestAnimationFrame for precise timing
-                      // Context7 GSAP docs: rAF ensures browser has painted before refresh/resume
-                      requestAnimationFrame(() => {
-                        // Resume ScrollSmoother FIRST (if it was active)
-                        if (wasSmootherActive && smootherInstanceRef.current) {
-                          smootherInstanceRef.current.paused(false);
-                        }
-
-                        // THEN refresh ScrollTrigger to recalculate positions
-                        // This allows new page's ScrollTrigger instances to work correctly
-                        ScrollTrigger.refresh();
-
-                        // CRITICAL FIX: Multi-stage refresh for production reliability
-                        // Race condition fix: Components create ScrollTriggers at different times
-                        // Production: lazy loading, code splitting, Suspense = variable timing
-                        // Solution: Multiple refreshes at strategic intervals to catch ALL ScrollTriggers
-
-                        // Stage 1: Immediate refresh for fast-mounting components (100ms)
-                        setTimeout(() => {
-                          ScrollTrigger.refresh();
-                        }, 100);
-
-                        // Stage 2: Medium delay for lazy-loaded components (300ms)
-                        setTimeout(() => {
-                          ScrollTrigger.refresh();
-                        }, 300);
-
-                        // Stage 3: Final safety net for very late components (600ms)
-                        // This ensures even the slowest-mounting ScrollTriggers work in production
-                        setTimeout(() => {
-                          ScrollTrigger.refresh();
-                        }, 600);
-                      });
-                    },
+                    opacity: 1, // Fully visible
+                    duration: 1.2, // Slower for ultra-smooth feel
+                    ease: 'power4.out', // GSAP Best Practice: power4 = butter smooth deceleration
+                    clearProps: 'willChange', // Cleanup will-change when done
                   },
+                  0, // Start immediately (no delay)
+                );
+
+                // Add subtle blur effect during transition for cinematic quality
+                // Blur starts at 8px and goes to 0 for glass-like smoothness
+                masterTimeline.fromTo(
+                  mainContent,
+                  {
+                    filter: 'blur(8px)',
+                  },
+                  {
+                    filter: 'blur(0px)',
+                    duration: 0.8,
+                    ease: 'power2.out',
+                  },
+                  0, // Run parallel with main animation
                 );
               });
             });
@@ -290,47 +314,54 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
             // CRITICAL FIX: Same double rAF for async content
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
-                gsap.fromTo(
+                const masterTimeline = gsap.timeline({
+                  onComplete: () => {
+                    requestAnimationFrame(() => {
+                      if (wasSmootherActive && smootherInstanceRef.current) {
+                        smootherInstanceRef.current.paused(false);
+                      }
+                      ScrollTrigger.refresh();
+
+                      setTimeout(() => {
+                        ScrollTrigger.refresh();
+                      }, 100);
+                      setTimeout(() => {
+                        ScrollTrigger.refresh();
+                      }, 300);
+                      setTimeout(() => {
+                        ScrollTrigger.refresh();
+                      }, 600);
+                    });
+                  },
+                });
+
+                gsap.set(smoothContentRef.current, { willChange: 'opacity' });
+
+                masterTimeline.fromTo(
                   smoothContentRef.current,
                   {
-                    yPercent: 100,
-                    opacity: 0.8,
+                    opacity: 0,
                   },
                   {
-                    yPercent: 0,
                     opacity: 1,
-                    duration: 0.9,
-                    ease: 'expo.out',
-                    overwrite: true,
-                    onComplete: () => {
-                      // CRITICAL: Use requestAnimationFrame for precise timing
-                      requestAnimationFrame(() => {
-                        // Resume ScrollSmoother FIRST (if it was active)
-                        if (wasSmootherActive && smootherInstanceRef.current) {
-                          smootherInstanceRef.current.paused(false);
-                        }
-
-                        // THEN refresh ScrollTrigger
-                        ScrollTrigger.refresh();
-
-                        // CRITICAL FIX: Multi-stage refresh for production reliability
-                        // Stage 1: Immediate refresh for fast-mounting components (100ms)
-                        setTimeout(() => {
-                          ScrollTrigger.refresh();
-                        }, 100);
-
-                        // Stage 2: Medium delay for lazy-loaded components (300ms)
-                        setTimeout(() => {
-                          ScrollTrigger.refresh();
-                        }, 300);
-
-                        // Stage 3: Final safety net for very late components (600ms)
-                        setTimeout(() => {
-                          ScrollTrigger.refresh();
-                        }, 600);
-                      });
-                    },
+                    duration: 1.2,
+                    ease: 'power4.out',
+                    clearProps: 'willChange',
                   },
+                  0,
+                );
+
+                masterTimeline.fromTo(
+                  smoothContentRef.current,
+                  {
+                    filter: 'blur(8px)',
+                  },
+                  {
+                    filter: 'blur(0px)',
+                    duration: 0.8,
+                    ease: 'power2.out',
+                  },
+                  0,
                 );
               });
             });
