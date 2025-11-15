@@ -56,6 +56,13 @@ export function BlogFeed({ posts, locale }: BlogFeedProps) {
         }
       });
 
+      // GSAP Best Practice: Refresh ScrollTrigger after all instances created
+      // This ensures accurate positioning calculations, especially after:
+      // - Async data loading (Sanity posts)
+      // - Page transitions
+      // - Suspense boundaries resolving
+      ScrollTrigger.refresh();
+
       // CRITICAL: Complete cleanup in correct order
       // 1. Kill ScrollTriggers first (removes scroll listeners)
       // 2. Kill tweens (stops any in-flight animations)
@@ -71,7 +78,7 @@ export function BlogFeed({ posts, locale }: BlogFeedProps) {
   if (!posts || posts.length === 0) {
     return (
       <div className="py-[var(--space-16)] text-center">
-        <p className="text-[var(--text-lg)] text-neutral-500">No posts found.</p>
+        <p className="text-pretty text-[var(--text-base)] text-neutral-500">No posts found.</p>
       </div>
     );
   }

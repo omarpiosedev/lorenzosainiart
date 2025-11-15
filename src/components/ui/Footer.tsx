@@ -5,7 +5,6 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useRef } from 'react';
 import { ScreenFitText } from './ScreenFitText';
 
@@ -15,15 +14,11 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 export default function Footer() {
   const t = useTranslations('Footer');
   const currentYear = new Date().getFullYear();
-  const pathname = usePathname();
 
   // Refs for GSAP animations
   const footerRef = useRef<HTMLElement>(null);
   const mainGridRef = useRef<HTMLDivElement>(null);
   const bannerRef = useRef<HTMLDivElement>(null);
-
-  // Check if we're on home page
-  const isHomePage = pathname.includes('/home') || pathname.match(/^\/(it|en)\/?$/);
 
   const pagesLinks = [
     { key: 'home', href: '/' },
@@ -38,7 +33,9 @@ export default function Footer() {
     { key: 'terms', href: '/terms' },
   ];
 
-  // GSAP entrance animations
+  // GSAP entrance animations - immediate on ALL pages (no ScrollTrigger)
+  // RATIONALE: Eliminates race condition with page transitions
+  // Footer is essential UI element that should be immediately visible
   useGSAP(
     () => {
       if (!mainGridRef.current || !bannerRef.current) {
@@ -58,60 +55,30 @@ export default function Footer() {
         force3D: true,
       });
 
-      // CRITICAL FIX: On home page, animate immediately without ScrollTrigger
-      // This prevents Footer from staying invisible after LoadingScreen
-      // because ScrollTrigger waits for scroll, but user is at top of page
-      if (isHomePage) {
-        // Immediate animation on mount (home page only)
-        const tl = gsap.timeline({ delay: 0.3 });
+      // Immediate animation on mount (all pages)
+      // Uses timeline for smooth sequencing with overlap
+      const tl = gsap.timeline({ delay: 0.3 });
 
-        tl.to(mainGridRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: 'power3.out',
-        });
+      tl.to(mainGridRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+      });
 
-        tl.to(
-          bannerRef.current,
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 1.0,
-            ease: 'power3.out',
-          },
-          '-=0.8', // Start 0.8s before previous animation ends (overlap)
-        );
-      } else {
-        // Other pages: use ScrollTrigger (animate when scrolling into view)
-        gsap.to(mainGridRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-          },
-        });
-
-        gsap.to(bannerRef.current, {
+      tl.to(
+        bannerRef.current,
+        {
           opacity: 1,
           scale: 1,
           duration: 1.0,
           ease: 'power3.out',
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-        });
-      }
+        },
+        '-=0.8', // Start 0.8s before previous animation ends (overlap)
+      );
     },
     {
       scope: footerRef,
-      dependencies: [isHomePage],
     },
   );
 
