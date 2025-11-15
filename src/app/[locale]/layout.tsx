@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import pick from 'lodash/pick';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
+import { notFound } from 'next/navigation';
 import { preload } from 'react-dom';
 import { PersonJsonLd, WebsiteJsonLd } from '@/components/seo/JsonLd';
 import { HomeLoadingProvider } from '@/contexts/HomeLoadingContext';
@@ -83,16 +84,17 @@ export default async function RootLayout(props: {
   // Extract locale from params - this is set by the [locale] route segment
   const { locale: paramLocale } = await props.params;
 
-  // CRITICAL: Validate and normalize locale to prevent hydration mismatch
-  // Always use 'it' if paramLocale is invalid or missing
-  const locale = hasLocale(routing.locales, paramLocale)
-    ? paramLocale
-    : routing.defaultLocale;
+  // CRITICAL: Validate locale and return 404 for unsupported locales
+  // Context7 next-intl Best Practice: Use hasLocale + notFound for validation
+  if (!hasLocale(routing.locales, paramLocale)) {
+    notFound();
+  }
 
-  // Set the locale for this request (required for next-intl)
-  setRequestLocale(locale);
+  // Context7 next-intl Best Practice: Enable static rendering with setRequestLocale
+  // This allows Next.js to statically generate pages for each locale
+  setRequestLocale(paramLocale);
 
-  // ✅ BEST PRACTICE: Ottieni tutti i messaggi dal server
+  // ✅ BEST PRACTICE: Get all messages from server
   const messages = await getMessages();
 
   // ✅ React 19: Preload critical resources for optimal performance
@@ -109,29 +111,29 @@ export default async function RootLayout(props: {
   // See: src/app/[locale]/home/page.tsx for home-specific preloads
 
   const navItems = [
-    { label: 'HOME', href: `/${locale}` },
-    { label: 'PORTFOLIO', href: `/${locale}/portfolio` },
-    { label: 'BLOG', href: `/${locale}/blog` },
-    { label: 'ABOUT ME', href: `/${locale}/aboutme` },
-    { label: 'CONTACT', href: `/${locale}/contact` },
+    { label: 'HOME', href: `/${paramLocale}` },
+    { label: 'PORTFOLIO', href: `/${paramLocale}/portfolio` },
+    { label: 'BLOG', href: `/${paramLocale}/blog` },
+    { label: 'ABOUT ME', href: `/${paramLocale}/aboutme` },
+    { label: 'CONTACT', href: `/${paramLocale}/contact` },
   ];
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={paramLocale} suppressHydrationWarning>
       <head>
         {/* JSON-LD Structured Data for SEO */}
-        <WebsiteJsonLd locale={locale} />
-        <PersonJsonLd locale={locale} />
+        <WebsiteJsonLd locale={paramLocale} />
+        <PersonJsonLd locale={paramLocale} />
       </head>
       <body>
-        {/* ✅ BEST PRACTICE: Passa solo i messaggi necessari per i componenti del layout
-            Questo riduce il bundle JS client e migliora le performance.
-            Include 'loading' per LoadingScreen e 'HomePage' per la pagina principale.
-            Altre pagine dovrebbero avvolgere il contenuto in NextIntlClientProvider
-            con i loro namespace specifici se necessario.
+        {/* ✅ BEST PRACTICE: Pass only necessary messages to client components
+            This reduces client JS bundle and improves performance.
+            Includes 'loading' for LoadingScreen and 'HomePage' for main page.
+            Other pages should wrap content in NextIntlClientProvider
+            with their specific namespaces if needed.
             CRITICAL: Pass locale AND timeZone explicitly to prevent hydration mismatch. */}
         <NextIntlClientProvider
-          locale={locale}
+          locale={paramLocale}
           timeZone="Europe/Rome"
           messages={pick(messages, ['loading', 'HomePage', 'Footer', 'BackgroundMusic'])}
         >
