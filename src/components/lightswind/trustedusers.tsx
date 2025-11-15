@@ -11,6 +11,7 @@ type TrustedUsersProps = {
   rating?: number;
   totalUsersText?: number;
   caption?: string;
+  clientsLabel?: string;
   className?: string;
   starColorClass?: string;
   ringColors?: string[];
@@ -25,6 +26,7 @@ export const TrustedUsers: React.FC<TrustedUsersProps> = ({
   rating = 5,
   totalUsersText = 1000, // ✅ default as number
   caption = 'Trusted by',
+  clientsLabel = 'clients',
   className = '',
   starColorClass = 'text-yellow-400',
   ringColors = [],
@@ -98,7 +100,7 @@ export const TrustedUsers: React.FC<TrustedUsersProps> = ({
               colorScheme="default"
               restartTrigger={restartTrigger}
             />
-            <span style={{ fontSize: textSize }}>clients</span>
+            <span style={{ fontSize: textSize }}>{clientsLabel}</span>
           </div>
         </div>
       </div>

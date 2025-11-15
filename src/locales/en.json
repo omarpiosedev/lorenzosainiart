@@ -108,6 +108,19 @@
         "excellence": {
           "title": "Excellence",
           "description": "Committed to delivering outstanding results that reflect your brand and vision."
+        },
+        "seamlessExperience": {
+          "title": "Seamless client experience"
+        },
+        "tailoredVision": {
+          "title": "Tailored to your vision"
+        },
+        "turnaround": {
+          "title": "7 day turnaround"
+        },
+        "trustedUsers": {
+          "caption": "satisfied",
+          "clients": "clients"
         }
       }
     },
@@ -230,6 +243,10 @@
       "instagram": "Instagram",
       "linkedin": "LinkedIn",
       "youtube": "YouTube"
+    },
+    "philosophy": {
+      "badge": "Philosophy",
+      "text": "Every frame is a canvas, and every moment holds infinite stories waiting to be told. I seek the beauty hidden in the ordinary, weaving creativity, design, and emotion into visuals that breathe life and meaning. My work is about touching hearts, sparking imagination, and turning fleeting instants into timeless art."
     }
   },
   "PortfolioPage": {

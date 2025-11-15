@@ -108,6 +108,19 @@
         "excellence": {
           "title": "Eccellenza",
           "description": "Impegnato a fornire risultati eccezionali che riflettano il tuo brand e la tua visione."
+        },
+        "seamlessExperience": {
+          "title": "Esperienza cliente impeccabile"
+        },
+        "tailoredVision": {
+          "title": "Personalizzato per la tua visione"
+        },
+        "turnaround": {
+          "title": "7 giorni di consegna"
+        },
+        "trustedUsers": {
+          "caption": "soddisfatti",
+          "clients": "clienti"
         }
       }
     },
@@ -230,6 +243,10 @@
       "instagram": "Instagram",
       "linkedin": "LinkedIn",
       "youtube": "YouTube"
+    },
+    "philosophy": {
+      "badge": "Filosofia",
+      "text": "Ogni scatto è una tela, e ogni momento racchiude infinite storie che attendono di essere raccontate. Cerco la bellezza nascosta nell'ordinario, intrecciando creatività, design ed emozione in immagini che respirano vita e significato. Il mio lavoro riguarda il toccare i cuori, accendere l'immaginazione e trasformare istanti fugaci in arte senza tempo."
     }
   },
   "PortfolioPage": {
@@ -316,9 +333,9 @@
     "title": "Blog",
     "hero": {
       "badge": "Blog",
-      "title": "Behind the lens",
-      "subtitle1": "Thoughts, insights, and stories from my photography journey.",
-      "subtitle2": "Take a peek into my creative process and recent projects."
+      "title": "Dietro l'obiettivo",
+      "subtitle1": "Pensieri, intuizioni e storie dal mio percorso fotografico.",
+      "subtitle2": "Dai un'occhiata al mio processo creativo e ai progetti recenti."
     }
   },
   "AboutPage": {

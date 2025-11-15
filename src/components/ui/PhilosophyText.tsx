@@ -3,6 +3,7 @@
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
 import GSAPScrollReveal from '@/components/ui/GSAPScrollReveal';
 
@@ -10,6 +11,7 @@ import GSAPScrollReveal from '@/components/ui/GSAPScrollReveal';
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function PhilosophyText() {
+  const t = useTranslations('HomePage.philosophy');
   const containerRef = useRef<HTMLDivElement>(null);
 
   // GSAP/React best practice: useGSAP hook with ScrollTrigger
@@ -78,7 +80,7 @@ export default function PhilosophyText() {
         className="bg-white/90 text-black rounded-full border border-black/10 inline-flex items-center justify-center"
         style={{ padding: '8px 16px' }}
       >
-        <span className="text-sm font-medium whitespace-nowrap">Philosophy</span>
+        <span className="text-sm font-medium whitespace-nowrap">{t('badge')}</span>
       </div>
 
       {/* Main text with GSAP ScrollReveal animation */}
@@ -90,7 +92,7 @@ export default function PhilosophyText() {
           ease="power1.out"
           scrubDuration={1.5}
         >
-          Every frame is a canvas, and every moment holds infinite stories waiting to be told. I seek the beauty hidden in the ordinary, weaving creativity, design, and emotion into visuals that breathe life and meaning. My work is about touching hearts, sparking imagination, and turning fleeting instants into timeless art.
+          {t('text')}
         </GSAPScrollReveal>
       </div>
     </div>

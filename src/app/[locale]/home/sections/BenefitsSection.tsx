@@ -641,9 +641,7 @@ export default function BenefitsSection() {
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
-              Seamless client
-              <br />
-              experience
+              {t('benefits.seamlessExperience.title')}
             </h3>
           </div>
         </div>
@@ -703,9 +701,7 @@ export default function BenefitsSection() {
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
-              Tailored to
-              <br />
-              your vision
+              {t('benefits.tailoredVision.title')}
             </h3>
           </div>
 
@@ -734,7 +730,8 @@ export default function BenefitsSection() {
               avatars={[]}
               rating={5}
               totalUsersText={300}
-              caption="satisfied"
+              caption={t('benefits.trustedUsers.caption')}
+              clientsLabel={t('benefits.trustedUsers.clients')}
               className="text-center"
               starColorClass="text-orange-500"
               ringColors={[]}
@@ -768,7 +765,7 @@ export default function BenefitsSection() {
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
-              7 day turnaround
+              {t('benefits.turnaround.title')}
             </h3>
           </div>
 
@@ -1048,9 +1045,7 @@ export default function BenefitsSection() {
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
                 >
-                  Seamless client
-                  <br />
-                  experience
+                  {t('benefits.seamlessExperience.title')}
                 </h3>
               </div>
             </div>
@@ -1099,9 +1094,7 @@ export default function BenefitsSection() {
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
                 >
-                  Tailored to
-                  <br />
-                  your vision
+                  {t('benefits.tailoredVision.title')}
                 </h3>
               </div>
 
@@ -1122,7 +1115,8 @@ export default function BenefitsSection() {
                   avatars={[]}
                   rating={5}
                   totalUsersText={300}
-                  caption="satisfied"
+                  caption={t('benefits.trustedUsers.caption')}
+                  clientsLabel={t('benefits.trustedUsers.clients')}
                   className="text-center"
                   starColorClass="text-orange-500"
                   ringColors={[]}
@@ -1148,7 +1142,7 @@ export default function BenefitsSection() {
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
                 >
-                  7 day turnaround
+                  {t('benefits.turnaround.title')}
                 </h3>
               </div>
 

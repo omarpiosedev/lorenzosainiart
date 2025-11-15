@@ -1,6 +1,7 @@
 'use client';
 
 import type { LoadingScreenHandle } from '@/components/ui/LoadingScreen';
+import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePathname } from 'next/navigation';
@@ -10,7 +11,7 @@ import { LoadingScreen } from '@/components/ui';
 import { useHomeLoading } from '@/contexts/HomeLoadingContext';
 
 // Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 type HomeClientProps = {
   children: React.ReactNode;
@@ -63,7 +64,8 @@ export default function HomeClient({ children }: HomeClientProps) {
   }, [pathname]);
 
   // Show loading screen on mount, then hide it after animation
-  useLayoutEffect(() => {
+  // BEST PRACTICE: Use useGSAP for ScrollTrigger.refresh() to ensure proper cleanup
+  useGSAP(() => {
     // CRITICAL: Save current scroll position before locking
     previousScrollY.current = window.scrollY;
 
@@ -83,7 +85,6 @@ export default function HomeClient({ children }: HomeClientProps) {
     document.body.style.top = '0';
     document.body.style.width = '100%';
 
-    let refreshTimer: NodeJS.Timeout | null = null;
     let contentVisibilityTimer: NodeJS.Timeout | null = null;
 
     const hideLoadingScreen = async () => {
@@ -112,12 +113,31 @@ export default function HomeClient({ children }: HomeClientProps) {
       setIsHomeLoading(false);
 
       // CRITICAL: Refresh all ScrollTrigger instances after loading completes
+      // Context7 GSAP Best Practice: Use requestAnimationFrame for precise timing
       // This recalculates all scroll-based animations with correct layout dimensions
-      // Without this, animations break because ScrollTrigger was initialized while
-      // loading screen covered the page (wrong calculations)
-      refreshTimer = setTimeout(() => {
+      requestAnimationFrame(() => {
         ScrollTrigger.refresh();
-      }, 100); // Small delay to ensure DOM is fully painted
+
+        // CRITICAL FIX: Multi-stage refresh for production reliability
+        // Race condition fix: Components create ScrollTriggers at different times
+        // Production: lazy loading, code splitting, Suspense = variable timing
+        // Solution: Multiple refreshes at strategic intervals to catch ALL ScrollTriggers
+
+        // Stage 1: Immediate refresh for fast-mounting components (100ms)
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 100);
+
+        // Stage 2: Medium delay for lazy-loaded components (300ms)
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 300);
+
+        // Stage 3: Final safety net for very late components (600ms)
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 600);
+      });
     };
 
     hideLoadingScreen();
@@ -130,14 +150,12 @@ export default function HomeClient({ children }: HomeClientProps) {
       document.body.style.width = originalWidth;
       // CRITICAL: Reset loading state when navigating away from home
       setIsHomeLoading(false);
-      if (refreshTimer) {
-        clearTimeout(refreshTimer);
-      }
       if (contentVisibilityTimer) {
         clearTimeout(contentVisibilityTimer);
       }
+      // ScrollTrigger cleanup is automatic with useGSAP
     };
-  }, [setIsHomeLoading]);
+  }, { dependencies: [setIsHomeLoading] });
 
   // CRITICAL: Hydration Guard Pattern - prevents footer flash
   // Return ONLY LoadingScreen during SSR/hydration, children render AFTER mount

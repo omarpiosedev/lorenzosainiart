@@ -40,9 +40,13 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
   const isVideoTransitionActiveRef = useRef(false);
   const targetPathRef = useRef<string | null>(null);
 
+  // BEST PRACTICE: Use contextSafe for GSAP animations in event handlers
+  const { contextSafe } = useGSAP({ scope: videoTransitionRef });
+
   // Listen for video transition events from child components
   useEffect(() => {
-    const handleVideoTransition = (event: CustomEvent<{ targetUrl: string }>) => {
+    // Context7 GSAP Best Practice: Wrap GSAP animations with contextSafe
+    const handleVideoTransition = contextSafe((event: CustomEvent<{ targetUrl: string }>) => {
       const { targetUrl } = event.detail;
 
       if (!videoRef.current || !videoTransitionRef.current) {
@@ -104,7 +108,7 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
           // If autoplay fails, navigate immediately
           router.push(targetUrl);
         });
-    };
+    });
 
     window.addEventListener(
       'videoTransition' as any,
@@ -132,11 +136,12 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
         gsap.killTweensOf(videoTransitionRef.current);
       }
     };
-  }, [router]);
+  }, [router, contextSafe]);
 
   // CRITICAL: Video transition overlay fade-out
   // Only fade out when new page pathname is confirmed and fully rendered
-  useEffect(() => {
+  // BEST PRACTICE: Use useGSAP for GSAP animations with dependencies
+  useGSAP(() => {
     // Check if video transition is active and pathname matches target
     if (!isVideoTransitionActiveRef.current || !targetPathRef.current) {
       return;
@@ -177,7 +182,7 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
         });
       });
     });
-  }, [pathname]);
+  }, { dependencies: [pathname], scope: videoTransitionRef });
 
   // Page transition: animate content on route change
   useGSAP(
@@ -199,16 +204,6 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
         previousPathnameRef.current = pathname;
         return;
       }
-
-      // CRITICAL iOS FIX: Kill all ScrollTrigger instances before page transition
-      // This prevents ScrollTrigger from interfering with navigation animations
-      ScrollTrigger.getAll().forEach((trigger) => {
-        try {
-          trigger.kill();
-        } catch {
-          // Silently ignore if trigger is already killed
-        }
-      });
 
       // CRITICAL: Pause ScrollSmoother during page transition
       // This prevents ScrollSmoother from interfering with the page transition animation
@@ -234,77 +229,113 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
           const mainContent = smoothContentRef.current.querySelector('[data-main-content]');
 
           if (mainContent) {
-            // Animate ONLY main content, not footer
-            gsap.fromTo(
-              mainContent,
-              {
-                yPercent: 100, // Start below viewport
-                opacity: 0.8,
-              },
-              {
-                yPercent: 0, // End at normal position
-                opacity: 1,
-                duration: 0.9, // Smooth, not too fast
-                ease: 'expo.out', // Very smooth exponential easing
-                overwrite: true, // Cancel any previous animations
-                onComplete: () => {
-                  // CRITICAL: Use requestAnimationFrame for precise timing
-                  // Context7 GSAP docs: rAF ensures browser has painted before refresh/resume
-                  requestAnimationFrame(() => {
-                    // Resume ScrollSmoother FIRST (if it was active)
-                    if (wasSmootherActive && smootherInstanceRef.current) {
-                      smootherInstanceRef.current.paused(false);
-                    }
+            // CRITICAL FIX: Wait for async content (Suspense boundaries) to resolve
+            // Blog/About pages use async server components that need time to render
+            // Delay animation start to ensure content is in DOM before animating
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                // Double rAF ensures React has painted the new content
+                // Animate ONLY main content, not footer
+                gsap.fromTo(
+                  mainContent,
+                  {
+                    yPercent: 100, // Start below viewport
+                    opacity: 0.8,
+                  },
+                  {
+                    yPercent: 0, // End at normal position
+                    opacity: 1,
+                    duration: 0.9, // Smooth, not too fast
+                    ease: 'expo.out', // Very smooth exponential easing
+                    overwrite: true, // Cancel any previous animations
+                    onComplete: () => {
+                      // CRITICAL: Use requestAnimationFrame for precise timing
+                      // Context7 GSAP docs: rAF ensures browser has painted before refresh/resume
+                      requestAnimationFrame(() => {
+                        // Resume ScrollSmoother FIRST (if it was active)
+                        if (wasSmootherActive && smootherInstanceRef.current) {
+                          smootherInstanceRef.current.paused(false);
+                        }
 
-                    // THEN refresh ScrollTrigger to recalculate positions
-                    // This allows new page's ScrollTrigger instances to work correctly
-                    ScrollTrigger.refresh();
+                        // THEN refresh ScrollTrigger to recalculate positions
+                        // This allows new page's ScrollTrigger instances to work correctly
+                        ScrollTrigger.refresh();
 
-                    // CRITICAL FIX: Second delayed refresh to catch late-mounting ScrollTriggers
-                    // Race condition fix: Some components create ScrollTriggers after initial refresh
-                    // This second refresh ensures all ScrollTriggers (especially from useGSAP hooks)
-                    // are properly initialized after client-side navigation
-                    setTimeout(() => {
-                      ScrollTrigger.refresh();
-                    }, 100); // 100ms delay ensures all components are mounted and useGSAP hooks executed
-                  });
-                },
-              },
-            );
+                        // CRITICAL FIX: Multi-stage refresh for production reliability
+                        // Race condition fix: Components create ScrollTriggers at different times
+                        // Production: lazy loading, code splitting, Suspense = variable timing
+                        // Solution: Multiple refreshes at strategic intervals to catch ALL ScrollTriggers
+
+                        // Stage 1: Immediate refresh for fast-mounting components (100ms)
+                        setTimeout(() => {
+                          ScrollTrigger.refresh();
+                        }, 100);
+
+                        // Stage 2: Medium delay for lazy-loaded components (300ms)
+                        setTimeout(() => {
+                          ScrollTrigger.refresh();
+                        }, 300);
+
+                        // Stage 3: Final safety net for very late components (600ms)
+                        // This ensures even the slowest-mounting ScrollTriggers work in production
+                        setTimeout(() => {
+                          ScrollTrigger.refresh();
+                        }, 600);
+                      });
+                    },
+                  },
+                );
+              });
+            });
           } else {
             // Fallback: animate entire content if data-main-content not found
-            gsap.fromTo(
-              smoothContentRef.current,
-              {
-                yPercent: 100,
-                opacity: 0.8,
-              },
-              {
-                yPercent: 0,
-                opacity: 1,
-                duration: 0.9,
-                ease: 'expo.out',
-                overwrite: true,
-                onComplete: () => {
-                  // CRITICAL: Use requestAnimationFrame for precise timing
-                  requestAnimationFrame(() => {
-                    // Resume ScrollSmoother FIRST (if it was active)
-                    if (wasSmootherActive && smootherInstanceRef.current) {
-                      smootherInstanceRef.current.paused(false);
-                    }
+            // CRITICAL FIX: Same double rAF for async content
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                gsap.fromTo(
+                  smoothContentRef.current,
+                  {
+                    yPercent: 100,
+                    opacity: 0.8,
+                  },
+                  {
+                    yPercent: 0,
+                    opacity: 1,
+                    duration: 0.9,
+                    ease: 'expo.out',
+                    overwrite: true,
+                    onComplete: () => {
+                      // CRITICAL: Use requestAnimationFrame for precise timing
+                      requestAnimationFrame(() => {
+                        // Resume ScrollSmoother FIRST (if it was active)
+                        if (wasSmootherActive && smootherInstanceRef.current) {
+                          smootherInstanceRef.current.paused(false);
+                        }
 
-                    // THEN refresh ScrollTrigger
-                    ScrollTrigger.refresh();
+                        // THEN refresh ScrollTrigger
+                        ScrollTrigger.refresh();
 
-                    // CRITICAL FIX: Second delayed refresh to catch late-mounting ScrollTriggers
-                    // Race condition fix: Some components create ScrollTriggers after initial refresh
-                    setTimeout(() => {
-                      ScrollTrigger.refresh();
-                    }, 100); // 100ms delay ensures all components are mounted and useGSAP hooks executed
-                  });
-                },
-              },
-            );
+                        // CRITICAL FIX: Multi-stage refresh for production reliability
+                        // Stage 1: Immediate refresh for fast-mounting components (100ms)
+                        setTimeout(() => {
+                          ScrollTrigger.refresh();
+                        }, 100);
+
+                        // Stage 2: Medium delay for lazy-loaded components (300ms)
+                        setTimeout(() => {
+                          ScrollTrigger.refresh();
+                        }, 300);
+
+                        // Stage 3: Final safety net for very late components (600ms)
+                        setTimeout(() => {
+                          ScrollTrigger.refresh();
+                        }, 600);
+                      });
+                    },
+                  },
+                );
+              });
+            });
           }
         } catch {
           // Silently ignore if elements are no longer in DOM
