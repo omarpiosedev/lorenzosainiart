@@ -325,16 +325,66 @@
     "title": "About Me",
     "header": {
       "name": "Lorenzo Saini",
-      "role": "Photographer"
+      "role1": "Photographer",
+      "role2": "Videomaker"
     },
     "badge": "About me",
     "heading": "Hey, I'm Lorenzo Saini",
     "description": "I'm a photographer focused on fashion, portrait, and commercial work — blending natural light with intentional storytelling.",
     "cta": "View portfolio",
-    "contact": "Contact"
+    "contact": "Contact",
+    "bio": {
+      "dropCap": "M",
+      "paragraph1": "y name is Lorenzo Saini — a photographer and videomaker drawn to quiet moments, clean composition, and the kind of images that leave room to feel something. I shoot portraits, fashion, and commercial work with a focus on light, mood, and story.",
+      "paragraph2": "My approach is simple: create thoughtful images and videos that feel honest, intentional, and lasting. Whether it's a personal project or a brand campaign, I aim to deliver work that doesn't just look good — it holds attention. And I'd love to create something meaningful with you next."
+    },
+    "testimonial": {
+      "quote": "Working with Lorenzo was one of the smoothest creative collaborations we've had. He brought clarity to the concept, calm to the process, and a sharp eye to every detail. The final images were more than we hoped for — refined, natural, and totally aligned with our brand. We'll absolutely be working with him again.",
+      "name": "Taylor Morgan",
+      "company": "Field & Form Studio",
+      "avatar": "/assets/images/testimonials/placeholder-avatar.jpg"
+    }
   },
   "ContactPage": {
-    "title": "Contact"
+    "title": "Contact",
+    "badge": "Contact",
+    "heading": "Let's create something together",
+    "description": "Have a project in mind? Whether it's fashion, commercial, or portrait work, I'd love to hear about it.",
+    "form": {
+      "name": {
+        "label": "Full Name",
+        "placeholder": "John Doe",
+        "error": "Please enter your name"
+      },
+      "email": {
+        "label": "Email Address",
+        "placeholder": "john@example.com",
+        "error": "Please enter a valid email"
+      },
+      "subject": {
+        "label": "Subject",
+        "placeholder": "Project inquiry",
+        "error": "Please enter a subject"
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Tell me about your project...",
+        "error": "Please enter your message",
+        "help": "Describe your vision and I'll get back to you within 24 hours"
+      },
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent! I'll get back to you soon.",
+      "error": "Something went wrong. Please try again."
+    },
+    "info": {
+      "title": "Get in Touch",
+      "email": "Email",
+      "phone": "Phone",
+      "social": "Follow Me",
+      "availability": "Available for work",
+      "response": "I typically respond within 24 hours"
+    }
   },
   "loading": {
     "message": "Loading..."

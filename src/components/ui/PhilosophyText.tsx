@@ -78,13 +78,13 @@ export default function PhilosophyText() {
         className="bg-white/90 text-black rounded-full border border-black/10 inline-flex items-center justify-center"
         style={{ padding: '8px 16px' }}
       >
-        <span className="text-base font-medium">Philosophy</span>
+        <span className="text-sm font-medium whitespace-nowrap">Philosophy</span>
       </div>
 
       {/* Main text with GSAP ScrollReveal animation */}
       <div className="max-w-4xl mx-auto text-center">
         <GSAPScrollReveal
-          className="text-2xl md:text-3xl lg:text-4xl leading-tight text-black tracking-wide font-semibold"
+          className="text-xl md:text-2xl lg:text-3xl leading-tight text-black tracking-wide font-semibold text-wrap-pretty line-clamp-3 md:line-clamp-none"
           staggerDelay={0.08}
           duration={1.5}
           ease="power1.out"

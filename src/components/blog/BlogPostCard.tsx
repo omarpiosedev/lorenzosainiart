@@ -218,11 +218,11 @@ export function BlogPostCard({ post, locale }: BlogPostCardProps) {
             />
           </div>
         )}
-        <div className="flex-1">
-          <h3 className="text-[var(--text-base)] font-semibold text-neutral-900">
+        <div className="flex-1 min-w-0">
+          <h3 className="truncate text-[var(--text-base)] font-semibold text-neutral-900">
             {post.author.name}
           </h3>
-          <p className="text-[var(--text-sm)] text-neutral-500">
+          <p className="whitespace-nowrap text-[var(--text-sm)] text-neutral-500">
             {formattedDate}
           </p>
         </div>

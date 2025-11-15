@@ -14,16 +14,16 @@ export function BlogHero() {
         </div>
 
         {/* Title */}
-        <h1 className="mb-[var(--space-4)] text-center font-lavener text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-[1.1] tracking-tight text-neutral-900">
+        <h1 className="heading-compact mb-[var(--space-4)] text-balance text-center font-lavener text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.1] tracking-tight text-neutral-900">
           {t('title')}
         </h1>
 
         {/* Subtitle */}
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-[var(--text-lg)] leading-relaxed text-neutral-600">
+          <p className="text-pretty text-[var(--text-base)] leading-relaxed text-neutral-600">
             {t('subtitle1')}
           </p>
-          <p className="mt-[var(--space-2)] text-[var(--text-lg)] leading-relaxed text-neutral-600">
+          <p className="text-pretty mt-[var(--space-2)] text-[var(--text-base)] leading-relaxed text-neutral-600">
             {t('subtitle2')}
           </p>
         </div>

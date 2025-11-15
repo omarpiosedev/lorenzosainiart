@@ -212,7 +212,7 @@ export default function ServicesSection() {
                 {/* Title - Large */}
                 <h1
                   ref={titleRef}
-                  className="text-4xl md:text-5xl lg:text-6xl font-light text-black leading-[1.1]"
+                  className="text-3xl md:text-4xl lg:text-5xl font-light text-black leading-[1.1] text-wrap-balanced heading-compact"
                   style={{
                     fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif',
                     letterSpacing: '-0.01em',
@@ -224,7 +224,7 @@ export default function ServicesSection() {
                 {/* Subtitle */}
                 <p
                   ref={subtitleRef}
-                  className="text-base md:text-lg text-black/60 leading-relaxed max-w-lg"
+                  className="text-sm md:text-base lg:text-lg text-black/60 leading-relaxed max-w-lg text-wrap-pretty line-clamp-4 md:line-clamp-none"
                   style={{
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                     fontWeight: 300,
@@ -270,7 +270,7 @@ export default function ServicesSection() {
 
                 {/* Services Title */}
                 <h2
-                  className="text-sm font-medium tracking-wide uppercase text-black/70 mb-6 lg:mb-10"
+                  className="text-sm font-medium tracking-wide uppercase text-black/70 mb-6 lg:mb-10 whitespace-nowrap"
                   style={{
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
@@ -298,7 +298,7 @@ export default function ServicesSection() {
                       {/* Service Text */}
                       <div className="flex-1 pt-0.5">
                         <span
-                          className="text-lg md:text-xl text-black/80 font-light leading-relaxed"
+                          className="text-base md:text-lg lg:text-xl text-black/80 font-light leading-relaxed text-wrap-pretty"
                           style={{
                             fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                           }}
@@ -333,13 +333,13 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-start pt-5 md:pt-12">
             <h2
-              className="text-[40px] md:text-3xl lg:text-4xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3"
+              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('photography.title')}
             </h2>
             <p
-              className="text-[16px] md:text-sm lg:text-base text-black/80 leading-snug md:leading-relaxed font-light"
+              className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed font-light text-wrap-pretty line-clamp-3 md:line-clamp-4"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('photography.description')}
@@ -382,13 +382,13 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-start items-end text-right pt-5 md:pt-12">
             <h2
-              className="text-[40px] text-sm md:text-3xl lg:text-4xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3"
+              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('videomaking.title')}
             </h2>
             <p
-              className="text-[16px] md:text-sm lg:text-base text-black/80 leading-snug md:leading-relaxed font-light"
+              className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed font-light text-wrap-pretty line-clamp-3 md:line-clamp-4"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('videomaking.description')}
@@ -450,13 +450,13 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-end pb-5 md:pb-12">
             <h2
-              className="text-[40px] md:text-3xl lg:text-4xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3"
+              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('dronefootage.title')}
             </h2>
             <p
-              className="text-[16px] md:text-sm lg:text-base text-black/80 leading-snug md:leading-relaxed font-light"
+              className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed font-light text-wrap-pretty line-clamp-3 md:line-clamp-4"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('dronefootage.description')}

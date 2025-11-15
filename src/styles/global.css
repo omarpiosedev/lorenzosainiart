@@ -369,6 +369,157 @@ section.w-screen {
   animation: var(--animate-marquee-vertical);
 }
 
+/* ========== MULTILINGUAL LAYOUT UTILITIES ========== */
+/* Language-agnostic utilities for handling variable text length across locales */
+
+/* Text Truncation & Line Clamping */
+.text-truncate-safe {
+  /* Single-line truncation with ellipsis - safe for all languages */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-clamp-2 {
+  /* Multi-line truncation (2 lines) - uses modern line-clamp */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-clamp-3 {
+  /* Multi-line truncation (3 lines) */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Word Breaking & Wrapping for Long Text */
+.text-wrap-balanced {
+  /* Balanced text wrapping - prevents orphans, better for headings */
+  text-wrap: balance;
+}
+
+.text-wrap-pretty {
+  /* Pretty wrapping - optimizes line breaks for readability */
+  text-wrap: pretty;
+}
+
+.text-break-words {
+  /* Break long words at any point to prevent overflow */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Flexible Button Sizing */
+.btn-fluid {
+  /* Fluid button - adapts to text length automatically */
+  min-width: fit-content;
+  width: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  white-space: nowrap;
+}
+
+.btn-fluid-wrap {
+  /* Fluid button that can wrap to multiple lines if needed */
+  min-width: fit-content;
+  width: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  white-space: normal;
+  text-align: center;
+}
+
+/* Responsive Container Queries */
+.container-adaptive {
+  /* Container that adapts to content width */
+  width: 100%;
+  max-width: 100%;
+  min-width: 0; /* Critical for flex children to shrink */
+}
+
+/* Grid & Flex Utilities for Dynamic Content */
+.grid-auto-fit {
+  /* Auto-fit grid - columns adapt to content and available space */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min-col-width, 200px)), 1fr));
+  gap: var(--grid-gap, 1rem);
+}
+
+.grid-auto-fill {
+  /* Auto-fill grid - fills space even with empty columns */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--min-col-width, 200px)), 1fr));
+  gap: var(--grid-gap, 1rem);
+}
+
+.flex-adaptive {
+  /* Flex container that adapts to content size */
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--flex-gap, 1rem);
+}
+
+.flex-adaptive > * {
+  /* Flex children grow/shrink based on content */
+  flex: 1 1 auto;
+  min-width: 0; /* Allows shrinking below content size */
+}
+
+/* Language-Specific Overrides */
+/* Italian text tends to be 20-30% longer than English */
+[lang='it'] .text-compact {
+  /* Slightly reduce font size for Italian to fit longer text */
+  font-size: 0.95em;
+  letter-spacing: -0.01em;
+}
+
+[lang='it'] .heading-compact {
+  /* Compact headings for Italian */
+  font-size: 0.92em;
+}
+
+/* Responsive Text Sizing */
+@media (max-width: 767px) {
+  /* Mobile: reduce text size for longer translations */
+  [lang='it'] .mobile-compact {
+    font-size: 0.9em;
+  }
+}
+
+/* Utility: Prevent Layout Shift */
+.min-h-touch-target {
+  /* Minimum height for touch targets (accessibility + stability) */
+  min-height: 44px;
+}
+
+.min-w-touch-target {
+  /* Minimum width for touch targets */
+  min-width: 44px;
+}
+
+/* Ellipsis with Tooltip Support */
+.ellipsis-hint {
+  /* Shows full text on hover - requires title attribute */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.ellipsis-hint:hover {
+  overflow: visible;
+  white-space: normal;
+  position: relative;
+  z-index: var(--z-modal);
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);

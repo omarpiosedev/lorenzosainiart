@@ -61,7 +61,7 @@ function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
         type="button"
       >
         <span
-          className="text-base md:text-lg font-normal text-black pr-6"
+          className="text-base md:text-lg font-normal text-black pr-6 text-wrap-balanced line-clamp-2 md:line-clamp-none"
           style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
         >
           {question}
@@ -96,6 +96,7 @@ function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
       >
         <div className="pt-4 text-xs md:text-sm text-gray-700 leading-relaxed">
           <p
+            className="text-wrap-pretty"
             style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
           >
             {answer}
@@ -196,13 +197,13 @@ export default function FAQSection() {
                 {t('faqLabel')}
               </ShimmerLabel>
               <h2
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight mb-4"
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight mb-4 text-wrap-balanced heading-compact"
                 style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
               >
                 {t('title')}
               </h2>
               <p
-                className="text-base md:text-lg text-gray-700 leading-relaxed"
+                className="text-sm md:text-base text-gray-700 leading-relaxed text-wrap-pretty line-clamp-3 md:line-clamp-none"
                 style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
               >
                 {t('subtitle')}

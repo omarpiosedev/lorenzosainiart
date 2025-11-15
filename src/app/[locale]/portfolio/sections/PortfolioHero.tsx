@@ -620,12 +620,12 @@ export default function PortfolioHero() {
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-30 px-4">
         <h1
           ref={titleRef}
-          className="text-black text-center leading-[1.1] mb-6"
+          className="text-black text-center leading-[1.1] mb-6 text-wrap-balanced heading-compact"
           style={{
             fontFamily: '"Cormorant Garamond", serif',
             fontWeight: 300,
             letterSpacing: '0.05em',
-            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
             textShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             opacity: 0,
           }}
@@ -636,8 +636,9 @@ export default function PortfolioHero() {
         {/* Subtitle */}
         <div
           ref={subtitleRef}
+          className="text-wrap-pretty"
           style={{
-            fontSize: 'clamp(1rem, 2vw, 1.5rem)',
+            fontSize: 'clamp(0.875rem, 1.75vw, 1.25rem)',
             opacity: 0,
           }}
         >
@@ -659,18 +660,17 @@ export default function PortfolioHero() {
         <button
           type="button"
           onClick={() => handleButtonClick('photography')}
-          className="group relative overflow-hidden rounded-full border-2 border-white/30 backdrop-blur-sm transition-all duration-500 hover:border-white/60 hover:scale-105"
+          className="group relative overflow-hidden rounded-full border-2 border-white/30 backdrop-blur-sm transition-all duration-500 hover:border-white/60 hover:scale-105 btn-fluid min-w-fit whitespace-nowrap"
           style={{
             padding: 'clamp(1rem, 2vw, 1.5rem) clamp(2rem, 4vw, 3rem)',
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            minWidth: 'clamp(10rem, 20vw, 15rem)',
           }}
         >
           <span
             className="relative z-10 text-white transition-colors duration-500 group-hover:text-white"
             style={{
               fontFamily: '"Cormorant Garamond", serif',
-              fontSize: 'clamp(1.2rem, 2.5vw, 2rem)',
+              fontSize: 'clamp(1rem, 2.2vw, 1.75rem)',
               fontWeight: 300,
               letterSpacing: '0.05em',
             }}
@@ -684,18 +684,17 @@ export default function PortfolioHero() {
         <button
           type="button"
           onClick={() => handleButtonClick('video')}
-          className="group relative overflow-hidden rounded-full border-2 border-white/30 backdrop-blur-sm transition-all duration-500 hover:border-white/60 hover:scale-105"
+          className="group relative overflow-hidden rounded-full border-2 border-white/30 backdrop-blur-sm transition-all duration-500 hover:border-white/60 hover:scale-105 btn-fluid min-w-fit whitespace-nowrap"
           style={{
             padding: 'clamp(1rem, 2vw, 1.5rem) clamp(2rem, 4vw, 3rem)',
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            minWidth: 'clamp(10rem, 20vw, 15rem)',
           }}
         >
           <span
             className="relative z-10 text-white transition-colors duration-500 group-hover:text-white"
             style={{
               fontFamily: '"Cormorant Garamond", serif',
-              fontSize: 'clamp(1.2rem, 2.5vw, 2rem)',
+              fontSize: 'clamp(1rem, 2.2vw, 1.75rem)',
               fontWeight: 300,
               letterSpacing: '0.05em',
             }}

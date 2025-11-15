@@ -168,13 +168,13 @@ function ProjectCard({ title, date, category, imageSrc, onHover, onLeave, infoRe
       <div ref={infoRef} className="mt-4 flex items-start justify-between">
         <div>
           <h3
-            className="text-lg md:text-xl font-medium text-black mb-1"
+            className="text-base md:text-lg font-medium text-black mb-1 text-wrap-balanced line-clamp-2"
             style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
           >
             {title}
           </h3>
           <p
-            className="text-sm text-gray-500"
+            className="text-xs text-gray-500 text-wrap-pretty line-clamp-2 md:line-clamp-3"
             style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
           >
             {date}
@@ -332,13 +332,13 @@ export default function PortfolioSection() {
               {t('portfolioLabel')}
             </ShimmerLabel>
             <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight mb-4"
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight mb-4 text-wrap-balanced heading-compact"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('title')}
             </h2>
             <p
-              className="text-base md:text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto"
+              className="text-sm md:text-base text-gray-600 leading-relaxed max-w-3xl mx-auto text-wrap-pretty line-clamp-3 md:line-clamp-none"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('subtitle')}
@@ -348,7 +348,7 @@ export default function PortfolioSection() {
           {/* Featured On Section */}
           <div ref={featuredRef} className="mb-0 text-center">
             <p
-              className="text-sm text-gray-500 mb-3"
+              className="text-xs text-gray-500 mb-3 text-wrap-pretty line-clamp-3 md:line-clamp-none"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('featuredOn')}

@@ -8,29 +8,74 @@ export const TextGenerateEffect = ({
   className,
   filter = true,
   duration = 0.5,
+  staggerDelay = 0.2,
+  initialDelay = 0,
+  animateBy = 'word',
 }: {
   words: string;
   className?: string;
   filter?: boolean;
   duration?: number;
+  staggerDelay?: number;
+  initialDelay?: number;
+  animateBy?: 'word' | 'letter';
 }) => {
   const [scope, animate] = useAnimate();
-  const wordsArray = words.split(' ');
+
   useEffect(() => {
-    animate(
-      'span',
-      {
-        opacity: 1,
-        filter: filter ? 'blur(0px)' : 'none',
-      },
-      {
-        duration: duration || 1,
-        delay: stagger(0.2),
-      },
-    );
+    const timer = setTimeout(() => {
+      animate(
+        'span',
+        {
+          opacity: 1,
+          filter: filter ? 'blur(0px)' : 'none',
+        },
+        {
+          duration: duration || 1,
+          delay: stagger(staggerDelay),
+        },
+      );
+    }, initialDelay * 1000);
+
+    return () => clearTimeout(timer);
   }, [scope.current]);
 
   const renderWords = () => {
+    if (animateBy === 'letter') {
+      const wordsArray = words.split(' ');
+      return (
+        <motion.div ref={scope} className="flex flex-wrap">
+          {wordsArray.map((word, wordIdx) => (
+            <span key={wordIdx} className="inline-block whitespace-nowrap">
+              {word.split('').map((letter, letterIdx) => (
+                <motion.span
+                  key={`${wordIdx}-${letterIdx}`}
+                  className="dark:text-white text-black opacity-0 inline-block"
+                  style={{
+                    filter: filter ? 'blur(10px)' : 'none',
+                  }}
+                >
+                  {letter}
+                </motion.span>
+              ))}
+              {wordIdx < wordsArray.length - 1 && (
+                <motion.span
+                  key={`${wordIdx}-space`}
+                  className="dark:text-white text-black opacity-0 inline-block"
+                  style={{
+                    filter: filter ? 'blur(10px)' : 'none',
+                  }}
+                >
+                  {'\u00A0'}
+                </motion.span>
+              )}
+            </span>
+          ))}
+        </motion.div>
+      );
+    }
+
+    const wordsArray = words.split(' ');
     return (
       <motion.div ref={scope}>
         {wordsArray.map((word, idx) => {
@@ -52,12 +97,8 @@ export const TextGenerateEffect = ({
   };
 
   return (
-    <div className={cn('font-bold', className)}>
-      <div className="mt-4">
-        <div className=" dark:text-white text-black text-2xl leading-snug tracking-wide">
-          {renderWords()}
-        </div>
-      </div>
+    <div className={cn('font-bold dark:text-white text-black', className)}>
+      {renderWords()}
     </div>
   );
 };

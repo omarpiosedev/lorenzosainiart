@@ -61,19 +61,19 @@ const CAROUSEL_CONFIG = {
 // Text configuration with responsive scaling
 const TEXT_CONFIG = {
   mobile: {
-    fontSize: 'clamp(2.5rem, 12vw, 4rem)', // 40px - 64px
+    fontSize: 'clamp(2rem, 10vw, 3.5rem)', // Reduced one level: 32px - 56px
     padding: '1rem',
     buttonSize: 'clamp(50px, 12vw, 60px)',
     gap: 'clamp(1rem, 4vw, 1.5rem)',
   },
   tablet: {
-    fontSize: 'clamp(4rem, 14vw, 8rem)', // 64px - 128px
+    fontSize: 'clamp(3.5rem, 12vw, 7rem)', // Reduced one level: 56px - 112px
     padding: '2rem',
     buttonSize: 'clamp(60px, 10vw, 70px)',
     gap: 'clamp(1.5rem, 5vw, 2rem)',
   },
   desktop: {
-    fontSize: 'clamp(6rem, 16vw, 16rem)', // 96px - 256px
+    fontSize: 'clamp(5rem, 14vw, 14rem)', // Reduced one level: 80px - 224px
     padding: '3rem',
     buttonSize: 'clamp(70px, 8vw, 80px)',
     gap: 'clamp(2rem, 6vw, 3rem)',
@@ -618,7 +618,7 @@ export default function Photography2DCarousel({
                     }}
                     type="button"
                     onClick={handleCTAClick}
-                    className="group pointer-events-auto flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 hover:scale-110"
+                    className="group pointer-events-auto flex items-center justify-center border-2 border-white rounded-full transition-all duration-300 hover:scale-110 btn-fluid min-w-fit"
                     style={{
                       width: textConfig.buttonSize,
                       height: textConfig.buttonSize,

@@ -56,7 +56,7 @@ export function PhotographyTitleEffect({
   }, [isActive, animate, duration, filter, staggerDelay]);
 
   return (
-    <motion.h2 ref={scope} className={className} style={style}>
+    <motion.h2 ref={scope} className={`${className} text-wrap-balanced heading-compact`} style={style}>
       {wordsArray.map((word, idx) => (
         <motion.span
           key={`${word}-${idx}`}

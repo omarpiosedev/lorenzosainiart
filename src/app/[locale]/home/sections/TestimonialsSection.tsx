@@ -98,17 +98,17 @@ function TestimonialCard({
           ★★★★★
         </div>
       </div>
-      <p className={`text-gray-800 leading-relaxed mb-4 flex-1 ${
+      <p className={`text-gray-800 leading-relaxed mb-4 flex-1 text-wrap-pretty line-clamp-4 md:line-clamp-6 ${
         isMobile ? 'text-xs sm:text-sm' : 'text-base'
       }`}
       >
         {t(`testimonials.${testimonial.key}.text`)}
       </p>
       <div>
-        <p className={`font-semibold text-black ${isMobile ? 'text-xs sm:text-sm' : 'text-base'}`}>
+        <p className={`font-semibold text-black truncate ${isMobile ? 'text-xs sm:text-sm' : 'text-base'}`}>
           {t(`testimonials.${testimonial.key}.name`)}
         </p>
-        <p className={`text-gray-600 ${isMobile ? 'text-xs' : 'text-sm'}`}>
+        <p className={`text-gray-600 truncate max-w-[200px] ${isMobile ? 'text-xs' : 'text-sm'}`}>
           {t(`testimonials.${testimonial.key}.company`)}
         </p>
       </div>
@@ -226,10 +226,10 @@ export default function TestimonialsSection() {
             }}
           >
             <h2
-              className="font-bold text-black leading-tight text-center flex items-center justify-center w-full h-full whitespace-nowrap"
+              className="font-bold text-black leading-tight text-center flex items-center justify-center w-full h-full text-wrap-balanced heading-compact"
               style={{
                 fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif',
-                fontSize: '3.33vw', // 64px / 1920px, stessa dimensione del titolo sez4
+                fontSize: '2.92vw', // Reduced one level from 3.33vw
               }}
             >
               {t('title')}
@@ -248,10 +248,10 @@ export default function TestimonialsSection() {
             }}
           >
             <p
-              className="text-gray-800 leading-relaxed text-center flex items-center justify-center w-full h-full"
+              className="text-gray-800 leading-relaxed text-center flex items-center justify-center w-full h-full text-wrap-pretty line-clamp-3 md:line-clamp-none"
               style={{
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                fontSize: '1.25vw', // Stessa dimensione del sottotitolo sez4
+                fontSize: '1.09vw', // Reduced one level from 1.25vw
               }}
             >
               {t('subtitle')}
@@ -323,7 +323,7 @@ export default function TestimonialsSection() {
 
             {/* Title - Mobile/Tablet */}
             <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10"
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10 text-wrap-balanced heading-compact"
               style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('title')}
@@ -331,7 +331,7 @@ export default function TestimonialsSection() {
 
             {/* Subtitle - Mobile/Tablet */}
             <p
-              className="text-base sm:text-lg lg:text-xl text-gray-800 leading-relaxed text-center max-w-2xl mx-auto mb-16 sm:mb-20 lg:mb-32"
+              className="text-sm sm:text-base lg:text-lg text-gray-800 leading-relaxed text-center max-w-2xl mx-auto mb-16 sm:mb-20 lg:mb-32 text-wrap-pretty line-clamp-3 md:line-clamp-none"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             >
               {t('subtitle')}

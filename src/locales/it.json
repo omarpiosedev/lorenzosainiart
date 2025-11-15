@@ -325,16 +325,66 @@
     "title": "Chi Sono",
     "header": {
       "name": "Lorenzo Saini",
-      "role": "Fotografo"
+      "role1": "Fotografo",
+      "role2": "Videomaker"
     },
     "badge": "Chi sono",
     "heading": "Ciao, sono Lorenzo Saini",
     "description": "Sono un fotografo specializzato in moda, ritratti e lavoro commerciale — combinando luce naturale con storytelling intenzionale.",
     "cta": "Visualizza portfolio",
-    "contact": "Contatti"
+    "contact": "Contatti",
+    "bio": {
+      "dropCap": "M",
+      "paragraph1": "i chiamo Lorenzo Saini — un fotografo e videomaker attratto da momenti autentici, composizioni pulite e il tipo di immagini che lasciano spazio per sentire qualcosa. Realizzo ritratti, moda e lavori commerciali con un focus su luce, atmosfera e narrazione.",
+      "paragraph2": "Il mio approccio è semplice: creare immagini e video che siano onesti, intenzionali e duraturi. Che si tratti di un progetto personale o di una campagna per un brand, il mio obiettivo è consegnare un lavoro che non sia solo bello esteticamente — ma che catturi l'attenzione. E mi piacerebbe creare qualcosa di significativo insieme a te."
+    },
+    "testimonial": {
+      "quote": "Lavorare con Lorenzo è stata una delle collaborazioni creative più fluide che abbiamo avuto. Ha portato chiarezza al concetto, calma al processo e un occhio attento ad ogni dettaglio. Le immagini finali erano più di quanto sperassimo — raffinate, naturali e totalmente allineate con il nostro brand. Lavoreremo assolutamente di nuovo con lui.",
+      "name": "Marco Bianchi",
+      "company": "Studio Creativo Milano",
+      "avatar": "/assets/images/testimonials/placeholder-avatar.jpg"
+    }
   },
   "ContactPage": {
-    "title": "Contatti"
+    "title": "Contatti",
+    "badge": "Contatti",
+    "heading": "Creiamo qualcosa insieme",
+    "description": "Hai un progetto in mente? Che si tratti di moda, commerciale o ritrattistica, mi piacerebbe sentirne parlare.",
+    "form": {
+      "name": {
+        "label": "Nome Completo",
+        "placeholder": "Mario Rossi",
+        "error": "Inserisci il tuo nome"
+      },
+      "email": {
+        "label": "Indirizzo Email",
+        "placeholder": "mario@esempio.it",
+        "error": "Inserisci un'email valida"
+      },
+      "subject": {
+        "label": "Oggetto",
+        "placeholder": "Richiesta progetto",
+        "error": "Inserisci l'oggetto"
+      },
+      "message": {
+        "label": "Messaggio",
+        "placeholder": "Raccontami del tuo progetto...",
+        "error": "Inserisci il tuo messaggio",
+        "help": "Descrivi la tua visione e ti risponderò entro 24 ore"
+      },
+      "submit": "Invia Messaggio",
+      "sending": "Invio in corso...",
+      "success": "Messaggio inviato! Ti risponderò presto.",
+      "error": "Qualcosa è andato storto. Riprova."
+    },
+    "info": {
+      "title": "Mettiti in Contatto",
+      "email": "Email",
+      "phone": "Telefono",
+      "social": "Seguimi",
+      "availability": "Disponibile per lavoro",
+      "response": "Rispondo tipicamente entro 24 ore"
+    }
   },
   "loading": {
     "message": "Caricamento in corso..."

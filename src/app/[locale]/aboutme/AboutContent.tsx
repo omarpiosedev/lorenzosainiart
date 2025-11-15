@@ -3,9 +3,11 @@
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useRef } from 'react';
+import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -67,7 +69,7 @@ export default function AboutContent() {
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen bg-[#FAFAFA] overflow-hidden"
+      className="relative min-h-screen bg-white overflow-hidden"
     >
       {/* Header */}
       <header
@@ -76,80 +78,54 @@ export default function AboutContent() {
       >
         {/* Left: Name & Role */}
         <div className="flex flex-col">
-          <h2 className="text-lg md:text-xl font-bold text-black">
+          <h2 className="text-base md:text-lg font-bold text-black text-wrap-balanced heading-compact">
             {t('header.name')}
           </h2>
-          <p className="text-sm text-gray-600">{t('header.role')}</p>
+          <div className="flex flex-col text-xs md:text-sm text-gray-600">
+            <p>{t('header.role1')}</p>
+            <p>{t('header.role2')}</p>
+          </div>
         </div>
 
         {/* Center: Logo */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-black flex items-center justify-center">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-black"
-            >
-              <circle cx="12" cy="12" r="3" fill="currentColor" />
-              <path
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-                fill="currentColor"
-              />
-            </svg>
+        <Link
+          href={`/${locale}`}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        >
+          <div className="relative w-12 h-12 md:w-16 md:h-16 transition-transform duration-700 ease-in-out hover:rotate-[360deg]">
+            <Image
+              src="/assets/images/LogoNero.webp"
+              alt="Lorenzo Saini Logo"
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 48px, 64px"
+            />
           </div>
-        </div>
+        </Link>
 
         {/* Right: Contact Button */}
         <Link
           href={`/${locale}/contact`}
-          className="px-6 py-3 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+          className="px-6 py-3 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors btn-fluid min-w-fit whitespace-nowrap"
         >
           {t('contact')}
         </Link>
       </header>
 
       {/* Main Section */}
-      <main className="min-h-screen flex items-center justify-center px-6 md:px-12 lg:px-24">
+      <main className="flex items-center justify-center px-6 md:px-12 lg:px-24 pt-24 md:pt-32 lg:pt-40 pb-12 md:pb-16 lg:pb-20">
         <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
           {/* Left: Circular Image */}
           <div ref={imageRef} className="flex justify-center lg:justify-end">
             <div className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[450px] lg:h-[450px] rounded-full overflow-hidden bg-gray-300">
-              {/* TODO: Replace with actual portrait image */}
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-400">
-                <svg
-                  width="120"
-                  height="120"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="text-gray-500"
-                >
-                  <circle cx="12" cy="8" r="4" fill="currentColor" />
-                  <path
-                    d="M4 20c0-4 3-7 8-7s8 3 8 7"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="3"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                  />
-                  <path
-                    d="M12 4L12 2M12 22L12 20M4 12L2 12M22 12L20 12"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    opacity="0.3"
-                  />
-                </svg>
-              </div>
+              <Image
+                src="/assets/images/about/1760967654159.jpeg"
+                alt="Lorenzo Saini - Photographer"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 300px, (max-width: 1024px) 400px, 450px"
+                priority
+              />
             </div>
           </div>
 
@@ -157,18 +133,23 @@ export default function AboutContent() {
           <div ref={contentRef} className="flex flex-col space-y-6 lg:space-y-8">
             {/* Badge */}
             <div className="inline-flex">
-              <span className="px-4 py-2 bg-gray-200 text-black text-sm rounded-full">
+              <span className="px-4 py-2 bg-gray-200 text-black text-sm rounded-full whitespace-nowrap">
                 {t('badge')}
               </span>
             </div>
 
             {/* Heading */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-black leading-tight">
-              {t('heading')}
-            </h1>
+            <TextGenerateEffect
+              words={t('heading')}
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight text-wrap-balanced heading-compact"
+              duration={0.8}
+              staggerDelay={0.3}
+              initialDelay={0.8}
+              animateBy="word"
+            />
 
             {/* Description */}
-            <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-xl">
+            <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-xl text-wrap-pretty line-clamp-4 md:line-clamp-none">
               {t('description')}
             </p>
 
@@ -176,7 +157,7 @@ export default function AboutContent() {
             <div>
               <Link
                 href={`/${locale}/portfolio`}
-                className="inline-block px-8 py-4 bg-black text-white rounded-full text-base font-medium hover:bg-gray-800 transition-colors"
+                className="inline-block px-8 py-4 bg-black text-white rounded-full text-base font-medium hover:bg-gray-800 transition-colors btn-fluid min-w-fit whitespace-nowrap"
               >
                 {t('cta')}
               </Link>
@@ -185,32 +166,53 @@ export default function AboutContent() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="fixed bottom-6 right-6 flex flex-col items-end space-y-2 z-10">
-        <button
-          type="button"
-          className="px-6 py-3 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
-        >
-          ₹ Buy template
-        </button>
-        <a
-          href="https://framer.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center space-x-2 text-sm text-gray-600 hover:text-black transition-colors"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M0 0h16v5.33H8L0 0zm0 5.33h8v5.34H0V5.33zm8 5.34L16 16H8v-5.33z" />
-          </svg>
-          <span>Made in Framer</span>
-        </a>
-      </footer>
+      {/* Bio & Testimonial Section */}
+      <section className="w-full bg-white pt-8 md:pt-10 lg:pt-12 pb-16 md:pb-20 lg:pb-24 px-6 md:px-12 lg:px-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+          {/* Left: Biography */}
+          <div className="flex flex-col space-y-6">
+            <div className="text-[15px] md:text-base text-black leading-relaxed">
+              <p className="text-wrap-pretty">
+                <span className="float-left text-[70px] md:text-[85px] font-bold leading-[0.8] mr-2 mt-1">
+                  {t('bio.dropCap')}
+                </span>
+                {t('bio.paragraph1')}
+              </p>
+            </div>
+            <p className="text-[15px] md:text-base text-black leading-relaxed text-wrap-pretty clear-both">
+              {t('bio.paragraph2')}
+            </p>
+          </div>
+
+          {/* Right: Testimonial */}
+          <div className="flex flex-col justify-center space-y-6 lg:pl-6">
+            <blockquote className="text-[15px] md:text-base text-black leading-relaxed text-wrap-pretty">
+              "
+              {t('testimonial.quote')}
+              "
+            </blockquote>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden shrink-0">
+                <Image
+                  src={t('testimonial.avatar')}
+                  alt={t('testimonial.name')}
+                  width={48}
+                  height={48}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="flex flex-col">
+                <p className="text-[15px] font-semibold text-black">
+                  {t('testimonial.name')}
+                </p>
+                <p className="text-[13px] text-gray-600">
+                  {t('testimonial.company')}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

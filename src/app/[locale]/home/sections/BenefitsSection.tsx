@@ -333,7 +333,7 @@ export default function BenefitsSection() {
             height: '3.98vh', // 43px / 1080px
           }}
         >
-          <ShimmerLabel className="w-full h-full text-sm font-medium tracking-wide">
+          <ShimmerLabel className="w-full h-full text-sm font-medium tracking-wide whitespace-nowrap">
             {t('benefitsLabel')}
           </ShimmerLabel>
         </div>
@@ -349,10 +349,10 @@ export default function BenefitsSection() {
           }}
         >
           <h2
-            className="font-bold text-black leading-tight text-center flex items-center justify-center w-full h-full"
+            className="font-bold text-black leading-tight text-center flex items-center justify-center w-full h-full text-wrap-balanced heading-compact"
             style={{
               fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif',
-              fontSize: '3.33vw', // 64px / 1920px, scales proportionally
+              fontSize: '2.70vw', // Reduced from 3.33vw (one level down)
             }}
           >
             {t('title')}
@@ -370,10 +370,10 @@ export default function BenefitsSection() {
           }}
         >
           <p
-            className="text-gray-800 leading-relaxed text-center flex items-center justify-center w-full h-full"
+            className="text-gray-800 leading-relaxed text-center flex items-center justify-center w-full h-full text-wrap-pretty line-clamp-3 md:line-clamp-none"
             style={{
               fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-              fontSize: '1.25vw', // Proportional font size
+              fontSize: '1.04vw', // Reduced from 1.25vw (one level down)
             }}
           >
             {t('subtitle')}
@@ -495,9 +495,9 @@ export default function BenefitsSection() {
             }}
           >
             <h3
-              className="text-black font-semibold leading-tight"
+              className="text-black font-semibold leading-tight text-wrap-balanced heading-compact"
               style={{
-                fontSize: '1.77vw', // 34px / 1920px = 1.77vw
+                fontSize: '1.46vw', // Reduced from 1.77vw (one level down)
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
@@ -563,9 +563,9 @@ export default function BenefitsSection() {
             }}
           >
             <h3
-              className="text-white font-semibold leading-tight"
+              className="text-white font-semibold leading-tight text-wrap-balanced heading-compact"
               style={{
-                fontSize: '1.77vw', // Stessa grandezza delle altre card (34px / 1920px = 1.77vw)
+                fontSize: '1.46vw', // Reduced from 1.77vw (one level down)
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                 textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
               }}
@@ -635,9 +635,9 @@ export default function BenefitsSection() {
             }}
           >
             <h3
-              className="text-black font-semibold leading-tight"
+              className="text-black font-semibold leading-tight text-wrap-pretty"
               style={{
-                fontSize: '1.77vw', // Stessa grandezza della Card 2 (34px / 1920px = 1.77vw)
+                fontSize: '1.46vw', // Reduced from 1.77vw (one level down)
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
@@ -697,9 +697,9 @@ export default function BenefitsSection() {
             }}
           >
             <h3
-              className="text-black font-semibold leading-tight"
+              className="text-black font-semibold leading-tight text-wrap-pretty"
               style={{
-                fontSize: '1.77vw', // Stessa dimensione delle altre card
+                fontSize: '1.46vw', // Reduced from 1.77vw (one level down)
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
@@ -762,9 +762,9 @@ export default function BenefitsSection() {
             style={{ top: '32px' }}
           >
             <h3
-              className="text-black font-semibold leading-tight"
+              className="text-black font-semibold leading-tight text-wrap-balanced heading-compact whitespace-nowrap"
               style={{
-                fontSize: '1.5vw', // Ingrandito
+                fontSize: '1.25vw', // Reduced from 1.5vw (one level down)
                 fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
@@ -798,13 +798,13 @@ export default function BenefitsSection() {
         <div className="flex flex-col items-center justify-start pt-16 sm:pt-20 lg:pt-24">
 
           {/* Benefits Button - Mobile/Tablet */}
-          <ShimmerLabel className="px-6 py-3 text-sm font-medium tracking-wide mb-8 sm:mb-12">
+          <ShimmerLabel className="px-6 py-3 text-sm font-medium tracking-wide mb-8 sm:mb-12 btn-fluid min-w-fit whitespace-nowrap">
             {t('benefitsLabel')}
           </ShimmerLabel>
 
           {/* Title - Mobile/Tablet */}
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10 text-wrap-balanced heading-compact"
             style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
           >
             {t('title')}
@@ -812,7 +812,7 @@ export default function BenefitsSection() {
 
           {/* Subtitle - Mobile/Tablet */}
           <p
-            className="text-base sm:text-lg lg:text-xl text-gray-800 leading-relaxed text-center max-w-2xl mx-auto mb-8 sm:mb-12 lg:mb-16"
+            className="text-sm sm:text-base lg:text-lg text-gray-800 leading-relaxed text-center max-w-2xl mx-auto mb-8 sm:mb-12 lg:mb-16 text-wrap-pretty line-clamp-3 md:line-clamp-none"
             style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
           >
             {t('subtitle')}
@@ -918,9 +918,9 @@ export default function BenefitsSection() {
                 }}
               >
                 <h3
-                  className="font-semibold text-black leading-tight"
+                  className="font-semibold text-black leading-tight text-wrap-balanced heading-compact"
                   style={{
-                    fontSize: '4.5vh', // Font size che si scala con il viewport come l'immagine
+                    fontSize: '3.75vh', // Reduced from 4.5vh (one level down)
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
                 >
@@ -978,9 +978,9 @@ export default function BenefitsSection() {
                 }}
               >
                 <h3
-                  className="font-semibold text-white leading-tight"
+                  className="font-semibold text-white leading-tight text-wrap-balanced heading-compact"
                   style={{
-                    fontSize: '4.5vh', // Stessa grandezza delle altre card mobile
+                    fontSize: '3.75vh', // Reduced from 4.5vh (one level down)
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
                   }}
@@ -1042,9 +1042,9 @@ export default function BenefitsSection() {
                 }}
               >
                 <h3
-                  className="font-semibold text-black leading-tight"
+                  className="font-semibold text-black leading-tight text-wrap-pretty"
                   style={{
-                    fontSize: '4.5vh', // Stessa grandezza della Card 2 mobile
+                    fontSize: '3.75vh', // Reduced from 4.5vh (one level down)
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
                 >
@@ -1093,9 +1093,9 @@ export default function BenefitsSection() {
                 }}
               >
                 <h3
-                  className="font-semibold text-black leading-tight"
+                  className="font-semibold text-black leading-tight text-wrap-pretty"
                   style={{
-                    fontSize: '4.5vh', // Font size che si scala con il viewport come l'immagine
+                    fontSize: '3.75vh', // Reduced from 4.5vh (one level down)
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
                 >
@@ -1142,9 +1142,9 @@ export default function BenefitsSection() {
                 style={{ top: '24px' }}
               >
                 <h3
-                  className="font-semibold text-black leading-tight"
+                  className="font-semibold text-black leading-tight text-wrap-balanced heading-compact whitespace-nowrap"
                   style={{
-                    fontSize: '4.5vh', // Font size che si scala con il viewport come nelle altre card
+                    fontSize: '3.75vh', // Reduced from 4.5vh (one level down)
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
                 >
