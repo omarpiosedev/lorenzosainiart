@@ -22,7 +22,9 @@ const baseConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'], // AVIF first for -50% size
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    qualities: [65, 70, 75, 80, 85], // Support quality values used across the project
+    // Allowed quality values (Next.js 16 requires explicit quality prop on each Image)
+    // Recommended usage: 75 (standard), 80 (portfolio), 85-90 (hero/LCP images)
+    qualities: [65, 70, 75, 80, 85, 90],
     minimumCacheTTL: 2678400, // 31 days (from default 4h) - reduces revalidation costs
     localPatterns: [
       {

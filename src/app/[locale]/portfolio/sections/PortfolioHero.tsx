@@ -598,11 +598,12 @@ export default function PortfolioHero() {
             fill
             sizes="(max-width: 1024px) 50vw, 20vw"
             className="object-cover"
+            quality={80}
             style={{
               filter: 'saturate(0.7) contrast(0.9)',
             }}
             priority={['img-1', 'img-2', 'img-3', 'img-8'].includes(image.id)}
-            loading={['img-1', 'img-2', 'img-3', 'img-8'].includes(image.id) ? undefined : 'lazy'}
+            loading={['img-1', 'img-2', 'img-8'].includes(image.id) ? undefined : 'lazy'}
           />
 
           {/* Dark desaturation overlay */}

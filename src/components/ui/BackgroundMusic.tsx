@@ -2,25 +2,48 @@
 
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 gsap.registerPlugin(useGSAP);
+
+export type BackgroundMusicHandle = {
+  start: () => Promise<void>;
+};
 
 type BackgroundMusicProps = {
   src: string;
   className?: string;
 };
 
-const BackgroundMusic = ({ src, className = '' }: BackgroundMusicProps) => {
+const BackgroundMusic = ({ ref, src, className = '' }: BackgroundMusicProps & { ref?: React.RefObject<BackgroundMusicHandle | null> }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const volumeContainerRef = useRef<HTMLDivElement>(null);
-  const [isPlaying, setIsPlaying] = useState(true); // Auto-play by default
+  const [isPlaying, setIsPlaying] = useState(false); // Start paused (controlled by LoadingScreen)
   const [isMuted, setIsMuted] = useState(false); // Start with sound
-  const [volume, setVolume] = useState(0.3); // Lower volume for autoplay
+  const [volume, setVolume] = useState(0.3); // Lower volume
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showPlayHint, setShowPlayHint] = useState(false);
+
+  // Expose start() method via ref for LoadingScreen to trigger
+  useImperativeHandle(ref, () => ({
+    start: async () => {
+      if (!audioRef.current) {
+        return;
+      }
+
+      try {
+        setHasInteracted(true);
+        setIsPlaying(true);
+        await audioRef.current.play();
+      } catch {
+        // Autoplay blocked - user needs to click play button manually
+        setIsPlaying(false);
+        setShowPlayHint(true);
+      }
+    },
+  }));
 
   // Load preferences from localStorage on mount
   useEffect(() => {
@@ -182,12 +205,11 @@ const BackgroundMusic = ({ src, className = '' }: BackgroundMusicProps) => {
       className={`fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 ${className}`}
       style={{ userSelect: 'none' }}
     >
-      {/* Hidden audio element with autoplay */}
+      {/* Hidden audio element - controlled by LoadingScreen via ref */}
       <audio
         ref={audioRef}
         src={src}
         loop
-        autoPlay
         preload="auto"
       >
         <track kind="captions" />
@@ -296,5 +318,7 @@ const BackgroundMusic = ({ src, className = '' }: BackgroundMusicProps) => {
     </div>
   );
 };
+
+BackgroundMusic.displayName = 'BackgroundMusic';
 
 export default BackgroundMusic;

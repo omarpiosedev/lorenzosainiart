@@ -577,6 +577,7 @@ export default function Photography2DCarousel({
                     fill
                     className="object-cover"
                     sizes={`(max-width: ${BREAKPOINTS.mobile}px) 95vw, (max-width: ${BREAKPOINTS.tablet}px) 90vw, 85vw`}
+                    quality={85}
                     priority={index < 2}
                     loading={index < 2 ? 'eager' : 'lazy'}
                   />

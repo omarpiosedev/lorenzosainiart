@@ -191,15 +191,14 @@ export default function HeroHome() {
         ease: 'power4.out',
       }, '+=0') // Ends at 2.2s (0.2s delay + 2.0s duration)
 
-    // === TITOLO - Parallax effect sincronizzato con loading screen exit ===
-    // Loading screen exit inizia a ~2.8s e dura 1.2s (finisce a 4.0s)
-    // Parallax deve essere visibile DURANTE l'exit
+    // === TITOLO - Animazione SUBITO senza delay ===
+    // Parte insieme a signature/contact per apparire immediatamente
       .to(activeTitle, {
         y: 0, // Sale dalla posizione 40vh a 0
-        opacity: 1, // Fade in insieme al movimento per effetto "scoperta"
-        duration: 1.8, // Movimento più veloce (2.8s + 1.8s = 4.6s)
-        ease: 'power1.out', // Easing più graduale
-      }, '+=0.5'); // 2.2s + 0.5s = 2.7s timeline = 2.9s reale (inizia poco dopo loading screen)
+        opacity: 1, // Fade in insieme al movimento
+        duration: 1.8, // Durata animazione
+        ease: 'power1.out', // Easing graduale
+      }, 0); // ✅ Parte al tempo 0 (stesso momento di signature/contact)
 
     // CRITICAL: Complete cleanup to prevent DOM errors during navigation
     return () => {
@@ -428,8 +427,7 @@ export default function HeroHome() {
           src="/assets/images/background.webp"
           alt="Background"
           fill
-          priority
-          fetchPriority="high"
+          preload={true}
           quality={75}
           onLoad={() => {
             // Notifica il resource loader quando l'immagine è caricata
@@ -472,8 +470,7 @@ export default function HeroHome() {
             alt="Clouds"
             fill
             sizes="(min-width: 1024px) 50vw, (min-width: 760px) 70vw, 100vw"
-            priority
-            fetchPriority="high"
+            preload={true}
             quality={85}
             onLoad={() => {
               // Notifica il resource loader quando l'immagine è caricata
@@ -504,8 +501,7 @@ export default function HeroHome() {
             alt="Couple"
             width={650}
             height={800}
-            priority
-            fetchPriority="high"
+            preload={true}
             quality={80}
             onLoad={() => {
               // Notifica il resource loader quando l'immagine è caricata
@@ -561,7 +557,7 @@ export default function HeroHome() {
                 borderColor="white"
                 blurAmount={20}
                 animationDuration={1.8}
-                delay={2.9}
+                delay={0.3}
               >
                 <h1
                   className="font-bold text-white leading-none text-center tracking-wider"
@@ -735,7 +731,7 @@ export default function HeroHome() {
               borderColor="white"
               blurAmount={25}
               animationDuration={1.8}
-              delay={2.9}
+              delay={0.3}
             >
               <h1
                 className="font-bold text-white leading-tight tracking-wider text-center px-2"

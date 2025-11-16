@@ -1,5 +1,7 @@
 'use client';
 
+import type { BackgroundMusicHandle } from '@/components/ui/BackgroundMusic';
+import type { LoadingScreenHandle } from '@/components/ui/LoadingScreen';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
@@ -9,6 +11,7 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import BackgroundMusic from '@/components/ui/BackgroundMusic';
 import FloatingNavBar from '@/components/ui/FloatingNavBar';
 import Footer from '@/components/ui/Footer';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import SettingsModal from '@/components/ui/SettingsModal';
 
 // Register GSAP plugins
@@ -21,10 +24,19 @@ type LayoutClientProps = {
 
 const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [hasLoadingCompleted, setHasLoadingCompleted] = useState(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const previousPathnameRef = useRef<string | null>(null);
   const isInitialMountRef = useRef(true);
+
+  // LoadingScreen and BackgroundMusic refs
+  const loadingScreenRef = useRef<LoadingScreenHandle>(null);
+  const backgroundMusicRef = useRef<BackgroundMusicHandle>(null);
+
+  // Check if current page is home (any locale)
+  const isHomePage = pathname === '/it' || pathname === '/en' || pathname === '/it/' || pathname === '/en/';
 
   // ScrollSmoother refs
   const smoothWrapperRef = useRef<HTMLDivElement>(null);
@@ -40,6 +52,86 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
 
   // BEST PRACTICE: Use contextSafe for GSAP animations in event handlers
   const { contextSafe } = useGSAP({ scope: videoTransitionRef });
+
+  // Show loading screen on every reload if on home page
+  useEffect(() => {
+    if (isHomePage) {
+      // Home page: show LoadingScreen, content hidden
+      setShowLoadingScreen(true);
+      setHasLoadingCompleted(false);
+    } else {
+      // Not home page: skip loading screen, show content immediately
+      setShowLoadingScreen(false);
+      setHasLoadingCompleted(true);
+    }
+  }, [isHomePage]);
+
+  // Handle Join button click from LoadingScreen
+  const handleJoinClick = async () => {
+    try {
+      // Start background music
+      if (backgroundMusicRef.current) {
+        await backgroundMusicRef.current.start();
+      }
+
+      // Small delay for music to start
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // CRITICAL: Mark loading as completed BEFORE exit animation
+      // This makes home page mount INSTANTLY while LoadingScreen animates out on top
+      setHasLoadingCompleted(true);
+
+      // CRITICAL: Wait for React to actually PAINT the home page before starting exit animation
+      // Triple requestAnimationFrame ensures browser has fully rendered the new content:
+      // Frame 1: React schedules re-render
+      // Frame 2: React commits changes to DOM
+      // Frame 3: Browser paints the home page
+      // Frame 4: NOW safe to start exit animation - home is visible underneath
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              // Reset scroll position to top
+              if (smootherInstanceRef.current) {
+                smootherInstanceRef.current.scrollTop(0);
+              } else {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+              }
+              resolve();
+            });
+          });
+        });
+      });
+
+      // Play exit animation (home page is now fully painted underneath)
+      if (loadingScreenRef.current) {
+        await loadingScreenRef.current.hide();
+      }
+
+      // AFTER animation completes, unmount LoadingScreen from DOM
+      setShowLoadingScreen(false);
+    } catch {
+      // On error, still mount home and hide loading screen
+      setHasLoadingCompleted(true);
+
+      // CRITICAL: Reset scroll position even on error
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (smootherInstanceRef.current) {
+            smootherInstanceRef.current.scrollTop(0);
+          } else {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }
+        });
+      });
+
+      if (loadingScreenRef.current) {
+        await loadingScreenRef.current.hide();
+      }
+
+      setShowLoadingScreen(false);
+    }
+  };
 
   // Listen for video transition events from child components
   useEffect(() => {
@@ -447,15 +539,18 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
           }}
         >
           {/* Main Content Wrapper - Animated on route change */}
+          {/* CRITICAL: Only render children AFTER LoadingScreen completes on home page
+              This ensures the home page content doesn't mount until user clicks "Join".
+              On non-home pages, children render immediately (hasLoadingCompleted = true). */}
           <div data-main-content>
-            {children}
+            {hasLoadingCompleted ? children : null}
           </div>
 
           {/* Footer - Inside smooth-content but OUTSIDE data-main-content */}
           {/* This prevents footer from being animated during page transitions */}
-          {/* CRITICAL: Exclude footer from portfolio page */}
+          {/* CRITICAL: Exclude footer from portfolio page AND during LoadingScreen on home */}
           {/* Wrapped in Suspense for Cache Components compatibility (new Date() usage) */}
-          {!pathname.includes('/portfolio') && (
+          {!pathname.includes('/portfolio') && hasLoadingCompleted && (
             <Suspense fallback={<div className="h-96" />}>
               <Footer />
             </Suspense>
@@ -471,7 +566,7 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
         />
 
         {/* Background Music Player - Fixed positioning outside smooth-content */}
-        <BackgroundMusic src="/assets/music/gymnopedie-n1-200688.mp3" />
+        <BackgroundMusic ref={backgroundMusicRef} src="/assets/music/gymnopedie-n1-200688.mp3" />
 
         {/* Settings Modal - Also outside smooth-content for proper fixed positioning */}
         <SettingsModal
@@ -498,6 +593,12 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
           preload="metadata"
         />
       </div>
+
+      {/* Loading Screen - Shows on every reload when on home page (z-index: 10001, above video overlay) */}
+      {/* CRITICAL: Use showLoadingScreen (not hasLoadingCompleted) to keep LoadingScreen mounted during exit animation */}
+      {showLoadingScreen && (
+        <LoadingScreen ref={loadingScreenRef} onJoinClick={handleJoinClick} />
+      )}
     </>
   );
 };

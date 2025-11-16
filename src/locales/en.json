@@ -439,6 +439,11 @@
   "loading": {
     "message": "Loading..."
   },
+  "LoadingScreen": {
+    "loading": "Loading...",
+    "joinButton": "Join",
+    "ariaLabel": "Initial loading screen"
+  },
   "Footer": {
     "description": "Professional photographer specializing in fashion, commercial, and portrait photography. Capturing authentic moments that tell your unique story.",
     "copyright": "© {year} Lorenzo Saini. All rights reserved.",

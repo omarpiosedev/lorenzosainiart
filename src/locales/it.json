@@ -439,6 +439,11 @@
   "loading": {
     "message": "Caricamento in corso..."
   },
+  "LoadingScreen": {
+    "loading": "Caricamento...",
+    "joinButton": "Entra",
+    "ariaLabel": "Schermata di caricamento iniziale"
+  },
   "Footer": {
     "description": "Fotografo professionista specializzato in fotografia fashion, commerciale e ritrattistica. Catturando momenti autentici che raccontano la tua storia unica.",
     "copyright": "© {year} Lorenzo Saini. Tutti i diritti riservati.",

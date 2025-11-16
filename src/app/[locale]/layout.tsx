@@ -125,7 +125,7 @@ export default async function RootLayout(props: {
         <NextIntlClientProvider
           locale={paramLocale}
           timeZone="Europe/Rome"
-          messages={pick(messages, ['HomePage', 'Footer', 'BackgroundMusic'])}
+          messages={pick(messages, ['HomePage', 'Footer', 'BackgroundMusic', 'LoadingScreen'])}
         >
           <LayoutClient navItems={navItems}>
             {props.children}
