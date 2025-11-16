@@ -119,7 +119,7 @@ export default function GSAPScrollReveal({
       ref={containerRef}
       className={className}
       style={{
-        fontFamily: 'Effloresce It, sans-serif',
+        fontFamily: 'Bacasime Antique, serif',
         WebkitFontSmoothing: 'antialiased',
       }}
     />

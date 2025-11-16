@@ -453,6 +453,23 @@
           }
         }
       }
+    },
+    "licenses": {
+      "title": "Licenze e certificazioni",
+      "description": "Certificazioni professionali che attestano competenze tecniche specifiche nel settore della ripresa aerea e della produzione video.",
+      "issueDate": "Data di rilascio",
+      "credentialId": "ID credenziale",
+      "items": [
+        {
+          "id": "easa-a1-a3",
+          "name": "EASA Open A1-A3",
+          "issuer": "EASA - European Union Aviation Safety Agency",
+          "issueDate": "feb 2024",
+          "credentialId": "LUX-RP-20001212gog8",
+          "logo": "/assets/images/licenses/easa-logo.png",
+          "description": "Patente europea per droni nelle categorie Open A1-A3, autorizzazione per pilotaggio droni fino a 25kg in aree urbane e non urbane."
+        }
+      ]
     }
   },
   "ContactPage": {

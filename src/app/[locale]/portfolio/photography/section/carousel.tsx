@@ -78,6 +78,7 @@ type CarouselItem = {
   buttonMesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
   index: number;
   isVisible: boolean;
+  isTitleVisible: boolean; // ✅ FIX: Track title visibility separately
 };
 
 export default function Carousel() {
@@ -173,6 +174,9 @@ export default function Carousel() {
     const wrap = wrapRef.current;
     let animationId: number;
     let scrollTrigger: ScrollTrigger | null = null;
+    // ✅ FIX: Track RAF IDs for React Strict Mode cleanup
+    let rafId2: number | undefined;
+    let rafId3: number | undefined;
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -224,7 +228,7 @@ export default function Carousel() {
         new THREE.MeshBasicMaterial({ visible: false }),
       );
 
-      items.push({ mesh, buttonMesh, index: i, isVisible: false });
+      items.push({ mesh, buttonMesh, index: i, isVisible: false, isTitleVisible: false });
       scene.add(mesh);
       scene.add(buttonMesh);
     }
@@ -291,7 +295,10 @@ export default function Carousel() {
           shouldShow = closestItem !== undefined && item.index === closestItem.index;
         } else {
           // Desktop: show titles within distance threshold
-          shouldShow = distance < 0.7;
+          // ✅ Context7 FIX: Increased from 0.7 → 1.2 → 1.8 for smoother scroll
+          // Context7 best practice: Larger threshold prevents flash during fast scroll
+          // Allows ~3 projects visible simultaneously for better UX
+          shouldShow = distance < 1.8;
         }
 
         if (titleElement) {
@@ -304,23 +311,28 @@ export default function Carousel() {
             titleElement.style.display = 'block';
           }
 
-          // Fade in/out animation with smooth movement
-          if (shouldShow) {
-            gsap.to(titleElement, {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: 'power3.out',
-              overwrite: 'auto',
-            });
-          } else {
-            gsap.to(titleElement, {
-              opacity: 0,
-              y: 20,
-              duration: 0.5,
-              ease: 'power2.in',
-              overwrite: 'auto',
-            });
+          // ✅ FIX: Only animate when visibility state changes (same pattern as buttons)
+          // Prevents duplicate animations on every frame
+          if (shouldShow !== item.isTitleVisible) {
+            item.isTitleVisible = shouldShow;
+
+            if (shouldShow) {
+              gsap.to(titleElement, {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                overwrite: 'auto',
+              });
+            } else {
+              gsap.to(titleElement, {
+                opacity: 0,
+                y: 20,
+                duration: 0.5,
+                ease: 'power2.in',
+                overwrite: 'auto',
+              });
+            }
           }
         }
 
@@ -392,12 +404,13 @@ export default function Carousel() {
 
     window.addEventListener('resize', resizeCanvas);
 
-    // ✅ CRITICAL FIX: Delay ScrollTrigger creation to avoid conflicts with page transition
+    // ✅ CRITICAL FIX: Delay ScrollTrigger creation AND render loop to avoid race condition
     // Wait for page transition to complete before creating ScrollTrigger
     // Triple RAF ensures ScrollSmoother is resumed and ready
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
+    // ✅ React Strict Mode Fix: Store RAF IDs for cleanup
+    const rafId1 = requestAnimationFrame(() => {
+      rafId2 = requestAnimationFrame(() => {
+        rafId3 = requestAnimationFrame(() => {
           // ScrollTrigger for canvas pinning - create after scene is ready
           scrollTrigger = ScrollTrigger.create({
             trigger: wrap,
@@ -408,21 +421,54 @@ export default function Carousel() {
 
           // Force refresh to ensure correct calculations
           ScrollTrigger.refresh();
+
+          // ✅ FIX: Call updateMeshes() once immediately to sync initial state
+          // This ensures titles and buttons are positioned correctly on load
+          updateMeshes();
+
+          // ✅ FIX: Start render loop AFTER ScrollTrigger is created
+          // This prevents race condition where updateMeshes() exits early
+          // because scrollTrigger is null, causing projects to flash/disappear
+          animationId = requestAnimationFrame(render);
         });
       });
     });
 
-    // Start render loop
-    animationId = requestAnimationFrame(render);
-
     // Cleanup
     return () => {
-      cancelAnimationFrame(animationId);
+      // ✅ React Strict Mode Fix: Cancel ALL RAF including triple delay
+      // CRITICAL: This prevents orphaned RAF callbacks in Strict Mode double-render
+      if (rafId1 !== undefined) {
+        cancelAnimationFrame(rafId1);
+      }
+      if (rafId2 !== undefined) {
+        cancelAnimationFrame(rafId2);
+      }
+      if (rafId3 !== undefined) {
+        cancelAnimationFrame(rafId3);
+      }
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+
       window.removeEventListener('resize', resizeCanvas);
 
       if (scrollTrigger) {
         scrollTrigger.kill();
       }
+
+      // ✅ Kill all GSAP tweens on dynamic elements
+      // CRITICAL for Strict Mode: Prevents animations on unmounted elements
+      items.forEach((item) => {
+        const titleEl = document.querySelector(`[data-project-index="${item.index}"]`);
+        const buttonEl = document.querySelector(`[data-project-button="${item.index}"]`);
+        if (titleEl) {
+          gsap.killTweensOf(titleEl);
+        }
+        if (buttonEl) {
+          gsap.killTweensOf(buttonEl);
+        }
+      });
 
       // Dispose Three.js resources
       geometry.dispose();

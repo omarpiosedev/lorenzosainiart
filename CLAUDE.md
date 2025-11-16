@@ -154,8 +154,9 @@ src/
 
 ## Styling Rules
 
-**Custom Fonts** (in `/public/assets/fonts/`):
-- Lavener (primary), Effloresce It (decorative)
+**Google Fonts** (imported in `global.css`):
+- Bacasime Antique (headings, uppercase)
+- Lora (body text, default font)
 
 **Fluid Design Tokens** (defined in `global.css`):
 - Typography: `--text-sm` to `--text-4xl`

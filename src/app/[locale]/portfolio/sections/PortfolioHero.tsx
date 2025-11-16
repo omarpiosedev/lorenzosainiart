@@ -41,7 +41,8 @@ export default function PortfolioHero() {
 
   // React 19.2 compliant: use useState for boolean flags instead of useRef
   const [isEntranceComplete, setIsEntranceComplete] = useState(false);
-  const [hasVideoPlayedOnce, setHasVideoPlayedOnce] = useState(false);
+  // Use ref instead of state to avoid triggering useGSAP re-execution
+  const hasVideoPlayedOnceRef = useRef(false);
 
   // Get contextSafe from useGSAP for button handlers
   const { contextSafe } = useGSAP({ scope: containerRef });
@@ -370,7 +371,7 @@ export default function PortfolioHero() {
   );
 
   // Image 3 Animation: MotionPath to center + Scale to fullscreen + Video loop
-  // React 19.2 + GSAP: Use state dependency and save timeline in ref
+  // React 19.2 + GSAP: Use contextSafe for event listeners (Context7 best practice)
   useGSAP(
     () => {
       if (
@@ -385,30 +386,31 @@ export default function PortfolioHero() {
       const img3 = img3Ref.current;
       const video = videoRef.current;
 
-      const loopStartTime = video.duration - 4; // Last 4 seconds
-      const loopTriggerTime = video.duration - 0.1; // Trigger loop 100ms before end
-
-      // Use 'timeupdate' to catch loop point before video ends (prevents visual gap)
-      const handleTimeUpdate = () => {
-        if (!video.duration) {
+      // Context7 Best Practice: Use contextSafe wrapper for event handlers
+      // This ensures proper cleanup and prevents memory leaks
+      // contextSafe is already available from the hook at component level (line 48)
+      const handleTimeUpdate = contextSafe!(() => {
+        if (!video.duration || Number.isNaN(video.duration)) {
           return;
         }
 
+        const loopStartTime = video.duration - 4; // Last 4 seconds
+        const loopTriggerTime = video.duration - 0.1; // Trigger loop 100ms before end
         const currentTime = video.currentTime;
 
-        // After first complete play, trigger loop just before the end
-        if (hasVideoPlayedOnce) {
+        // After first complete play, trigger seamless loop
+        if (hasVideoPlayedOnceRef.current) {
           if (currentTime >= loopTriggerTime) {
             video.currentTime = loopStartTime;
           }
         } else {
           // First play: mark as complete when reaching loop trigger point
           if (currentTime >= loopTriggerTime) {
-            setHasVideoPlayedOnce(true);
+            hasVideoPlayedOnceRef.current = true;
             video.currentTime = loopStartTime;
           }
         }
-      };
+      });
 
       video.addEventListener('timeupdate', handleTimeUpdate);
 
@@ -504,6 +506,8 @@ export default function PortfolioHero() {
       // CRITICAL: Complete cleanup to prevent DOM errors during navigation
       // Kill timeline, ScrollTriggers, event listeners, and matchMedia BEFORE React unmounts
       return () => {
+        // Context7 Best Practice: Remove event listeners in cleanup
+        // handleTimeUpdate is context-safe, so it will be properly cleaned up
         if (videoRef.current) {
           try {
             videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
@@ -538,7 +542,9 @@ export default function PortfolioHero() {
       };
     },
     {
-      dependencies: [isEntranceComplete, hasVideoPlayedOnce], // Re-run when state changes
+      // Context7 Best Practice: Only include dependencies that NEED to trigger recreation
+      // Removed hasVideoPlayedOnce - it's now a ref to prevent unwanted re-execution
+      dependencies: [isEntranceComplete],
     },
   );
 

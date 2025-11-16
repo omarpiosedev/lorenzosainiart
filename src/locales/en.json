@@ -453,6 +453,23 @@
           }
         }
       }
+    },
+    "licenses": {
+      "title": "Licenses and Certifications",
+      "description": "Professional certifications that validate specific technical skills in aerial filming and video production.",
+      "issueDate": "Issue date",
+      "credentialId": "Credential ID",
+      "items": [
+        {
+          "id": "easa-a1-a3",
+          "name": "EASA Open A1-A3",
+          "issuer": "EASA - European Union Aviation Safety Agency",
+          "issueDate": "Feb 2024",
+          "credentialId": "LUX-RP-20001212gog8",
+          "logo": "/assets/images/licenses/easa-logo.png",
+          "description": "European drone license for Open A1-A3 categories, authorization for drone piloting up to 25kg in urban and non-urban areas."
+        }
+      ]
     }
   },
   "ContactPage": {

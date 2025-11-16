@@ -3,6 +3,7 @@
 import Biography from './Biography';
 import GearTools from './GearTools';
 import HeroAbout from './HeroAbout';
+import LicensesCertifications from './LicensesCertifications';
 import Timeline from './Timeline';
 
 export default function AboutContent() {
@@ -12,6 +13,7 @@ export default function AboutContent() {
       <Biography />
       <GearTools />
       <Timeline />
+      <LicensesCertifications />
     </div>
   );
 }

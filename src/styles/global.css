@@ -70,22 +70,6 @@ section.w-screen {
   padding: 0 !important;
 }
 
-@font-face {
-  font-family: 'Lavener';
-  src: url('/assets/fonts/LAVENER.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Effloresce It';
-  src: url('/assets/fonts/Effloresce It.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* CSS Variables */
 :root {
   /* Typography Scale */
@@ -174,14 +158,6 @@ section.w-screen {
 }
 
 /* Font Utilities */
-.font-lavener {
-  font-family: 'Lavener', serif;
-}
-
-.font-effloresce {
-  font-family: 'Effloresce It', serif;
-}
-
 .font-bacasime {
   font-family: 'Bacasime Antique', serif;
   text-transform: uppercase;

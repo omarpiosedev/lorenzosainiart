@@ -3,7 +3,6 @@ import pick from 'lodash/pick';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { preload } from 'react-dom';
 import { PersonJsonLd, WebsiteJsonLd } from '@/components/seo/JsonLd';
 import { routing } from '@/lib/i18n/routing';
 import { getBaseUrl } from '@/utils/AppConfig';
@@ -97,9 +96,7 @@ export default async function RootLayout(props: {
   const messages = await getMessages();
 
   // ✅ React 19: Preload critical resources for optimal performance
-  // Fonts - browser will prioritize these for FOUT prevention
-  preload('/assets/fonts/LAVENER.ttf', { as: 'font', type: 'font/ttf', crossOrigin: 'anonymous' });
-  preload('/assets/fonts/Effloresce It.otf', { as: 'font', type: 'font/opentype', crossOrigin: 'anonymous' });
+  // Google Fonts (Bacasime Antique and Lora) are already preloaded via @import in global.css
 
   const navItems = [
     { label: 'HOME', href: `/${paramLocale}` },

@@ -74,7 +74,7 @@ export default function Timeline() {
     >
       <div className="max-w-6xl mx-auto">
         {/* Main Title */}
-        <h2 className="timeline-title text-2xl md:text-3xl font-bold text-black mb-12 md:mb-16">
+        <h2 className="timeline-title font-bacasime text-2xl md:text-3xl text-black mb-12 md:mb-16">
           {t('title')}
         </h2>
 
