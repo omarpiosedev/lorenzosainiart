@@ -346,7 +346,8 @@
       "role2": "Videomaker"
     },
     "badge": "About me",
-    "heading": "Hey, I'm Lorenzo Saini",
+    "greeting": "Hey, I'm",
+    "name": "Lorenzo Saini",
     "description": "I'm a photographer focused on fashion, portrait, and commercial work — blending natural light with intentional storytelling.",
     "cta": "View portfolio",
     "contact": "Contact",

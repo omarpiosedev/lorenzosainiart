@@ -223,11 +223,7 @@ export default function ServicesSection() {
                 {/* Subtitle */}
                 <p
                   ref={subtitleRef}
-                  className="text-sm md:text-base lg:text-lg text-black/60 leading-relaxed max-w-lg text-wrap-pretty line-clamp-4 md:line-clamp-none"
-                  style={{
-                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                    fontWeight: 300,
-                  }}
+                  className="text-sm md:text-base lg:text-lg text-black/60 leading-relaxed max-w-lg text-wrap-pretty line-clamp-4 md:line-clamp-none font-lora"
                 >
                   {t('subtitle')}
                 </p>
@@ -235,12 +231,7 @@ export default function ServicesSection() {
                 {/* Scroll Hint */}
                 <div className="flex items-center gap-3 pt-4">
                   <div className="w-8 h-px bg-black/20" aria-hidden="true" />
-                  <span
-                    className="text-xs tracking-wide uppercase text-black/40"
-                    style={{
-                      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                    }}
-                  >
+                  <span className="text-xs tracking-wide uppercase text-black/40 font-lora">
                     Scroll to see all my services
                   </span>
                   {/* Animated Down Arrow */}
@@ -268,12 +259,7 @@ export default function ServicesSection() {
                 />
 
                 {/* Services Title */}
-                <h2
-                  className="text-sm font-medium tracking-wide uppercase text-black/70 mb-6 lg:mb-10 whitespace-nowrap"
-                  style={{
-                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                  }}
-                >
+                <h2 className="text-sm font-medium tracking-wide uppercase text-black/70 mb-6 lg:mb-10 whitespace-nowrap font-lora-medium">
                   {t('servicesTitle')}
                 </h2>
 
@@ -282,12 +268,7 @@ export default function ServicesSection() {
                   {[0, 1, 2].map(index => (
                     <div key={index} ref={setServiceItemRef(index)} className="flex items-start gap-6">
                       {/* Number */}
-                      <span
-                        className="text-sm font-medium text-black/30 tabular-nums min-w-[3ch] pt-1"
-                        style={{
-                          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                        }}
-                      >
+                      <span className="text-sm font-medium text-black/30 tabular-nums min-w-[3ch] pt-1 font-lora-medium">
                         {String(index + 1).padStart(2, '0')}
                       </span>
 
@@ -296,12 +277,7 @@ export default function ServicesSection() {
 
                       {/* Service Text */}
                       <div className="flex-1 pt-0.5">
-                        <span
-                          className="text-base md:text-lg lg:text-xl text-black/80 font-light leading-relaxed text-wrap-pretty"
-                          style={{
-                            fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                          }}
-                        >
+                        <span className="text-base md:text-lg lg:text-xl text-black/80 leading-relaxed text-wrap-pretty font-lora">
                           {t(`services.${index}`)}
                         </span>
                       </div>
@@ -332,14 +308,11 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-start pt-5 md:pt-12">
             <h2
-              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-bacasime"
+              className="text-[32px] md:text-2xl lg:text-3xl font-semibold text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-lora-semibold uppercase"
             >
               {t('photography.title')}
             </h2>
-            <p
-              className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed font-light text-wrap-pretty line-clamp-3 md:line-clamp-4"
-              style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
-            >
+            <p className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed text-wrap-pretty line-clamp-3 md:line-clamp-4 font-lora">
               {t('photography.description')}
             </p>
           </div>
@@ -380,14 +353,11 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-start items-end text-right pt-5 md:pt-12">
             <h2
-              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-bacasime"
+              className="text-[32px] md:text-2xl lg:text-3xl font-semibold text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-lora-semibold uppercase"
             >
               {t('videomaking.title')}
             </h2>
-            <p
-              className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed font-light text-wrap-pretty line-clamp-3 md:line-clamp-4"
-              style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
-            >
+            <p className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed text-wrap-pretty line-clamp-3 md:line-clamp-4 font-lora">
               {t('videomaking.description')}
             </p>
           </div>
@@ -447,14 +417,11 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-end pb-5 md:pb-12">
             <h2
-              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-bacasime"
+              className="text-[32px] md:text-2xl lg:text-3xl font-semibold text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-lora-semibold uppercase"
             >
               {t('dronefootage.title')}
             </h2>
-            <p
-              className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed font-light text-wrap-pretty line-clamp-3 md:line-clamp-4"
-              style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
-            >
+            <p className="text-[14px] md:text-xs lg:text-sm text-black/80 leading-snug md:leading-relaxed text-wrap-pretty line-clamp-3 md:line-clamp-4 font-lora">
               {t('dronefootage.description')}
             </p>
           </div>

@@ -143,24 +143,21 @@ export default function Footer() {
 
             {/* Description */}
             <p
-              className="text-sm text-gray-600 leading-relaxed mb-6 max-w-md"
-              style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-sm text-gray-600 leading-relaxed mb-6 max-w-md font-lora"
             >
               {t('description')}
             </p>
 
             {/* Copyright */}
             <p
-              className="text-xs text-gray-500"
-              style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-xs text-gray-500 font-lora"
             >
               {t('copyright', { year: currentYear })}
             </p>
 
             {/* Developer Credit */}
             <p
-              className="text-xs text-gray-500 mt-2"
-              style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-xs text-gray-500 mt-2 font-lora"
             >
               {t('developer')}
               {' '}
@@ -180,8 +177,7 @@ export default function Footer() {
             {/* Pages Column */}
             <div>
               <h4
-                className="text-sm font-semibold text-black mb-4"
-                style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                className="text-sm font-semibold text-black mb-4 font-lora-semibold"
               >
                 {t('pages')}
               </h4>
@@ -190,8 +186,7 @@ export default function Footer() {
                   <li key={link.key}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-600 hover:text-black transition-colors duration-200"
-                      style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                      className="text-sm text-gray-600 hover:text-black transition-colors duration-200 font-lora"
                     >
                       {t(`nav.${link.key}` as never)}
                     </Link>
@@ -203,8 +198,7 @@ export default function Footer() {
             {/* Information Column */}
             <div>
               <h4
-                className="text-sm font-semibold text-black mb-4"
-                style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                className="text-sm font-semibold text-black mb-4 font-lora-semibold"
               >
                 {t('information')}
               </h4>
@@ -213,8 +207,7 @@ export default function Footer() {
                   <li key={link.key}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-600 hover:text-black transition-colors duration-200"
-                      style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                      className="text-sm text-gray-600 hover:text-black transition-colors duration-200 font-lora"
                     >
                       {t(`nav.${link.key}` as never)}
                     </Link>

@@ -677,7 +677,7 @@ export default function HeroHome() {
                 style={{
                   fontFamily: '\'Bacasime Antique\', serif',
                   fontSize: breakpoint === 'desktop'
-                    ? 'min(calc((100vw - 32px) / 11), calc(100vh * 0.41))'
+                    ? 'min(calc((100vw - 32px) / 11.5), calc(100vh * 0.41))'
                     : 'min(calc((100vw - 40px) / 10), calc(100vh * 0.11))',
                   whiteSpace: breakpoint === 'desktop' ? 'nowrap' : 'normal',
                   lineHeight: breakpoint === 'desktop' ? 1 : 1.1,

@@ -169,8 +169,7 @@ export default function ContactCTASection() {
             {t('title')}
           </h2>
           <p
-            className="text-sm md:text-base lg:text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto px-4 text-wrap-pretty line-clamp-3 md:line-clamp-none"
-            style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+            className="text-sm md:text-base lg:text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto px-4 text-wrap-pretty line-clamp-3 md:line-clamp-none font-lora"
           >
             {t('subtitle')}
           </p>
@@ -244,8 +243,7 @@ export default function ContactCTASection() {
         <div ref={ctaRef} className="flex justify-center mb-12 md:mb-16">
           <Link
             href="/contact"
-            className="btn-fluid inline-flex items-center justify-center min-w-fit px-6 py-3 md:px-8 md:py-4 bg-black text-white rounded-full text-sm md:text-base lg:text-lg font-medium transition-all duration-300 hover:bg-gray-800 hover:scale-105 hover:shadow-xl whitespace-nowrap"
-            style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+            className="btn-fluid inline-flex items-center justify-center min-w-fit px-6 py-3 md:px-8 md:py-4 bg-black text-white rounded-full text-sm md:text-base lg:text-lg font-medium transition-all duration-300 hover:bg-gray-800 hover:scale-105 hover:shadow-xl whitespace-nowrap font-lora-medium"
           >
             {t('ctaButton')}
           </Link>
@@ -257,8 +255,7 @@ export default function ContactCTASection() {
           className="flex flex-col items-center justify-center gap-4"
         >
           <span
-            className="text-sm md:text-base text-gray-600 font-medium whitespace-nowrap"
-            style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+            className="text-sm md:text-base text-gray-600 font-medium whitespace-nowrap font-lora-medium"
           >
             {t('socialLabel')}
           </span>
@@ -274,8 +271,7 @@ export default function ContactCTASection() {
               >
                 {social.icon}
                 <span
-                  className="text-sm font-medium hidden sm:inline truncate max-w-[120px]"
-                  style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                  className="text-sm font-medium hidden sm:inline truncate max-w-[120px] font-lora-medium"
                 >
                   {t(social.name as never)}
                 </span>

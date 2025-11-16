@@ -158,41 +158,42 @@ export default function ContactClient() {
 
   return (
     <div ref={containerRef} className="min-h-screen safe-top safe-bottom">
-      <div className="container mx-auto px-4 py-[var(--space-16)] md:py-[var(--space-20)]">
-        <div className="mx-auto max-w-3xl">
-          {/* Hero Section */}
-          <div className="mb-[var(--space-12)] text-center md:mb-[var(--space-16)]">
-            {/* Badge */}
-            <div
-              ref={badgeRef}
-              className="mb-[var(--space-8)] inline-flex items-center justify-center"
-            >
-              <span className="rounded-full bg-neutral-100 px-6 py-2.5 text-sm font-medium text-neutral-600">
-                {t('info.response')}
-              </span>
-            </div>
-
-            {/* Title with letter-by-letter animation */}
-            <h1 className="mb-[var(--space-4)] flex justify-center">
-              <TextGenerateEffect
-                words={t('heading')}
-                className="whitespace-nowrap font-bacasime text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[0.95] tracking-tight text-neutral-900"
-                animateBy="letter"
-                duration={0.5}
-                staggerDelay={0.08}
-                initialDelay={0.8}
-                filter={true}
-              />
-            </h1>
-
-            {/* Subtitle */}
-            <p
-              ref={subtitleRef}
-              className="mx-auto max-w-2xl text-[var(--text-lg)] leading-relaxed text-neutral-600"
-            >
-              {t('description')}
-            </p>
+      <div className="container mx-auto px-4 pt-32 md:pt-40 lg:pt-48 pb-[var(--space-16)] md:pb-[var(--space-20)]">
+        {/* Hero Section */}
+        <div className="mb-[var(--space-12)] text-center md:mb-[var(--space-16)]">
+          {/* Badge */}
+          <div
+            ref={badgeRef}
+            className="mb-[var(--space-8)] inline-flex items-center justify-center"
+          >
+            <span className="rounded-full bg-neutral-100 px-6 py-2.5 text-sm font-medium text-neutral-600">
+              {t('info.response')}
+            </span>
           </div>
+
+          {/* Title with letter-by-letter animation */}
+          <h1 className="mb-8 md:mb-12 flex justify-center">
+            <TextGenerateEffect
+              words={t('heading')}
+              className="md:whitespace-nowrap font-bacasime text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[0.95] tracking-tight text-neutral-900"
+              animateBy="letter"
+              duration={0.5}
+              staggerDelay={0.08}
+              initialDelay={0.8}
+              filter={true}
+            />
+          </h1>
+
+          {/* Subtitle */}
+          <p
+            ref={subtitleRef}
+            className="mx-auto max-w-2xl text-[var(--text-lg)] leading-relaxed text-neutral-600"
+          >
+            {t('description')}
+          </p>
+        </div>
+
+        <div className="mx-auto max-w-3xl">
 
           {/* Form Section */}
           <form

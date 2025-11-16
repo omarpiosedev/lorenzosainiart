@@ -85,7 +85,7 @@ function TestimonialCard({
 }) {
   return (
     <div className={`bg-gray-100 rounded-2xl flex-shrink-0 flex flex-col ${
-      isMobile ? 'p-4 mx-2 w-80 h-64' : 'p-8 mx-4 w-96 h-80'
+      isMobile ? 'p-4 mx-2 w-80 h-72' : 'p-8 mx-4 w-96 h-88'
     }`}
     >
       <div className="flex items-center mb-3">
@@ -98,17 +98,17 @@ function TestimonialCard({
           ★★★★★
         </div>
       </div>
-      <p className={`text-gray-800 leading-relaxed mb-4 flex-1 text-wrap-pretty line-clamp-4 md:line-clamp-6 ${
+      <p className={`text-gray-800 leading-relaxed mb-4 flex-1 text-wrap-pretty line-clamp-6 md:line-clamp-8 font-lora ${
         isMobile ? 'text-xs sm:text-sm' : 'text-base'
       }`}
       >
         {t(`testimonials.${testimonial.key}.text`)}
       </p>
       <div>
-        <p className={`font-semibold text-black truncate ${isMobile ? 'text-xs sm:text-sm' : 'text-base'}`}>
+        <p className={`font-semibold text-black truncate font-lora-semibold ${isMobile ? 'text-xs sm:text-sm' : 'text-base'}`}>
           {t(`testimonials.${testimonial.key}.name`)}
         </p>
-        <p className={`text-gray-600 truncate max-w-[200px] ${isMobile ? 'text-xs' : 'text-sm'}`}>
+        <p className={`text-gray-600 truncate max-w-[200px] font-lora ${isMobile ? 'text-xs' : 'text-sm'}`}>
           {t(`testimonials.${testimonial.key}.company`)}
         </p>
       </div>
@@ -205,11 +205,9 @@ export default function TestimonialsSection() {
               top: '9.72vh', // 105px / 1080px
               left: '50%',
               transform: 'translateX(-50%)', // Centrato orizzontalmente
-              width: '5.73vw', // 110px / 1920px (stessa dimensione del pulsante benefits)
-              height: '3.98vh', // 43px / 1080px (stessa dimensione del pulsante benefits)
             }}
           >
-            <ShimmerLabel className="w-full h-full text-sm font-medium tracking-wide">
+            <ShimmerLabel className="px-6 py-3 text-sm font-medium tracking-wide whitespace-nowrap">
               {t('testimonialsLabel')}
             </ShimmerLabel>
           </div>
@@ -247,9 +245,8 @@ export default function TestimonialsSection() {
             }}
           >
             <p
-              className="text-gray-800 leading-relaxed text-center flex items-center justify-center w-full h-full text-wrap-pretty line-clamp-3 md:line-clamp-none"
+              className="text-gray-800 leading-relaxed text-center flex items-center justify-center w-full h-full text-wrap-pretty line-clamp-3 md:line-clamp-none font-lora"
               style={{
-                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                 fontSize: '1.09vw', // Reduced one level from 1.25vw
               }}
             >
@@ -312,7 +309,7 @@ export default function TestimonialsSection() {
         </div>
 
         {/* Mobile/Tablet responsive layout */}
-        <div className="xl:hidden px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 lg:pb-24">
+        <div className="xl:hidden px-4 sm:px-6 lg:px-8 pb-24 sm:pb-32 lg:pb-40">
           <div className="flex flex-col items-center justify-start pt-24 sm:pt-32 lg:pt-40">
 
             {/* Testimonials Button - Mobile/Tablet */}
@@ -329,8 +326,7 @@ export default function TestimonialsSection() {
 
             {/* Subtitle - Mobile/Tablet */}
             <p
-              className="text-sm sm:text-base lg:text-lg text-gray-800 leading-relaxed text-center max-w-2xl mx-auto mb-16 sm:mb-20 lg:mb-32 text-wrap-pretty line-clamp-3 md:line-clamp-none"
-              style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-sm sm:text-base lg:text-lg text-gray-800 leading-relaxed text-center max-w-2xl mx-auto mb-16 sm:mb-20 lg:mb-32 text-wrap-pretty line-clamp-3 md:line-clamp-none font-lora"
             >
               {t('subtitle')}
             </p>
@@ -339,7 +335,7 @@ export default function TestimonialsSection() {
             <div
               ref={marqueeMobileRef}
               className="relative w-full overflow-hidden"
-              style={{ height: '280px' }}
+              style={{ height: '300px' }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >

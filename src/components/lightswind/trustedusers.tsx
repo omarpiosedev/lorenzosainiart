@@ -83,7 +83,7 @@ export const TrustedUsers: React.FC<TrustedUsersProps> = ({
         {/* Count and text - centered */}
         <div className="text-foreground text-center font-medium">
           <div className="flex items-center justify-center gap-1">
-            <span style={{ fontSize: textSize }}>{caption}</span>
+            <span className="uppercase font-lora-semibold" style={{ fontSize: textSize }}>{caption}</span>
             <CountUp
               value={totalUsersText}
               duration={2}
@@ -100,7 +100,7 @@ export const TrustedUsers: React.FC<TrustedUsersProps> = ({
               colorScheme="default"
               restartTrigger={restartTrigger}
             />
-            <span style={{ fontSize: textSize }}>{clientsLabel}</span>
+            <span className="uppercase font-lora-semibold" style={{ fontSize: textSize }}>{clientsLabel}</span>
           </div>
         </div>
       </div>

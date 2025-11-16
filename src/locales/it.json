@@ -113,7 +113,7 @@
           "title": "Esperienza cliente impeccabile"
         },
         "tailoredVision": {
-          "title": "Personalizzato per la tua visione"
+          "title": "Su misura\nper la tua\nvisione"
         },
         "turnaround": {
           "title": "7 giorni di consegna"
@@ -346,7 +346,8 @@
       "role2": "Videomaker"
     },
     "badge": "Chi sono",
-    "heading": "Ciao, sono Lorenzo Saini",
+    "greeting": "Ciao, sono",
+    "name": "Lorenzo Saini",
     "description": "Sono un fotografo specializzato in moda, ritratti e lavoro commerciale — combinando luce naturale con storytelling intenzionale.",
     "cta": "Visualizza portfolio",
     "contact": "Contatti",

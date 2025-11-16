@@ -61,8 +61,7 @@ function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
         type="button"
       >
         <span
-          className="text-base md:text-lg font-normal text-black pr-6 text-wrap-balanced line-clamp-2 md:line-clamp-none"
-          style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+          className="text-base md:text-lg font-normal text-black pr-6 text-wrap-balanced line-clamp-2 md:line-clamp-none font-lora"
         >
           {question}
         </span>
@@ -96,8 +95,7 @@ function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
       >
         <div className="pt-4 text-xs md:text-sm text-gray-700 leading-relaxed">
           <p
-            className="text-wrap-pretty"
-            style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+            className="text-wrap-pretty font-lora"
           >
             {answer}
           </p>
@@ -182,7 +180,7 @@ export default function FAQSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-white py-12 md:py-16 px-4 md:px-8 lg:px-16"
+      className="relative bg-white py-20 md:py-28 px-4 md:px-8 lg:px-16"
       data-section="faq"
       aria-label="Frequently Asked Questions"
     >
@@ -202,8 +200,7 @@ export default function FAQSection() {
                 {t('title')}
               </h2>
               <p
-                className="text-sm md:text-base text-gray-700 leading-relaxed text-wrap-pretty line-clamp-3 md:line-clamp-none"
-                style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                className="text-sm md:text-base text-gray-700 leading-relaxed text-wrap-pretty line-clamp-3 md:line-clamp-none font-lora"
               >
                 {t('subtitle')}
               </p>
@@ -263,8 +260,7 @@ export default function FAQSection() {
                 {/* Copyright text */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span
-                    className="text-white text-xs font-light"
-                    style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                    className="text-white text-xs font-light font-lora"
                   >
                     {t('imageCopyright')}
                   </span>

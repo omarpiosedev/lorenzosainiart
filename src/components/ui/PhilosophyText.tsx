@@ -57,6 +57,7 @@ export default function PhilosophyText() {
         },
         pin: containerRef.current, // Pin this text element
         pinSpacing: false, // Don't add spacing (section handles layout)
+        anticipatePin: 1, // CRITICAL: Prevents pin jitter on fast scroll (mobile)
         invalidateOnRefresh: true,
         // ✅ OPTIMIZED: Dynamic will-change management (Context7 best practice)
         // Add will-change only during animation, remove after to free GPU resources
@@ -103,7 +104,7 @@ export default function PhilosophyText() {
       <div className="max-w-4xl mx-auto text-center">
         <TextGenerateScrollEffect
           words={t('text')}
-          className="text-xl md:text-2xl lg:text-3xl leading-tight text-black tracking-wide font-semibold text-wrap-pretty"
+          className="text-lg md:text-xl lg:text-2xl leading-relaxed text-black tracking-normal font-lora-semibold text-wrap-pretty"
           duration={1}
           staggerDelay={0.08}
           animateBy="word"

@@ -76,23 +76,33 @@ export default function HeroAbout() {
         <div ref={contentRef} className="flex flex-col space-y-6 lg:space-y-8">
           {/* Badge */}
           <div className="inline-flex">
-            <span className="px-4 py-2 bg-gray-200 text-black text-sm rounded-full whitespace-nowrap">
+            <span className="px-4 py-2 bg-gray-200 text-black text-sm rounded-full whitespace-nowrap font-lora">
               {t('badge')}
             </span>
           </div>
 
           {/* Heading */}
-          <TextGenerateEffect
-            words={t('heading')}
-            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight text-wrap-balanced heading-compact"
-            duration={0.8}
-            staggerDelay={0.08}
-            initialDelay={0.8}
-            animateBy="letter"
-          />
+          <div className="leading-tight text-wrap-balanced heading-compact font-bacasime">
+            <TextGenerateEffect
+              words={t('greeting')}
+              className="text-2xl md:text-3xl lg:text-4xl text-black mb-2 block"
+              duration={1.2}
+              staggerDelay={0.12}
+              initialDelay={0.8}
+              animateBy="letter"
+            />
+            <TextGenerateEffect
+              words={t('name')}
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-black block"
+              duration={1.2}
+              staggerDelay={0.12}
+              initialDelay={2.6}
+              animateBy="letter"
+            />
+          </div>
 
           {/* Description */}
-          <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-xl text-wrap-pretty line-clamp-4 md:line-clamp-none">
+          <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-xl text-wrap-pretty line-clamp-4 md:line-clamp-none font-lora">
             {t('description')}
           </p>
 
@@ -100,7 +110,7 @@ export default function HeroAbout() {
           <div>
             <Link
               href={`/${locale}/portfolio`}
-              className="inline-block px-8 py-4 bg-black text-white rounded-full text-base font-medium hover:bg-gray-800 transition-colors btn-fluid min-w-fit whitespace-nowrap"
+              className="inline-block px-8 py-4 bg-black text-white rounded-full text-base font-medium hover:bg-gray-800 transition-colors btn-fluid min-w-fit whitespace-nowrap font-lora-medium"
             >
               {t('cta')}
             </Link>
