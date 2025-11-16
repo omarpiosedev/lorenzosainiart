@@ -1,0 +1,152 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up Node.js environment
+        uses: ./.github/actions/setup-project
+        with:
+          node-version: 22.x
+
+      - name: Restore Next.js build cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .next
+          key: nextjs-build-22.x-${{ github.sha }}
+          restore-keys: |
+            nextjs-build-22.x-
+
+      - name: Build Next.js for production
+        if: steps.cache-nextjs.outputs.cache-hit != 'true'
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SENTRY_DISABLED: 'true'
+          SENTRY_DSN: 'https://example.sentry.io/project'
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.15.x
+
+      - name: Run Lighthouse CI
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 30
+
+      - name: Comment PR with Lighthouse results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Read manifest to get report paths
+            const manifestPath = '.lighthouseci/manifest.json';
+            if (!fs.existsSync(manifestPath)) {
+              console.log('No manifest found, skipping comment');
+              return;
+            }
+
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const reports = manifest[0]?.lhr || [];
+
+            if (reports.length === 0) {
+              console.log('No reports found');
+              return;
+            }
+
+            // Get first report summary
+            const firstReport = JSON.parse(fs.readFileSync(reports[0].jsonPath, 'utf8'));
+            const categories = firstReport.categories;
+
+            const scores = {
+              performance: Math.round(categories.performance.score * 100),
+              accessibility: Math.round(categories.accessibility.score * 100),
+              bestPractices: Math.round(categories['best-practices'].score * 100),
+              seo: Math.round(categories.seo.score * 100),
+            };
+
+            const metrics = firstReport.audits;
+            const fcp = Math.round(metrics['first-contentful-paint'].numericValue);
+            const lcp = Math.round(metrics['largest-contentful-paint'].numericValue);
+            const cls = metrics['cumulative-layout-shift'].numericValue.toFixed(3);
+            const tbt = Math.round(metrics['total-blocking-time'].numericValue);
+
+            const scoreEmoji = (score) => {
+              if (score >= 90) return '🟢';
+              if (score >= 50) return '🟠';
+              return '🔴';
+            };
+
+            const body = `## 🔦 Lighthouse Performance Report
+
+            ### Scores
+            | Category | Score |
+            |----------|-------|
+            | ${scoreEmoji(scores.performance)} Performance | **${scores.performance}**/100 |
+            | ${scoreEmoji(scores.accessibility)} Accessibility | **${scores.accessibility}**/100 |
+            | ${scoreEmoji(scores.bestPractices)} Best Practices | **${scores.bestPractices}**/100 |
+            | ${scoreEmoji(scores.seo)} SEO | **${scores.seo}**/100 |
+
+            ### Core Web Vitals
+            | Metric | Value | Target |
+            |--------|-------|--------|
+            | First Contentful Paint | **${fcp}ms** | < 1800ms |
+            | Largest Contentful Paint | **${lcp}ms** | < 2500ms |
+            | Cumulative Layout Shift | **${cls}** | < 0.1 |
+            | Total Blocking Time | **${tbt}ms** | < 300ms |
+
+            📊 [View full report in artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Lighthouse Performance Report')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body,
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              });
+            }

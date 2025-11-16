@@ -5,7 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
-import GSAPScrollReveal from '@/components/ui/GSAPScrollReveal';
+import { TextGenerateScrollEffect } from '@/components/ui/TextGenerateScrollEffect';
 
 // Register GSAP plugins (best practice: register once at module level)
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -83,17 +83,19 @@ export default function PhilosophyText() {
         <span className="text-sm font-medium whitespace-nowrap">{t('badge')}</span>
       </div>
 
-      {/* Main text with GSAP ScrollReveal animation */}
+      {/* Main text with GSAP TextGenerateScrollEffect animation */}
       <div className="max-w-4xl mx-auto text-center">
-        <GSAPScrollReveal
+        <TextGenerateScrollEffect
+          words={t('text')}
           className="text-xl md:text-2xl lg:text-3xl leading-tight text-black tracking-wide font-semibold text-wrap-pretty line-clamp-3 md:line-clamp-none"
+          duration={1}
           staggerDelay={0.08}
-          duration={1.5}
-          ease="power1.out"
-          scrubDuration={1.5}
-        >
-          {t('text')}
-        </GSAPScrollReveal>
+          animateBy="word"
+          filter={true}
+          scrollTriggerStart="top 90%"
+          scrollTriggerEnd="+=2300"
+          scrub={1}
+        />
       </div>
     </div>
   );

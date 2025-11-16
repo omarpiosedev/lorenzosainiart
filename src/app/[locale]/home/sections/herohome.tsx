@@ -25,6 +25,7 @@ export default function HeroHome() {
   const titleMobileRef = useRef<HTMLHeadingElement>(null);
   const signatureRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
   const tl = useRef<gsap.core.Timeline | undefined>(undefined);
   const sposiParallaxRef = useRef<gsap.core.Tween | null>(null);
   const cloudParallaxRef = useRef<gsap.core.Tween | null>(null);
@@ -32,6 +33,7 @@ export default function HeroHome() {
   // Incrementa mountKey ogni volta che il componente viene montato/visitato
   // Questo forza le animazioni GSAP a ripartire grazie a revertOnUpdate
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: forces GSAP animations to restart on mount
     setMountKey(prev => prev + 1);
   }, []);
 
@@ -127,7 +129,7 @@ export default function HeroHome() {
     if (!isReady) {
       return;
     }
-    if (!sposiRef.current || !cloudRef.current || (!titleDesktopRef.current && !titleMobileRef.current) || !signatureRef.current || !contactRef.current) {
+    if (!sposiRef.current || !cloudRef.current || (!titleDesktopRef.current && !titleMobileRef.current) || !signatureRef.current || !contactRef.current || !logoRef.current) {
       return;
     }
 
@@ -149,9 +151,9 @@ export default function HeroHome() {
       transform: sposiOriginalTransform,
     });
 
-    // === SIGNATURE E CONTACT ===
-    // Impostano stati iniziali per signature e contact
-    gsap.set([signatureRef.current, contactRef.current], {
+    // === SIGNATURE, CONTACT E LOGO ===
+    // Impostano stati iniziali per signature, contact e logo
+    gsap.set([signatureRef.current, contactRef.current, logoRef.current], {
       opacity: 0,
       scale: 0.8,
       filter: 'blur(6px)',
@@ -174,17 +176,17 @@ export default function HeroHome() {
       delay: 0.2,
       onComplete: () => {
         // Rimuovi will-change dopo le animazioni per liberare risorse
-        gsap.set([signatureRef.current, contactRef.current, activeTitle], {
+        gsap.set([signatureRef.current, contactRef.current, logoRef.current, activeTitle], {
           willChange: 'auto',
         });
       },
     });
 
-    // Signature e contact appaiono insieme
-    tl.current.set([signatureRef.current, contactRef.current], {
+    // Signature, contact e logo appaiono insieme
+    tl.current.set([signatureRef.current, contactRef.current, logoRef.current], {
       opacity: 1,
     })
-      .to([signatureRef.current, contactRef.current], {
+      .to([signatureRef.current, contactRef.current, logoRef.current], {
         scale: 1,
         filter: 'blur(0px)',
         duration: 2.0,
@@ -372,17 +374,6 @@ export default function HeroHome() {
           >
             Videomaker
           </span>
-          <br />
-          <span style={{
-            fontSize: breakpoint === 'mobile' ? '11px' : breakpoint === 'tablet' ? '13px' : '14px',
-            opacity: 0.6,
-            fontStyle: 'italic',
-            transform: 'skew(-8deg)',
-            display: 'inline-block',
-          }}
-          >
-            Designer
-          </span>
         </p>
       </div>
 
@@ -405,6 +396,27 @@ export default function HeroHome() {
         >
           Contact
         </button>
+      </div>
+
+      {/* Logo bianco - centrato in alto sulla stessa linea di signature e contact */}
+      <div
+        ref={logoRef}
+        className="absolute z-30"
+        style={{
+          top: '16px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          opacity: 0, // Nascosto inizialmente
+        }}
+      >
+        <Image
+          src="/assets/images/LogoBianco.webp"
+          alt="Lorenzo Saini Logo"
+          width={breakpoint === 'mobile' ? 40 : breakpoint === 'tablet' ? 50 : 60}
+          height={breakpoint === 'mobile' ? 40 : breakpoint === 'tablet' ? 50 : 60}
+          quality={90}
+          className="object-contain"
+        />
       </div>
 
       {/* Background Image - LCP optimized */}

@@ -56,6 +56,7 @@ const CarouselPhoto = ({ photos, className = '' }: CarouselPhotoProps) => {
   );
 
   // ✅ Context-safe wobble animation on hover
+
   const handleItemHover = contextSafe((index: number) => {
     if (zoomedIndex !== null) {
       return;
@@ -85,6 +86,7 @@ const CarouselPhoto = ({ photos, className = '' }: CarouselPhotoProps) => {
   });
 
   // ✅ Context-safe zoom animation on click
+
   const handleItemClick = contextSafe(
     (index: number, event: React.MouseEvent) => {
       event.preventDefault();
@@ -154,6 +156,7 @@ const CarouselPhoto = ({ photos, className = '' }: CarouselPhotoProps) => {
   );
 
   // ✅ Context-safe close zoom animation
+
   const handleCloseZoom = contextSafe((event: React.MouseEvent) => {
     if (zoomedIndex === null) {
       return;

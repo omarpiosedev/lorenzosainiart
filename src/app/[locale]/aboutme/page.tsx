@@ -3,6 +3,7 @@ import pick from 'lodash/pick';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { Header } from '@/components/ui';
 import { getBaseUrl } from '@/utils/AppConfig';
 import AboutContent from './section/AboutContent';
 
@@ -72,6 +73,7 @@ export default async function AboutMePage(props: Props) {
   return (
     <NextIntlClientProvider messages={pick(messages, ['AboutPage'])}>
       <BreadcrumbJsonLd items={breadcrumbItems} />
+      <Header variant="black" />
       <AboutContent />
     </NextIntlClientProvider>
   );

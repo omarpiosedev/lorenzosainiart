@@ -1,8 +1,12 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+
+// Register GSAP plugins
+gsap.registerPlugin(useGSAP);
 
 type SettingsModalProps = {
   isOpen: boolean;
@@ -47,7 +51,9 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     onClose();
   };
 
-  useEffect(() => {
+  // ✅ BEST PRACTICE: Use useGSAP for GSAP animations with React 19 compatibility
+  // Context7 Pattern: Automatic cleanup, proper scoping, no memory leaks
+  useGSAP(() => {
     const modal = modalRef.current;
     const overlay = overlayRef.current;
     const content = contentRef.current;
@@ -84,7 +90,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
         .to(overlay, { opacity: 0, duration: 0.2, ease: 'power2.in' }, '-=0.1')
         .set(modal, { display: 'none' });
     }
-  }, [isOpen]);
+  }, { dependencies: [isOpen], scope: modalRef });
 
   // Close modal when clicking overlay
   const handleOverlayClick = (e: React.MouseEvent) => {

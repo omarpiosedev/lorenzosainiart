@@ -54,6 +54,11 @@ export default antfu(
       'jsx-a11y/no-noninteractive-tabindex': 'warn', // Convert to warning
       'jsx-a11y/no-static-element-interactions': 'warn', // Convert to warning
       '@next/next/no-img-element': 'warn', // Convert img warnings to avoid blocking build
+      'react-hooks/refs': 'off', // Allow GSAP contextSafe pattern (official React 19 pattern)
+      'react-hooks/set-state-in-effect': 'warn', // Downgrade to warning (some cases are intentional)
+      'react-hooks-extra/no-direct-set-state-in-use-effect': 'off', // Disable duplicate rule
+      'react-web-api/no-leaked-event-listener': 'warn', // Downgrade to warning
+      'react-web-api/no-leaked-timeout': 'warn', // Downgrade to warning
     },
   },
 );

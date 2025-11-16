@@ -30,6 +30,7 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
   const pathname = usePathname();
   const previousPathnameRef = useRef<string | null>(null);
   const isInitialMountRef = useRef(true);
+  const isFirstLoadRef = useRef(true); // Track if this is first app load vs client navigation
 
   // LoadingScreen and BackgroundMusic refs
   const loadingScreenRef = useRef<LoadingScreenHandle>(null);
@@ -53,16 +54,22 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
   // BEST PRACTICE: Use contextSafe for GSAP animations in event handlers
   const { contextSafe } = useGSAP({ scope: videoTransitionRef });
 
-  // Show loading screen on every reload if on home page
+  // Show loading screen ONLY on first load/reload if on home page
+  // Skip LoadingScreen during client-side navigation to home (use normal page transition)
   useEffect(() => {
-    if (isHomePage) {
-      // Home page: show LoadingScreen, content hidden
+    if (isHomePage && isFirstLoadRef.current) {
+      // First load on home page: show LoadingScreen, content hidden
       setShowLoadingScreen(true);
       setHasLoadingCompleted(false);
     } else {
-      // Not home page: skip loading screen, show content immediately
+      // Not home page OR client navigation to home: skip loading screen, show content immediately
       setShowLoadingScreen(false);
       setHasLoadingCompleted(true);
+    }
+
+    // Mark first load as complete after initial check
+    if (isFirstLoadRef.current) {
+      isFirstLoadRef.current = false;
     }
   }, [isHomePage]);
 
@@ -135,7 +142,8 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
 
   // Listen for video transition events from child components
   useEffect(() => {
-    // Context7 GSAP Best Practice: Wrap GSAP animations with contextSafe
+    // ✅ BEST PRACTICE: Wrap GSAP animations with contextSafe for proper cleanup
+    // contextSafe is stable and doesn't need to be in dependencies array
     const handleVideoTransition = contextSafe((event: CustomEvent<{ targetUrl: string }>) => {
       const { targetUrl } = event.detail;
 
@@ -226,7 +234,9 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
         gsap.killTweensOf(videoTransitionRef.current);
       }
     };
-  }, [router, contextSafe]);
+    // ✅ contextSafe is stable and omitted from dependencies to prevent unnecessary re-runs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
 
   // CRITICAL: Video transition overlay fade-out
   // Only fade out when new page pathname is confirmed and fully rendered

@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
 import { BlogFeedContainer } from '@/components/blog/BlogFeedContainer';
 import { BlogHero } from '@/components/blog/BlogHero';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { Header } from '@/components/ui';
 import { getBaseUrl } from '@/utils/AppConfig';
 
 type Props = {
@@ -55,6 +56,8 @@ export default async function BlogPage(props: Props) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 
+  const t = await getTranslations('BlogPage.hero');
+
   const baseUrl = getBaseUrl();
   const breadcrumbItems = [
     { name: 'Home', url: `${baseUrl}/${locale}` },
@@ -64,8 +67,14 @@ export default async function BlogPage(props: Props) {
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbItems} />
+      <Header variant="black" />
       <div className="min-h-screen">
-        <BlogHero />
+        <BlogHero
+          badge={t('badge')}
+          title={t('title')}
+          subtitle1={t('subtitle1')}
+          subtitle2={t('subtitle2')}
+        />
         {/* Wrap data fetching in Suspense for Cache Components compatibility */}
         {/* Empty fallback: shows empty feed instead of skeleton during first load */}
         <Suspense fallback={<div className="w-full bg-white py-[var(--space-12)] md:py-[var(--space-16)]" />}>

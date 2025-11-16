@@ -1,0 +1,171 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "npm run start",
+      "startServerReadyPattern": "Ready in",
+      "startServerReadyTimeout": 30000,
+      "url": [
+        "http://localhost:3000/it",
+        "http://localhost:3000/it/portfolio",
+        "http://localhost:3000/it/aboutme",
+        "http://localhost:3000/it/contact",
+        "http://localhost:3000/it/blog",
+        "http://localhost:3000/en",
+        "http://localhost:3000/en/portfolio"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "cpuSlowdownMultiplier": 1
+        },
+        "budgets": [
+          {
+            "path": "/*",
+            "resourceSizes": [
+              {
+                "resourceType": "script",
+                "budget": 400
+              },
+              {
+                "resourceType": "image",
+                "budget": 800
+              },
+              {
+                "resourceType": "stylesheet",
+                "budget": 50
+              },
+              {
+                "resourceType": "document",
+                "budget": 100
+              },
+              {
+                "resourceType": "font",
+                "budget": 150
+              },
+              {
+                "resourceType": "total",
+                "budget": 1500
+              }
+            ],
+            "resourceCounts": [
+              {
+                "resourceType": "third-party",
+                "budget": 15
+              },
+              {
+                "resourceType": "script",
+                "budget": 30
+              }
+            ],
+            "timings": [
+              {
+                "metric": "interactive",
+                "budget": 3500
+              },
+              {
+                "metric": "first-contentful-paint",
+                "budget": 1500
+              },
+              {
+                "metric": "largest-contentful-paint",
+                "budget": 2500
+              },
+              {
+                "metric": "cumulative-layout-shift",
+                "budget": 0.1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "categories:performance": [
+          "error",
+          {
+            "minScore": 0.85,
+            "aggregationMethod": "median-run"
+          }
+        ],
+        "categories:accessibility": [
+          "warn",
+          {
+            "minScore": 0.95,
+            "aggregationMethod": "pessimistic"
+          }
+        ],
+        "categories:best-practices": [
+          "warn",
+          {
+            "minScore": 0.9,
+            "aggregationMethod": "pessimistic"
+          }
+        ],
+        "categories:seo": [
+          "error",
+          {
+            "minScore": 0.95,
+            "aggregationMethod": "pessimistic"
+          }
+        ],
+        "first-contentful-paint": [
+          "error",
+          {
+            "maxNumericValue": 2000,
+            "aggregationMethod": "optimistic"
+          }
+        ],
+        "largest-contentful-paint": [
+          "error",
+          {
+            "maxNumericValue": 2500,
+            "aggregationMethod": "optimistic"
+          }
+        ],
+        "cumulative-layout-shift": [
+          "error",
+          {
+            "maxNumericValue": 0.1,
+            "aggregationMethod": "pessimistic"
+          }
+        ],
+        "total-blocking-time": [
+          "warn",
+          {
+            "maxNumericValue": 300,
+            "aggregationMethod": "optimistic"
+          }
+        ],
+        "speed-index": [
+          "warn",
+          {
+            "maxNumericValue": 3000,
+            "aggregationMethod": "optimistic"
+          }
+        ],
+        "interactive": [
+          "warn",
+          {
+            "maxNumericValue": 3500,
+            "aggregationMethod": "optimistic"
+          }
+        ],
+        "uses-responsive-images": "off",
+        "offscreen-images": "off",
+        "modern-image-formats": "warn",
+        "uses-optimized-images": "warn",
+        "unused-javascript": "off",
+        "bf-cache": "off"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage",
+      "reportFilenamePattern": "%%PATHNAME%%-%%DATETIME%%-report.%%EXTENSION%%"
+    }
+  }
+}

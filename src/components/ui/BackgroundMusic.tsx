@@ -22,7 +22,7 @@ const BackgroundMusic = ({ ref, src, className = '' }: BackgroundMusicProps & { 
   const [isPlaying, setIsPlaying] = useState(false); // Start paused (controlled by LoadingScreen)
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showPlayHint, setShowPlayHint] = useState(false);
-  const FIXED_VOLUME = 0.3; // Fixed volume at 30%
+  const FIXED_VOLUME = 0.6; // Fixed volume at 60%
 
   // Expose start() method via ref for LoadingScreen to trigger
   useImperativeHandle(ref, () => ({

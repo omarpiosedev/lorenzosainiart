@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
+import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 
 // Register GSAP
 if (typeof window !== 'undefined') {
@@ -32,7 +33,6 @@ export default function ContactClient() {
   // Refs for GSAP animations
   const containerRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -47,7 +47,7 @@ export default function ContactClient() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<FormStatus>('idle');
 
-  // GSAP animations
+  // GSAP animations (title animation removed - now uses TextGenerateEffect)
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -63,16 +63,11 @@ export default function ContactClient() {
           y: 20,
           duration: 0.6,
         })
-          .from(titleRef.current, {
-            opacity: 0,
-            y: 30,
-            duration: 0.8,
-          }, '-=0.3')
           .from(subtitleRef.current, {
             opacity: 0,
             y: 20,
             duration: 0.6,
-          }, '-=0.4')
+          }, '-=0.2')
           .from(formRef.current, {
             opacity: 0,
             y: 40,
@@ -177,12 +172,17 @@ export default function ContactClient() {
               </span>
             </div>
 
-            {/* Title */}
-            <h1
-              ref={titleRef}
-              className="mb-[var(--space-4)] font-lavener text-[clamp(2.5rem,8vw,5rem)] font-bold leading-[0.95] tracking-tight text-neutral-900"
-            >
-              {t('heading')}
+            {/* Title with letter-by-letter animation */}
+            <h1 className="mb-[var(--space-4)] flex justify-center">
+              <TextGenerateEffect
+                words={t('heading')}
+                className="whitespace-nowrap font-lavener text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[0.95] tracking-tight text-neutral-900"
+                animateBy="letter"
+                duration={0.5}
+                staggerDelay={0.08}
+                initialDelay={0.8}
+                filter={true}
+              />
             </h1>
 
             {/* Subtitle */}

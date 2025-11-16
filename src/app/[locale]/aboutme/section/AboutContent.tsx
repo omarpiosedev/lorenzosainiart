@@ -24,7 +24,6 @@ export default function AboutContent() {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLElement>(null);
   const bioParagraph1Ref = useRef<HTMLDivElement>(null);
   const bioParagraph2Ref = useRef<HTMLParagraphElement>(null);
   const testimonialRef = useRef<HTMLDivElement>(null);
@@ -37,14 +36,6 @@ export default function AboutContent() {
       }
 
       const ctx = gsap.context(() => {
-        // Fade in header
-        gsap.from(headerRef.current, {
-          opacity: 0,
-          y: -20,
-          duration: 0.8,
-          ease: 'power3.out',
-        });
-
         // Animate image with scale
         gsap.from(imageRef.current, {
           opacity: 0,
@@ -135,47 +126,6 @@ export default function AboutContent() {
       ref={containerRef}
       className="relative min-h-screen bg-white overflow-hidden"
     >
-      {/* Header */}
-      <header
-        ref={headerRef}
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 bg-transparent"
-      >
-        {/* Left: Name & Role */}
-        <div className="flex flex-col">
-          <h2 className="text-base md:text-lg font-bold text-black text-wrap-balanced heading-compact">
-            {t('header.name')}
-          </h2>
-          <div className="flex flex-col text-xs md:text-sm text-gray-600">
-            <p>{t('header.role1')}</p>
-            <p>{t('header.role2')}</p>
-          </div>
-        </div>
-
-        {/* Center: Logo */}
-        <Link
-          href={`/${locale}`}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        >
-          <div className="relative w-12 h-12 md:w-16 md:h-16 transition-transform duration-700 ease-in-out hover:rotate-[360deg]">
-            <Image
-              src="/assets/images/LogoNero.webp"
-              alt="Lorenzo Saini Logo"
-              fill
-              className="object-contain"
-              sizes="(max-width: 768px) 48px, 64px"
-            />
-          </div>
-        </Link>
-
-        {/* Right: Contact Button */}
-        <Link
-          href={`/${locale}/contact`}
-          className="px-6 py-3 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors btn-fluid min-w-fit whitespace-nowrap"
-        >
-          {t('contact')}
-        </Link>
-      </header>
-
       {/* Main Section */}
       <main className="flex items-center justify-center px-6 md:px-12 lg:px-24 pt-24 md:pt-32 lg:pt-40 pb-12 md:pb-16 lg:pb-20">
         <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">

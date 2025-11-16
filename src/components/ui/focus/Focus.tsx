@@ -1,7 +1,34 @@
 'use client';
 
 import { gsap } from 'gsap';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+// ✅ MODERN PATTERN: Custom hook for interval management (React 2025 best practice)
+// Replaces old setInterval pattern with cleaner, more maintainable code
+function useInterval(callback: () => void, delay: number | null) {
+  const savedCallback = useRef<() => void>(callback);
+
+  // Remember the latest callback
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval
+  useEffect(() => {
+    if (delay === null) {
+      return;
+    }
+
+    const tick = () => {
+      if (savedCallback.current) {
+        savedCallback.current();
+      }
+    };
+
+    const id = setInterval(tick, delay);
+    return () => clearInterval(id);
+  }, [delay]);
+}
 
 type FocusProps = {
   sentence?: string;
@@ -42,7 +69,6 @@ export function Focus({
   const wordRefs = useRef<{ [key: number]: HTMLSpanElement | null }>({});
   const frameRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const setWordRef = (el: HTMLSpanElement | null, index: number) => {
     if (el) {
@@ -97,25 +123,16 @@ export function Focus({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);
 
+  // ✅ MODERN PATTERN: Use custom useInterval hook for cleaner code
   // Auto-cycle through words in automatic mode
-  useEffect(() => {
-    if (!manualMode) {
-      // Clear any existing interval
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+  const cycleWords = useCallback(() => {
+    setCurrentIndex(prev => (prev + 1) % words.length);
+  }, [words.length]);
 
-      intervalRef.current = setInterval(() => {
-        setCurrentIndex(prev => (prev + 1) % words.length);
-      }, animationDuration * 1000 + pauseBetweenAnimations * 1000);
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [manualMode, words.length, animationDuration, pauseBetweenAnimations]);
+  useInterval(
+    cycleWords,
+    manualMode ? null : (animationDuration * 1000 + pauseBetweenAnimations * 1000),
+  );
 
   // Initialize frame position
   useEffect(() => {

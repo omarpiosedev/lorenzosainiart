@@ -493,6 +493,7 @@ export default function Photography2DCarousel({
   // EVENT HANDLERS
   // ============================================================================
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- contextSafe wrapper is intentional
   const handleCTAClick = useCallback(
     contextSafe(() => {
       if (projects.length > 0 && projects[currentIndex]) {
