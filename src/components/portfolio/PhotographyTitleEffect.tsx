@@ -1,7 +1,13 @@
 'use client';
 
-import { motion, stagger, useAnimate } from 'motion/react';
-import { useEffect } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { useRef } from 'react';
+
+// Register GSAP plugins
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(useGSAP);
+}
 
 type PhotographyTitleEffectProps = {
   words: string;
@@ -22,53 +28,62 @@ export function PhotographyTitleEffect({
   staggerDelay = 0.1,
   isActive,
 }: PhotographyTitleEffectProps) {
-  const [scope, animate] = useAnimate();
+  const containerRef = useRef<HTMLHeadingElement>(null);
   const wordsArray = words.split(' ');
 
-  useEffect(() => {
-    if (!isActive) {
-      // Reset to hidden when not active
-      animate(
-        'span',
+  // GSAP animation using useGSAP hook with isActive dependency
+  useGSAP(
+    () => {
+      if (!containerRef.current) {
+        return;
+      }
+
+      const spans = containerRef.current.querySelectorAll('.text-span');
+
+      if (!isActive) {
+        // Reset to hidden when not active
+        gsap.to(spans, {
+          opacity: 0,
+          filter: filter ? 'blur(10px)' : 'none',
+          duration: 0.2,
+          ease: 'power2.out',
+        });
+        return;
+      }
+
+      // Animate in when active
+      gsap.fromTo(
+        spans,
         {
           opacity: 0,
           filter: filter ? 'blur(10px)' : 'none',
         },
         {
-          duration: 0.2,
+          opacity: 1,
+          filter: filter ? 'blur(0px)' : 'none',
+          duration,
+          stagger: staggerDelay,
+          ease: 'power2.out',
         },
       );
-      return;
-    }
-
-    // Animate in when active
-    animate(
-      'span',
-      {
-        opacity: 1,
-        filter: filter ? 'blur(0px)' : 'none',
-      },
-      {
-        duration,
-        delay: stagger(staggerDelay),
-      },
-    );
-  }, [isActive, animate, duration, filter, staggerDelay]);
+    },
+    { scope: containerRef, dependencies: [isActive, duration, filter, staggerDelay] },
+  );
 
   return (
-    <motion.h2 ref={scope} className={`${className} text-wrap-balanced heading-compact`} style={style}>
+    <h2 ref={containerRef} className={`${className} text-wrap-balanced heading-compact`} style={style}>
       {wordsArray.map((word, idx) => (
-        <motion.span
+        <span
           key={`${word}-${idx}`}
-          className="inline-block opacity-0"
+          className="text-span inline-block opacity-0"
           style={{
             filter: filter ? 'blur(10px)' : 'none',
           }}
         >
           {word}
           {idx < wordsArray.length - 1 ? '\u00A0' : ''}
-        </motion.span>
+        </span>
       ))}
-    </motion.h2>
+    </h2>
   );
 }

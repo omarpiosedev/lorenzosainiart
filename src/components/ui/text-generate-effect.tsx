@@ -1,7 +1,14 @@
 'use client';
-import { motion, stagger, useAnimate } from 'motion/react';
-import { useEffect } from 'react';
+
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { useRef } from 'react';
 import { cn } from '@/lib/utils';
+
+// Register GSAP plugins
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(useGSAP);
+}
 
 export const TextGenerateEffect = ({
   words,
@@ -20,84 +27,96 @@ export const TextGenerateEffect = ({
   initialDelay?: number;
   animateBy?: 'word' | 'letter';
 }) => {
-  const [scope, animate] = useAnimate();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      animate(
-        'span',
+  // GSAP animation using useGSAP hook
+  useGSAP(
+    () => {
+      if (!containerRef.current) {
+        return;
+      }
+
+      const spans = containerRef.current.querySelectorAll('.text-span');
+
+      // Animate from hidden state to visible
+      gsap.fromTo(
+        spans,
+        {
+          opacity: 0,
+          filter: filter ? 'blur(10px)' : 'none',
+        },
         {
           opacity: 1,
           filter: filter ? 'blur(0px)' : 'none',
-        },
-        {
-          duration: duration || 1,
-          delay: stagger(staggerDelay),
+          duration,
+          stagger: staggerDelay,
+          delay: initialDelay,
+          ease: 'power2.out',
         },
       );
-    }, initialDelay * 1000);
-
-    return () => clearTimeout(timer);
-  }, [scope.current]);
+    },
+    { scope: containerRef, dependencies: [words, duration, staggerDelay, initialDelay, filter, animateBy] },
+  );
 
   const renderWords = () => {
     if (animateBy === 'letter') {
       const wordsArray = words.split(' ');
       return (
-        <motion.div ref={scope} className="flex flex-wrap">
+        <div className="flex flex-wrap">
           {wordsArray.map((word, wordIdx) => (
             <span key={wordIdx} className="inline-block whitespace-nowrap">
               {word.split('').map((letter, letterIdx) => (
-                <motion.span
+                <span
                   key={`${wordIdx}-${letterIdx}`}
-                  className="dark:text-white text-black opacity-0 inline-block"
+                  className="text-span dark:text-white text-black opacity-0 inline-block"
                   style={{
                     filter: filter ? 'blur(10px)' : 'none',
                   }}
                 >
                   {letter}
-                </motion.span>
+                </span>
               ))}
               {wordIdx < wordsArray.length - 1 && (
-                <motion.span
+                <span
                   key={`${wordIdx}-space`}
-                  className="dark:text-white text-black opacity-0 inline-block"
+                  className="text-span dark:text-white text-black opacity-0 inline-block"
                   style={{
                     filter: filter ? 'blur(10px)' : 'none',
                   }}
                 >
                   {'\u00A0'}
-                </motion.span>
+                </span>
               )}
             </span>
           ))}
-        </motion.div>
+        </div>
       );
     }
 
+    // Animate by word
     const wordsArray = words.split(' ');
     return (
-      <motion.div ref={scope}>
+      <div>
         {wordsArray.map((word, idx) => {
           return (
-            <motion.span
+            <span
               key={word + idx}
-              className="dark:text-white text-black opacity-0"
+              className="text-span dark:text-white text-black opacity-0"
               style={{
                 filter: filter ? 'blur(10px)' : 'none',
               }}
             >
               {word}
               {' '}
-            </motion.span>
+            </span>
           );
         })}
-      </motion.div>
+      </div>
     );
   };
 
   return (
-    <div className={cn('font-bold dark:text-white text-black', className)}>
+    <div ref={containerRef} className={cn('font-bold dark:text-white text-black', className)}>
       {renderWords()}
     </div>
   );
