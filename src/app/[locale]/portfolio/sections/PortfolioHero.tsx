@@ -587,7 +587,6 @@ export default function PortfolioHero() {
           }`}
           style={{
             willChange: 'transform',
-            opacity: 0,
             zIndex: image.id === 'img-3' ? 'var(--z-image-focus)' : 'var(--z-elements)',
           }}
         >
@@ -602,8 +601,8 @@ export default function PortfolioHero() {
             style={{
               filter: 'saturate(0.7) contrast(0.9)',
             }}
-            priority={['img-1', 'img-2', 'img-3', 'img-8'].includes(image.id)}
-            loading={['img-1', 'img-2', 'img-8'].includes(image.id) ? undefined : 'lazy'}
+            priority={true}
+            loading="eager"
           />
 
           {/* Dark desaturation overlay */}
