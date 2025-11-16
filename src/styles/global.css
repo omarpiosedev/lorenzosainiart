@@ -1,7 +1,7 @@
 @layer theme, base, clerk, components, utilities; /* Ensure Clerk is compatible with Tailwind CSS v4 */
 
 /* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bacasime+Antique&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
 @import 'tailwindcss';
 
@@ -29,6 +29,9 @@ body {
   position: relative;
   left: 0 !important;
   right: 0 !important;
+  /* Lora as default font */
+  font-family: 'Lora', ui-serif, Georgia, serif;
+  font-weight: 400;
 }
 
 /* Reset any browser defaults */
@@ -170,6 +173,46 @@ section.w-screen {
   line-height: 1.2;
 }
 
+/* Font Utilities */
+.font-lavener {
+  font-family: 'Lavener', serif;
+}
+
+.font-effloresce {
+  font-family: 'Effloresce It', serif;
+}
+
+.font-bacasime {
+  font-family: 'Bacasime Antique', serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Lora variants for body text */
+.font-lora {
+  font-family: 'Lora', ui-serif, Georgia, serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.font-lora-italic {
+  font-family: 'Lora', ui-serif, Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.font-lora-medium {
+  font-family: 'Lora', ui-serif, Georgia, serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.font-lora-semibold {
+  font-family: 'Lora', ui-serif, Georgia, serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
 /* Poster Scaling System */
 .poster {
   /* Wrapper for ScaleToFit - non toccare */
@@ -274,6 +317,8 @@ section.w-screen {
 }
 
 @theme inline {
+  /* Lora as default body font */
+  --font-sans: 'Lora', ui-serif, Georgia, serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

@@ -168,8 +168,7 @@ function ProjectCard({ title, date, category, imageSrc, onHover, onLeave, infoRe
       <div ref={infoRef} className="mt-4 flex items-start justify-between">
         <div>
           <h3
-            className="text-base md:text-lg font-medium text-black mb-1 text-wrap-balanced line-clamp-2"
-            style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+            className="text-base md:text-lg font-medium text-black mb-1 text-wrap-balanced line-clamp-2 font-bacasime"
           >
             {title}
           </h3>
@@ -332,8 +331,7 @@ export default function PortfolioSection() {
               {t('portfolioLabel')}
             </ShimmerLabel>
             <h2
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight mb-4 text-wrap-balanced heading-compact"
-              style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight mb-4 text-wrap-balanced heading-compact font-bacasime"
             >
               {t('title')}
             </h2>

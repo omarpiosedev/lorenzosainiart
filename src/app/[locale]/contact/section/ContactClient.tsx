@@ -176,7 +176,7 @@ export default function ContactClient() {
             <h1 className="mb-[var(--space-4)] flex justify-center">
               <TextGenerateEffect
                 words={t('heading')}
-                className="whitespace-nowrap font-lavener text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[0.95] tracking-tight text-neutral-900"
+                className="whitespace-nowrap font-bacasime text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[0.95] tracking-tight text-neutral-900"
                 animateBy="letter"
                 duration={0.5}
                 staggerDelay={0.08}

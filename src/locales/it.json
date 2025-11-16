@@ -393,6 +393,65 @@
           "description": "Per montaggio video e color grading — dove la storia prende vita"
         }
       }
+    },
+    "timeline": {
+      "title": "Il mio percorso",
+      "experience": {
+        "title": "Esperienza",
+        "items": {
+          "freelance": {
+            "role": "Videomaker",
+            "company": "Freelance",
+            "type": "Freelance",
+            "period": "apr 2021 - Presente",
+            "duration": "4 anni 8 mesi",
+            "location": "Como",
+            "description": "Produzione video professionale per clienti e progetti creativi personali.",
+            "skills": ["Revisione", "After Effects", "Color Grading", "Motion Graphics", "Sound Design", "Final Cut Pro"]
+          },
+          "mediaworld": {
+            "role": "Addetto punto vendita",
+            "company": "MediaWorld",
+            "type": "Part-time",
+            "period": "ott 2019 - Presente",
+            "duration": "6 anni 2 mesi",
+            "location": "Como, Lombardia, Italia",
+            "description": "Reparto pc/foto/videogiochi/audio",
+            "skills": []
+          },
+          "mediaset": {
+            "role": "Tirocinante",
+            "company": "Mediaset",
+            "type": "Part-time",
+            "period": "set 2023 - dic 2023",
+            "duration": "4 mesi",
+            "location": "Cologno Monzese, Lombardia, Italia",
+            "description": "Post Produzione e Editing video di programmi tv registrati. Striscia la Notizia, Cotto e Mangiato, Dritto e Rovescio, Verissimo e Mag",
+            "skills": ["Adobe Premiere", "Avid Media Composer", "Post Produzione", "Editing TV"]
+          }
+        }
+      },
+      "education": {
+        "title": "Formazione",
+        "items": {
+          "sae": {
+            "school": "SAE Institute",
+            "degree": "Diploma accademico",
+            "field": "Produzioni cinetelevisive e new media",
+            "period": "2020 - 2023",
+            "grade": "98",
+            "skills": ["After Effects", "Adobe Premiere", "Sound Design", "Cinematografia", "Editing Video"]
+          },
+          "davinci": {
+            "school": "Da vinci ripamonti",
+            "degree": "Diploma Istituto Tecnico e Professionale",
+            "field": "Tecnologie/tecnici delle comunicazioni audiovisive",
+            "period": "2014 - 2019",
+            "grade": "78/100",
+            "skills": []
+          }
+        }
+      }
     }
   },
   "ContactPage": {

@@ -150,7 +150,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}>
+            <h2 className="text-2xl font-bold text-gray-900 font-bacasime">
               Settings
             </h2>
             <p className="text-gray-600 text-sm mt-1">

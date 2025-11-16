@@ -212,9 +212,8 @@ export default function ServicesSection() {
                 {/* Title - Large */}
                 <h1
                   ref={titleRef}
-                  className="text-3xl md:text-4xl lg:text-5xl font-light text-black leading-[1.1] text-wrap-balanced heading-compact"
+                  className="text-3xl md:text-4xl lg:text-5xl font-light text-black leading-[1.1] text-wrap-balanced heading-compact font-bacasime"
                   style={{
-                    fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif',
                     letterSpacing: '-0.01em',
                   }}
                 >
@@ -333,8 +332,7 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-start pt-5 md:pt-12">
             <h2
-              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact"
-              style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-bacasime"
             >
               {t('photography.title')}
             </h2>
@@ -382,8 +380,7 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-start items-end text-right pt-5 md:pt-12">
             <h2
-              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact"
-              style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-bacasime"
             >
               {t('videomaking.title')}
             </h2>
@@ -450,8 +447,7 @@ export default function ServicesSection() {
         >
           <div className="p-4 md:p-8 lg:p-10 h-full flex flex-col justify-end pb-5 md:pb-12">
             <h2
-              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact"
-              style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-[32px] md:text-2xl lg:text-3xl font-light text-black tracking-tight leading-tight mb-1.5 md:mb-3 text-wrap-balanced heading-compact font-bacasime"
             >
               {t('dronefootage.title')}
             </h2>

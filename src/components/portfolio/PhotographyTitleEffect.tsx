@@ -71,7 +71,7 @@ export function PhotographyTitleEffect({
   );
 
   return (
-    <h2 ref={containerRef} className={`${className} text-wrap-balanced heading-compact`} style={style}>
+    <h2 ref={containerRef} className={`${className} text-wrap-balanced heading-compact font-bacasime`} style={style}>
       {wordsArray.map((word, idx) => (
         <span
           key={`${word}-${idx}`}

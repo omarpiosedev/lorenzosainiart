@@ -197,8 +197,7 @@ export default function FAQSection() {
                 {t('faqLabel')}
               </ShimmerLabel>
               <h2
-                className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight mb-4 text-wrap-balanced heading-compact"
-                style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight mb-4 text-wrap-balanced heading-compact font-bacasime"
               >
                 {t('title')}
               </h2>

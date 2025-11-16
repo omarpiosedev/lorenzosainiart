@@ -459,9 +459,8 @@ export default function Carousel() {
             <h2
               key={index}
               data-project-index={index}
-              className="project-title absolute top-[35%] text-[var(--text-lg)] md:text-[var(--text-xl)] font-black uppercase text-black whitespace-nowrap text-wrap-balanced heading-compact"
+              className="project-title absolute top-[35%] text-[var(--text-lg)] md:text-[var(--text-xl)] font-black uppercase text-black whitespace-nowrap text-wrap-balanced heading-compact font-bacasime"
               style={{
-                fontFamily: 'var(--font-clash-display, sans-serif)',
               }}
             >
               {project.title}

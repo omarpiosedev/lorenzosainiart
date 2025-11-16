@@ -164,8 +164,7 @@ export default function ContactCTASection() {
         {/* Header */}
         <div ref={headerRef} className="text-center mb-12 md:mb-16 lg:mb-20">
           <h2
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-snug mb-6 md:mb-8 px-4 text-wrap-balanced heading-compact"
-            style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-snug mb-6 md:mb-8 px-4 text-wrap-balanced heading-compact font-bacasime"
           >
             {t('title')}
           </h2>

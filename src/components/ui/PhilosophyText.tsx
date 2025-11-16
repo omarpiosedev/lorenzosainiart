@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import { useRef } from 'react';
+import { ShimmerLabel } from '@/components/ui/shimmer-label';
 import { TextGenerateScrollEffect } from '@/components/ui/TextGenerateScrollEffect';
 
 // Register GSAP plugins (best practice: register once at module level)
@@ -23,19 +24,37 @@ export default function PhilosophyText() {
         return;
       }
 
-      // Find parent section (data-section="sez2" from PhilosophyGallerySection)
+      // Find parent section (data-section="philosophy-gallery" from PhilosophyGallerySection)
       const section = containerRef.current.closest('[data-section="philosophy-gallery"]');
       if (!section) {
         return;
       }
 
-      // Pin text when section enters viewport, unpin when it exits
-      // Original logic: rect.top <= 0 && rect.bottom > window.innerHeight
-      // ScrollTrigger equivalent: pin from section top to section bottom
+      // Find all images in the gallery and get the last one
+      const images = section.querySelectorAll('img');
+      const lastImage = images[images.length - 1];
+
+      if (!lastImage) {
+        return;
+      }
+
+      // Pin text when section enters viewport, unpin when last image covers it
       ScrollTrigger.create({
         trigger: section, // Trigger based on section position
         start: 'top top', // Pin when section top reaches viewport top
-        end: 'bottom bottom', // Unpin when section bottom exits viewport
+        end: () => {
+          // Calculate when the last image's top reaches the text's bottom
+          const lastImageParent = lastImage.parentElement;
+          if (!lastImageParent) {
+            return 'bottom bottom';
+          }
+
+          const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+          const imageTop = lastImageParent.getBoundingClientRect().top + window.scrollY;
+          const offset = imageTop - sectionTop;
+
+          return `+=${offset}px`;
+        },
         pin: containerRef.current, // Pin this text element
         pinSpacing: false, // Don't add spacing (section handles layout)
         invalidateOnRefresh: true,
@@ -61,7 +80,7 @@ export default function PhilosophyText() {
   return (
     <div
       ref={containerRef}
-      className="flex flex-col items-center justify-center px-4 gap-8 z-10"
+      className="flex flex-col items-center justify-start px-4 gap-8 z-10 pt-16 md:pt-20"
       style={{
         position: 'absolute',
         top: 0,
@@ -76,18 +95,15 @@ export default function PhilosophyText() {
       }}
     >
       {/* Philosophy badge */}
-      <div
-        className="bg-white/90 text-black rounded-full border border-black/10 inline-flex items-center justify-center"
-        style={{ padding: '8px 16px' }}
-      >
-        <span className="text-sm font-medium whitespace-nowrap">{t('badge')}</span>
-      </div>
+      <ShimmerLabel className="text-xs font-medium tracking-wide">
+        {t('badge')}
+      </ShimmerLabel>
 
       {/* Main text with GSAP TextGenerateScrollEffect animation */}
       <div className="max-w-4xl mx-auto text-center">
         <TextGenerateScrollEffect
           words={t('text')}
-          className="text-xl md:text-2xl lg:text-3xl leading-tight text-black tracking-wide font-semibold text-wrap-pretty line-clamp-3 md:line-clamp-none"
+          className="text-xl md:text-2xl lg:text-3xl leading-tight text-black tracking-wide font-semibold text-wrap-pretty"
           duration={1}
           staggerDelay={0.08}
           animateBy="word"

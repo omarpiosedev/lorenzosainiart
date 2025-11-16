@@ -349,9 +349,8 @@ export default function BenefitsSection() {
           }}
         >
           <h2
-            className="font-bold text-black leading-tight text-center flex items-center justify-center w-full h-full text-wrap-balanced heading-compact"
+            className="font-bold text-black leading-tight text-center flex items-center justify-center w-full h-full text-wrap-balanced heading-compact font-bacasime"
             style={{
-              fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif',
               fontSize: '2.70vw', // Reduced from 3.33vw (one level down)
             }}
           >
@@ -495,10 +494,9 @@ export default function BenefitsSection() {
             }}
           >
             <h3
-              className="text-black font-semibold leading-tight text-wrap-balanced heading-compact"
+              className="text-black font-semibold leading-tight text-wrap-balanced heading-compact font-bacasime"
               style={{
                 fontSize: '1.46vw', // Reduced from 1.77vw (one level down)
-                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
               {t('benefits.equipment.title')}
@@ -563,10 +561,9 @@ export default function BenefitsSection() {
             }}
           >
             <h3
-              className="text-white font-semibold leading-tight text-wrap-balanced heading-compact"
+              className="text-white font-semibold leading-tight text-wrap-balanced heading-compact font-bacasime"
               style={{
                 fontSize: '1.46vw', // Reduced from 1.77vw (one level down)
-                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                 textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
               }}
             >
@@ -635,10 +632,9 @@ export default function BenefitsSection() {
             }}
           >
             <h3
-              className="text-black font-semibold leading-tight text-wrap-pretty"
+              className="text-black font-semibold leading-tight text-wrap-pretty font-bacasime"
               style={{
                 fontSize: '1.46vw', // Reduced from 1.77vw (one level down)
-                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
               {t('benefits.seamlessExperience.title')}
@@ -695,10 +691,9 @@ export default function BenefitsSection() {
             }}
           >
             <h3
-              className="text-black font-semibold leading-tight text-wrap-pretty"
+              className="text-black font-semibold leading-tight text-wrap-pretty font-bacasime"
               style={{
                 fontSize: '1.46vw', // Reduced from 1.77vw (one level down)
-                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
               }}
             >
               {t('benefits.tailoredVision.title')}
@@ -801,8 +796,7 @@ export default function BenefitsSection() {
 
           {/* Title - Mobile/Tablet */}
           <h2
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10 text-wrap-balanced heading-compact"
-            style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10 text-wrap-balanced heading-compact font-bacasime"
           >
             {t('title')}
           </h2>

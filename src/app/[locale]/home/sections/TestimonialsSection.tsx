@@ -226,9 +226,8 @@ export default function TestimonialsSection() {
             }}
           >
             <h2
-              className="font-bold text-black leading-tight text-center flex items-center justify-center w-full h-full text-wrap-balanced heading-compact"
+              className="font-bold text-black leading-tight text-center flex items-center justify-center w-full h-full text-wrap-balanced heading-compact font-bacasime"
               style={{
-                fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif',
                 fontSize: '2.92vw', // Reduced one level from 3.33vw
               }}
             >
@@ -323,8 +322,7 @@ export default function TestimonialsSection() {
 
             {/* Title - Mobile/Tablet */}
             <h2
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10 text-wrap-balanced heading-compact"
-              style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-black leading-tight text-center mb-6 sm:mb-8 lg:mb-10 text-wrap-balanced heading-compact font-bacasime"
             >
               {t('title')}
             </h2>

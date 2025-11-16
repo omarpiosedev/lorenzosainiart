@@ -620,11 +620,9 @@ export default function PortfolioHero() {
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-30 px-4">
         <h1
           ref={titleRef}
-          className="text-black text-center leading-[1.1] mb-6 text-wrap-balanced heading-compact"
+          className="text-black text-center leading-[1.1] mb-6 text-wrap-balanced heading-compact font-bacasime"
           style={{
-            fontFamily: '"Cormorant Garamond", serif',
             fontWeight: 300,
-            letterSpacing: '0.05em',
             fontSize: 'clamp(2rem, 5vw, 3.5rem)',
             textShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             opacity: 0,

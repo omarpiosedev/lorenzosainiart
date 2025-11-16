@@ -24,7 +24,7 @@ export function BlogHero({ badge, title, subtitle1, subtitle2 }: BlogHeroProps) 
         <h1 className="heading-compact mb-[var(--space-4)] flex justify-center">
           <TextGenerateEffect
             words={title}
-            className="text-balance text-center font-lavener text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.1] tracking-tight text-neutral-900"
+            className="text-balance text-center font-bacasime text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[1.1] tracking-tight text-neutral-900"
             animateBy="letter"
             duration={0.5}
             staggerDelay={0.08}

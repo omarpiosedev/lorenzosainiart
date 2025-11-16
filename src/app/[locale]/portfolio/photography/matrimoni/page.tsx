@@ -19,7 +19,7 @@ export default async function MatrimoniPage(props: Props) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="text-center">
-        <h1 className="text-4xl font-black uppercase mb-4" style={{ fontFamily: 'var(--font-clash-display, sans-serif)' }}>
+        <h1 className="text-4xl font-black uppercase mb-4 font-bacasime">
           Matrimoni
         </h1>
         <p className="text-lg text-black/60">Coming Soon</p>

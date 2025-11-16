@@ -134,8 +134,7 @@ export default function Footer() {
 
                 {/* Text inside frames */}
                 <h3
-                  className="text-2xl font-bold text-black whitespace-nowrap"
-                  style={{ fontFamily: 'Lavener, -apple-system, BlinkMacSystemFont, sans-serif' }}
+                  className="text-2xl font-bold text-black whitespace-nowrap font-bacasime"
                 >
                   Lorenzo Saini
                 </h3>
@@ -231,9 +230,8 @@ export default function Footer() {
       <div ref={bannerRef} className="w-full border-t border-gray-200 px-4">
         <ScreenFitText
           text="LORENZOSAINI"
-          className="text-black"
+          className="text-black font-bacasime"
           style={{
-            fontFamily: 'Lavener, serif',
             letterSpacing: '0.15em',
             fontWeight: 700,
             transform: 'scaleY(1.3)',
