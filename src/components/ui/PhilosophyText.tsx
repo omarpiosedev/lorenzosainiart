@@ -30,34 +30,16 @@ export default function PhilosophyText() {
         return;
       }
 
-      // Find all images in the gallery and get the last one
-      const images = section.querySelectorAll('img');
-      const lastImage = images[images.length - 1];
-
-      if (!lastImage) {
-        return;
-      }
-
-      // Pin text when section enters viewport, unpin when last image covers it
+      // Pin text when section enters viewport, unpin when it exits
+      // Original logic: rect.top <= 0 && rect.bottom > window.innerHeight
+      // ScrollTrigger equivalent: pin from section top to section bottom
       ScrollTrigger.create({
         trigger: section, // Trigger based on section position
         start: 'top top', // Pin when section top reaches viewport top
-        end: () => {
-          // Calculate when the last image's top reaches the text's bottom
-          const lastImageParent = lastImage.parentElement;
-          if (!lastImageParent) {
-            return 'bottom bottom';
-          }
-
-          const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-          const imageTop = lastImageParent.getBoundingClientRect().top + window.scrollY;
-          const offset = imageTop - sectionTop;
-
-          return `+=${offset}px`;
-        },
+        end: 'bottom bottom', // Unpin when section bottom exits viewport
         pin: containerRef.current, // Pin this text element
         pinSpacing: false, // Don't add spacing (section handles layout)
-        anticipatePin: 1, // CRITICAL: Prevents pin jitter on fast scroll (mobile)
+        anticipatePin: 1, // Prevents pin jitter on fast scroll (mobile)
         invalidateOnRefresh: true,
         // ✅ OPTIMIZED: Dynamic will-change management (Context7 best practice)
         // Add will-change only during animation, remove after to free GPU resources
@@ -81,7 +63,7 @@ export default function PhilosophyText() {
   return (
     <div
       ref={containerRef}
-      className="flex flex-col items-center justify-start px-4 gap-8 z-10 pt-16 md:pt-20"
+      className="flex flex-col items-center justify-center md:justify-start px-4 gap-8 z-10 md:pt-20"
       style={{
         position: 'absolute',
         top: 0,

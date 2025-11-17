@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
+import WhatsAppSection from './WhatsAppSection';
 
 // Register GSAP
 if (typeof window !== 'undefined') {
@@ -194,7 +195,6 @@ export default function ContactClient() {
         </div>
 
         <div className="mx-auto max-w-3xl">
-
           {/* Form Section */}
           <form
             ref={formRef}
@@ -301,6 +301,9 @@ export default function ContactClient() {
               </div>
             )}
           </form>
+
+          {/* WhatsApp Quick Contact Section */}
+          <WhatsAppSection />
         </div>
       </div>
     </div>

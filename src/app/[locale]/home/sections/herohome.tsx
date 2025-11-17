@@ -578,7 +578,7 @@ export default function HeroHome() {
         )}
       </div>
 
-      {/* ✅ OPTIMIZATION 3: Consolidated gradient layers (9 → 3) */}
+      {/* Container per overlay gradient - scala insieme */}
       <div
         className="absolute"
         style={{
@@ -594,7 +594,7 @@ export default function HeroHome() {
           zIndex: 100,
         }}
       >
-        {/* Overlay gradient at bottom with progressive blur - OPTIMIZED */}
+        {/* Overlay gradient at bottom with progressive blur */}
         <div
           className="absolute bottom-0 pointer-events-none"
           style={{
@@ -612,39 +612,135 @@ export default function HeroHome() {
             }}
           />
 
-          {/* Heavy blur layer (combines old layers 1-3) */}
-          <div
-            className="absolute bottom-0 inset-x-0"
-            style={{
-              height: breakpoint === 'desktop' ? '140px' : '100px',
-              background: breakpoint === 'desktop'
-                ? 'linear-gradient(to top, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.12) 75%, transparent 100%)'
-                : 'linear-gradient(to top, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 75%, transparent 100%)',
-              backdropFilter: breakpoint === 'desktop' ? 'blur(28px)' : 'blur(18px)',
-            }}
-          />
+          {breakpoint === 'mobile'
+            ? (
+                <>
+                  {/* Mobile: 9 layer blur originali */}
+                  {/* Layer 1 - blur più intenso alla base */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '60px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 60%, transparent 100%)',
+                      backdropFilter: 'blur(20px)',
+                    }}
+                  />
 
-          {/* Medium blur layer (combines old layers 4-6) */}
-          <div
-            className="absolute bottom-0 inset-x-0"
-            style={{
-              height: '260px',
-              background: 'linear-gradient(to top, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.065) 30%, rgba(255,255,255,0.025) 65%, rgba(255,255,255,0.008) 85%, transparent 100%)',
-              backdropFilter: 'blur(8px)',
-            }}
-          />
+                  {/* Layer 2 */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '100px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 80%, transparent 100%)',
+                      backdropFilter: 'blur(16px)',
+                    }}
+                  />
 
-          {/* Light blur layer (combines old layers 7-9) */}
-          <div
-            className="absolute bottom-0 inset-x-0"
-            style={{
-              height: breakpoint === 'desktop' ? '500px' : '384px',
-              background: breakpoint === 'desktop'
-                ? 'linear-gradient(to top, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.012) 25%, rgba(255,255,255,0.005) 55%, rgba(255,255,255,0.002) 75%, rgba(255,255,255,0.0005) 90%, transparent 100%)'
-                : 'linear-gradient(to top, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.005) 25%, rgba(255,255,255,0.002) 55%, rgba(255,255,255,0.0008) 75%, rgba(255,255,255,0.0002) 90%, transparent 100%)',
-              backdropFilter: breakpoint === 'desktop' ? 'blur(2px)' : 'blur(1px)',
-            }}
-          />
+                  {/* Layer 3 */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '140px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.12) 40%, rgba(255,255,255,0.06) 70%, rgba(255,255,255,0.02) 90%, transparent 100%)',
+                      backdropFilter: 'blur(12px)',
+                    }}
+                  />
+
+                  {/* Layer 4 */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '180px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.04) 65%, rgba(255,255,255,0.015) 85%, rgba(255,255,255,0.005) 95%, transparent 100%)',
+                      backdropFilter: 'blur(9px)',
+                    }}
+                  />
+
+                  {/* Layer 5 */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '220px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.055) 30%, rgba(255,255,255,0.03) 60%, rgba(255,255,255,0.012) 80%, rgba(255,255,255,0.004) 92%, transparent 100%)',
+                      backdropFilter: 'blur(6px)',
+                    }}
+                  />
+
+                  {/* Layer 6 */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '260px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.035) 25%, rgba(255,255,255,0.02) 55%, rgba(255,255,255,0.008) 75%, rgba(255,255,255,0.003) 88%, rgba(255,255,255,0.001) 96%, transparent 100%)',
+                      backdropFilter: 'blur(4px)',
+                    }}
+                  />
+
+                  {/* Layer 7 */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '300px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.02) 20%, rgba(255,255,255,0.012) 50%, rgba(255,255,255,0.005) 70%, rgba(255,255,255,0.002) 85%, rgba(255,255,255,0.0008) 94%, transparent 100%)',
+                      backdropFilter: 'blur(2.5px)',
+                    }}
+                  />
+
+                  {/* Layer 8 */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '340px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.012) 15%, rgba(255,255,255,0.007) 45%, rgba(255,255,255,0.003) 65%, rgba(255,255,255,0.001) 80%, rgba(255,255,255,0.0004) 92%, transparent 100%)',
+                      backdropFilter: 'blur(1.5px)',
+                    }}
+                  />
+
+                  {/* Layer 9 - finale molto sottile */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '384px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.006) 10%, rgba(255,255,255,0.003) 40%, rgba(255,255,255,0.0015) 60%, rgba(255,255,255,0.0006) 75%, rgba(255,255,255,0.0002) 88%, rgba(255,255,255,0.0001) 96%, transparent 100%)',
+                      backdropFilter: 'blur(0.8px)',
+                    }}
+                  />
+                </>
+              )
+            : (
+                <>
+                  {/* Desktop/Tablet: 3 layer ottimizzati */}
+                  {/* Heavy blur layer (combines old layers 1-3) */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '140px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.12) 75%, transparent 100%)',
+                      backdropFilter: 'blur(28px)',
+                    }}
+                  />
+
+                  {/* Medium blur layer (combines old layers 4-6) */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '260px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.065) 30%, rgba(255,255,255,0.025) 65%, rgba(255,255,255,0.008) 85%, transparent 100%)',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  />
+
+                  {/* Light blur layer (combines old layers 7-9) */}
+                  <div
+                    className="absolute bottom-0 inset-x-0"
+                    style={{
+                      height: '500px',
+                      background: 'linear-gradient(to top, rgba(255,255,255,0.022) 0%, rgba(255,255,255,0.012) 25%, rgba(255,255,255,0.005) 55%, rgba(255,255,255,0.002) 75%, rgba(255,255,255,0.0005) 90%, transparent 100%)',
+                      backdropFilter: 'blur(2px)',
+                    }}
+                  />
+                </>
+              )}
         </div>
       </div>
 

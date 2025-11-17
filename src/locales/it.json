@@ -511,6 +511,14 @@
       "social": "Seguimi",
       "availability": "Disponibile per lavoro",
       "response": "Rispondo tipicamente entro 24 ore"
+    },
+    "whatsapp": {
+      "badge": "Contatto Rapido",
+      "title": "Hai bisogno di una risposta più veloce?",
+      "description": "Inviami un messaggio su WhatsApp e ti risponderò il prima possibile.",
+      "cta": "Messaggio su WhatsApp",
+      "availability": "Di solito risponde in pochi minuti",
+      "phone": "+39 123 456 7890"
     }
   },
   "loading": {
