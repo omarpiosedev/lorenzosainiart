@@ -16,6 +16,7 @@ export default function PortfolioHero3D() {
   const containerRef = useRef<HTMLDivElement>(null);
   const frontImagesRefs = useRef<(HTMLDivElement | null)[]>([]);
   const smallImagesRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   // Central image for all 6 front layers
   const centralImageSrc = '/assets/images/PortfolioHero/521bf560-6b45-43d3-8f20-b22d725c5dee_rw_3840ff89.webp';
@@ -42,7 +43,64 @@ export default function PortfolioHero3D() {
     styles.front6,
   ];
 
-  // Animation setup - EXACTLY as GitHub reference
+  // Entrance animations - SAME as old PortfolioHero.tsx
+  useGSAP(
+    () => {
+      if (!titleRef.current) {
+        return;
+      }
+
+      const allImages = [...frontImagesRefs.current, ...smallImagesRefs.current].filter(Boolean);
+
+      // Set initial states
+      gsap.set(titleRef.current, {
+        opacity: 0,
+        y: 60,
+        filter: 'blur(12px)',
+        scale: 0.95,
+      });
+
+      gsap.set(allImages, {
+        opacity: 0,
+        scale: 0.88,
+        filter: 'blur(10px)',
+        y: 40,
+      });
+
+      // Timeline for staggered entrance
+      const tl = gsap.timeline({
+        delay: 0.4,
+      });
+
+      tl.to(allImages, {
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        y: 0,
+        duration: 2.4,
+        stagger: {
+          amount: 1.6,
+          from: 'random',
+          ease: 'power1.inOut',
+        },
+        ease: 'expo.out',
+      }).to(
+        titleRef.current,
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          scale: 1,
+          duration: 2.6,
+          ease: 'expo.out',
+        },
+        '-=1.4',
+      );
+    },
+    { scope: containerRef, dependencies: [] },
+  );
+
+  // Scroll animation setup - EXACTLY as GitHub reference
   useGSAP(
     () => {
       if (!containerRef.current) {
@@ -139,7 +197,7 @@ export default function PortfolioHero3D() {
   return (
     <section ref={containerRef} className={styles.section}>
       {/* Title - EXACT structure from GitHub */}
-      <h1 className={styles.title}>
+      <h1 ref={titleRef} className={styles.title}>
         <span className={styles.titleLeft}>{leftWords}</span>
         {' '}
         <span className={styles.titleRight}>{rightWords}</span>
