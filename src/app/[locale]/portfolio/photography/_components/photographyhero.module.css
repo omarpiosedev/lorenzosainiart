@@ -1,0 +1,348 @@
+/* ========== PHOTOGRAPHY HERO STYLES (CSS MODULE) ========== */
+/* Based on original carousel 3D demo */
+/* CSS Modules provide automatic scoping - no manual prefixes needed! */
+
+/* CSS Variables - Shared between component and preview-wrapper portal */
+.photographyHero,
+:global(#preview-wrapper) {
+  --color-text: #000000;
+  --color-bg: #ffffff;
+  --color-link: #000000;
+  --color-link-hover: rgba(0, 0, 0, 0.6);
+  --aspect: 4/5;
+  --grid-item-height: 20vh;
+  --c-gap: 3rem;
+  --r-gap: 3rem;
+  --column: 80px;
+  --column-count: 3;
+  --border-radius: 4px;
+}
+
+.photographyHero {
+  font-family: 'Bacasime Antique', serif;
+  text-transform: uppercase;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+:global(#preview-wrapper) {
+  font-family: 'Bacasime Antique', serif;
+  text-transform: uppercase;
+}
+
+/* ========== SCENE ELEMENTS (automatically scoped by CSS Modules) ========== */
+
+/* Scene Wrapper */
+.sceneWrapper {
+  position: relative;
+}
+
+/* Scene */
+.scene {
+  perspective: 900px;
+  position: relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Scene Title */
+.sceneTitle {
+  position: relative;
+  z-index: 10;
+  margin: 0;
+  font-size: clamp(4rem, 12vw, 10rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.sceneTitle span {
+  display: inline-block;
+}
+
+.sceneTitle :global(.char) {
+  display: inline-block;
+  transform-style: preserve-3d;
+  transform-origin: 50% 0%;
+}
+
+/* Carousel */
+.carousel {
+  width: 400px;
+  height: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -250px 0 0 -200px;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform: translateZ(-550px) rotateY(0deg);
+}
+
+.scene:nth-child(even) .carousel {
+  transform: translateZ(-550px) rotateY(45deg);
+}
+
+.carouselCell {
+  position: absolute;
+  width: 350px;
+  height: 420px;
+  left: 0;
+  top: 0;
+  transform-style: preserve-3d;
+}
+
+/* Card */
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.cardFace {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.cardFace img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+.cardFaceBack {
+  transform: rotateY(180deg);
+}
+
+/* ========== PREVIEW ELEMENTS (inside #preview-wrapper portal - use :global) ========== */
+
+/* Preview */
+:global(#preview-wrapper .preview) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 15vw;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  grid-row-gap: 1rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+:global(#preview-wrapper .preview__header) {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: space-between;
+  line-height: 1;
+}
+
+:global(#preview-wrapper .preview__title) {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+:global(#preview-wrapper .preview__title span),
+:global(#preview-wrapper .preview__close span) {
+  display: inline-block;
+}
+
+:global(#preview-wrapper .preview__title .char),
+:global(#preview-wrapper .preview__close .char) {
+  display: inline-block;
+}
+
+:global(#preview-wrapper .preview__close) {
+  background: none;
+  text-transform: inherit;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--color-text);
+  transition: color 0.3s ease;
+}
+
+:global(#preview-wrapper .preview__close:hover),
+:global(#preview-wrapper .preview__close:focus) {
+  outline: none;
+  color: var(--color-link-hover);
+}
+
+/* Grid */
+:global(#preview-wrapper .grid) {
+  padding: 1rem 0;
+  display: grid;
+  grid-template-columns: repeat(var(--column-count), minmax(var(--column), 1fr));
+  grid-column-gap: var(--c-gap);
+  grid-row-gap: var(--r-gap);
+  width: 100%;
+  perspective: 900px;
+}
+
+:global(#preview-wrapper .grid__item) {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  will-change: transform, clip-path;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+:global(#preview-wrapper .grid__item-image) {
+  width: 100%;
+  aspect-ratio: var(--aspect);
+  background-size: cover;
+  background-position: 50% 50%;
+  transition: opacity 0.15s cubic-bezier(0.2, 0, 0.2, 1);
+  position: relative;
+  cursor: pointer;
+}
+
+:global(#preview-wrapper .grid__item:hover .grid__item-image) {
+  opacity: 0.7;
+}
+
+/* Lightbox */
+:global(#preview-wrapper .lightbox) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+:global(#preview-wrapper .lightbox.active) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+:global(#preview-wrapper .lightbox__image) {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: var(--border-radius);
+}
+
+:global(#preview-wrapper .lightbox__close) {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background: none;
+  border: 0;
+  color: #ffffff;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+}
+
+:global(#preview-wrapper .lightbox__close:hover) {
+  opacity: 0.6;
+}
+
+:global(#preview-wrapper .lightbox__nav) {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 1rem 1.5rem;
+  font-family: inherit;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+:global(#preview-wrapper .lightbox__nav:hover) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+:global(#preview-wrapper .lightbox__nav--prev) {
+  left: 2rem;
+}
+
+:global(#preview-wrapper .lightbox__nav--next) {
+  right: 2rem;
+}
+
+:global(#preview-wrapper .lightbox__counter) {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+
+:global(#preview-wrapper .grid__item-caption h3) {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media screen and (min-width: 65em) {
+  .photographyHero,
+  :global(#preview-wrapper) {
+    --column-count: 6;
+  }
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 768px) {
+  .photographyHero,
+  :global(#preview-wrapper) {
+    --column-count: 2;
+    --c-gap: 1.5rem;
+    --r-gap: 1.5rem;
+  }
+
+  :global(#preview-wrapper .preview) {
+    padding: 0 5vw;
+  }
+
+  .carousel {
+    width: 300px;
+    height: 375px;
+    margin: -187.5px 0 0 -150px;
+  }
+
+  .carouselCell {
+    width: 260px;
+    height: 315px;
+  }
+}

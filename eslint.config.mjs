@@ -27,7 +27,7 @@ export default antfu(
     },
 
     // Ignored paths
-    ignores: ['migrations/**/*', '.vercel/**/*', 'vercel.json', 'MetodoScaling.md', '*.md'],
+    ignores: ['migrations/**/*', '.vercel/**/*', 'vercel.json', 'MetodoScaling.md', '*.md', 'githubreference/**/*'],
   },
   // --- Accessibility Rules ---
   jsxA11y.flatConfigs.recommended,

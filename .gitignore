@@ -62,3 +62,7 @@ build-archive.log
 /playwright/.cache/
 .playwright-mcp/
 .history/
+
+# Large image assets
+/public/assets/images/allimages-avif/
+/public/assets/images/allimages/

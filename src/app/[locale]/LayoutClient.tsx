@@ -513,9 +513,9 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
       const smoother = ScrollSmoother.create({
         wrapper: smoothWrapperRef.current!,
         content: smoothContentRef.current!,
-        smooth: 1.2,
+        smooth: 1, // Match original demo config
         effects: true, // Enable parallax effects on desktop
-        normalizeScroll: false, // Keep disabled on desktop to prevent conflicts with ScrollSmoother
+        normalizeScroll: true, // Match original demo config
       });
 
       // Save ScrollSmoother instance for scroll-to-top on navigation
@@ -543,7 +543,6 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
           id="smooth-content"
           ref={smoothContentRef}
           style={{
-            backgroundColor: '#ffffff',
             minHeight: '100vh',
             position: 'relative',
           }}
@@ -603,6 +602,10 @@ const LayoutClient = ({ children, navItems }: LayoutClientProps) => {
           preload="metadata"
         />
       </div>
+
+      {/* Preview Wrapper - Sibling of smooth-content for fixed positioning (3D Carousel previews) */}
+      {/* This matches the original demo structure where previews are outside smooth-content */}
+      <div id="preview-wrapper" />
 
       {/* Loading Screen - Shows on every reload when on home page (z-index: 10001, above video overlay) */}
       {/* CRITICAL: Use showLoadingScreen (not hasLoadingCompleted) to keep LoadingScreen mounted during exit animation */}
