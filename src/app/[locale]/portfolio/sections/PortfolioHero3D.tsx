@@ -24,7 +24,7 @@ export default function PortfolioHero3D() {
   const smallImagesSrcs = [
     '/assets/images/PortfolioHero/0df95003-185c-4339-9b8c-d4b673e48b974bde.webp', // img-1
     '/assets/images/PortfolioHero/1d10e477-37ef-47cf-a510-e03a81f9688f_rwc_251x0x1537x2048x153788ee.webp', // img-2
-    '/assets/images/PortfolioHero/521bf560-6b45-43d3-8f20-b22d725c5dee_rw_3840ff89.webp', // img-3
+    '/assets/images/allimages-avif/fca350ae-e988-408f-b48d-295c227f5627_rw_1920bc33.avif', // img-3
     '/assets/images/PortfolioHero/53c9c768-8380-4850-8b3f-b43f6cf07b8f_rw_1920c93c.webp', // img-4
     '/assets/images/PortfolioHero/62a73e53-e709-445b-83b3-ec4283ab3fe7_rw_19205948.webp', // img-5
     '/assets/images/PortfolioHero/6785377c-6f6d-470a-984a-512b8f994d04_rw_1920d928.webp', // img-6
