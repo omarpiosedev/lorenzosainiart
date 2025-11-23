@@ -258,11 +258,13 @@ export default function PortfolioHero3D() {
       <video
         ref={videoRef}
         src="/assets/videos/Partendo_da_questo_202511072258_9snja.mp4"
-        className="fixed inset-0 w-screen h-screen object-cover pointer-events-none"
+        className="fixed inset-0 w-screen h-screen pointer-events-none"
         style={{
           opacity: 0,
           visibility: 'hidden',
           zIndex: 100,
+          objectFit: 'cover',
+          objectPosition: 'center',
         }}
         muted
         playsInline
