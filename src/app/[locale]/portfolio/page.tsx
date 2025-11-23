@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { BreadcrumbJsonLd, PortfolioCollectionJsonLd } from '@/components/seo/JsonLd';
 import { getBaseUrl } from '@/utils/AppConfig';
-import PortfolioHero3D from './sections/PortfolioHero3D';
+import PortfolioHero3DWrapper from './sections/PortfolioHero3DWrapper';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -67,7 +67,7 @@ export default async function PortfolioPage(props: Props) {
     <NextIntlClientProvider messages={pick(messages, ['PortfolioPage'])}>
       <BreadcrumbJsonLd items={breadcrumbItems} />
       <PortfolioCollectionJsonLd locale={locale} />
-      <PortfolioHero3D />
+      <PortfolioHero3DWrapper />
     </NextIntlClientProvider>
   );
 }

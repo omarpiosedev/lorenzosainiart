@@ -5,7 +5,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
 import styles from './PortfolioHero3D.module.css';
 
 // Register GSAP plugins
@@ -13,11 +14,17 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function PortfolioHero3D() {
   const t = useTranslations('PortfolioPage');
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const frontImagesRefs = useRef<(HTMLDivElement | null)[]>([]);
   const smallImagesRefs = useRef<(HTMLImageElement | null)[]>([]);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const transitionVideoRef = useRef<HTMLVideoElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+
+  // State for navigation
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Get contextSafe from useGSAP for video event handlers
   const { contextSafe } = useGSAP({ scope: containerRef });
@@ -104,6 +111,39 @@ export default function PortfolioHero3D() {
     { scope: containerRef, dependencies: [] },
   );
 
+  // Handle navigation with transition video
+  const handleNavigation = (destination: 'photography' | 'video') => {
+    if (isNavigating || !transitionVideoRef.current) {
+      return;
+    }
+
+    setIsNavigating(true);
+    const transitionVideo = transitionVideoRef.current;
+
+    // Navigate when video ends
+    const handleVideoEnd = () => {
+      transitionVideo.removeEventListener('ended', handleVideoEnd);
+      router.push(`/portfolio/${destination}`);
+    };
+
+    transitionVideo.addEventListener('ended', handleVideoEnd);
+
+    // Fade in transition video
+    gsap.to(transitionVideo, {
+      autoAlpha: 1,
+      duration: 0.5,
+      ease: 'power1.inOut',
+      onStart: () => {
+        transitionVideo.currentTime = 0; // Start from beginning
+        transitionVideo.play().catch((err) => {
+          console.error('Transition video autoplay failed:', err);
+          // Navigate anyway if play fails
+          handleVideoEnd();
+        });
+      },
+    });
+  };
+
   // Scroll animation setup - EXACTLY as GitHub reference + Video overlay
   useGSAP(
     () => {
@@ -122,6 +162,13 @@ export default function PortfolioHero3D() {
         backfaceVisibility: 'hidden',
         force3D: true,
       });
+
+      // Set buttons initial state (hidden)
+      if (buttonsRef.current) {
+        gsap.set(buttonsRef.current, {
+          autoAlpha: 0,
+        });
+      }
 
       // Video seamless looping handler
       const handleTimeUpdate = contextSafe!(() => {
@@ -194,29 +241,36 @@ export default function PortfolioHero3D() {
         0.6,
       );
 
-      // Fade in video at the end of scroll animation
-      timeline.to(
-        video,
-        {
-          autoAlpha: 1,
-          duration: 0.8,
-          ease: 'power1.inOut',
-          onStart: () => {
-            // Play video when it starts appearing
-            if (video.paused) {
-              video.play().catch((err) => {
-                console.error('Video autoplay failed:', err);
-              });
-            }
-          },
-          onReverseComplete: () => {
-            // Pause and reset video when scrolling back
-            video.pause();
-            video.currentTime = 0;
-          },
+      // Fade in video at the end
+      timeline.to(video, {
+        autoAlpha: 1,
+        duration: 1,
+        ease: 'power1.inOut',
+        onStart: () => {
+          if (video.paused) {
+            video.play().catch((err) => {
+              console.error('Video autoplay failed:', err);
+            });
+          }
         },
-        '-=0.3', // Slight overlap for smooth transition
-      );
+        onReverseComplete: () => {
+          video.pause();
+          video.currentTime = 0;
+        },
+      });
+
+      // Fade in buttons with video
+      if (buttonsRef.current) {
+        timeline.to(
+          buttonsRef.current,
+          {
+            autoAlpha: 1,
+            duration: 0.8,
+            ease: 'power1.inOut',
+          },
+          '-=0.8', // Start 0.8s before video finishes (overlap for smooth appearance)
+        );
+      }
 
       // Cleanup
       return () => {
@@ -258,13 +312,40 @@ export default function PortfolioHero3D() {
       <video
         ref={videoRef}
         src="/assets/videos/Partendo_da_questo_202511072258_9snja.mp4"
-        className="fixed inset-0 w-screen h-screen pointer-events-none"
         style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center',
           opacity: 0,
           visibility: 'hidden',
           zIndex: 100,
+          pointerEvents: 'none',
+        }}
+        muted
+        playsInline
+        preload="metadata"
+      />
+
+      {/* Transition video - plays on button click before navigation */}
+      <video
+        ref={transitionVideoRef}
+        src="/assets/videos/Partendo_da_questo_202511072313_klq88.mp4"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
           objectFit: 'cover',
           objectPosition: 'center',
+          opacity: 0,
+          visibility: 'hidden',
+          zIndex: 200,
+          pointerEvents: 'none',
         }}
         muted
         playsInline
@@ -323,6 +404,28 @@ export default function PortfolioHero3D() {
             alt={`Portfolio item ${index + 1}`}
           />
         ))}
+      </div>
+
+      {/* Navigation buttons */}
+      <div ref={buttonsRef} className={styles.buttonsContainer}>
+        <button
+          type="button"
+          onClick={() => handleNavigation('photography')}
+          disabled={isNavigating}
+          className={styles.navButton}
+          aria-label={t('hero.buttons.photography')}
+        >
+          {t('hero.buttons.photography')}
+        </button>
+        <button
+          type="button"
+          onClick={() => handleNavigation('video')}
+          disabled={isNavigating}
+          className={styles.navButton}
+          aria-label={t('hero.buttons.video')}
+        >
+          {t('hero.buttons.video')}
+        </button>
       </div>
     </section>
   );

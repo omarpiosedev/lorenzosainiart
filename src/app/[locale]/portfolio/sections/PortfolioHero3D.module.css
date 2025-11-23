@@ -266,3 +266,57 @@
     height: 33%;
   }
 }
+
+/* Navigation buttons */
+.buttonsContainer {
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  display: flex;
+  gap: 2rem;
+  pointer-events: auto;
+}
+
+.navButton {
+  font-family: 'Bacasime Antique', serif;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1rem 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 0;
+}
+
+.navButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.navButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .buttonsContainer {
+    top: 8%;
+    gap: 1rem;
+    flex-direction: column;
+    width: 80%;
+  }
+
+  .navButton {
+    font-size: var(--text-base);
+    padding: 0.8rem 2rem;
+    width: 100%;
+  }
+}
