@@ -17,6 +17,10 @@ export default function PortfolioHero3D() {
   const frontImagesRefs = useRef<(HTMLDivElement | null)[]>([]);
   const smallImagesRefs = useRef<(HTMLImageElement | null)[]>([]);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Get contextSafe from useGSAP for video event handlers
+  const { contextSafe } = useGSAP({ scope: containerRef });
 
   // Central image for all 6 front layers
   const centralImageSrc = '/assets/images/PortfolioHero/521bf560-6b45-43d3-8f20-b22d725c5dee_rw_3840ff89.webp';
@@ -100,14 +104,15 @@ export default function PortfolioHero3D() {
     { scope: containerRef, dependencies: [] },
   );
 
-  // Scroll animation setup - EXACTLY as GitHub reference
+  // Scroll animation setup - EXACTLY as GitHub reference + Video overlay
   useGSAP(
     () => {
-      if (!containerRef.current) {
+      if (!containerRef.current || !videoRef.current) {
         return;
       }
 
       const container = containerRef.current;
+      const video = videoRef.current;
       const frontImages = frontImagesRefs.current.filter(Boolean) as HTMLDivElement[];
       const smallImages = smallImagesRefs.current.filter(Boolean) as HTMLImageElement[];
 
@@ -117,6 +122,23 @@ export default function PortfolioHero3D() {
         backfaceVisibility: 'hidden',
         force3D: true,
       });
+
+      // Video seamless looping handler
+      const handleTimeUpdate = contextSafe!(() => {
+        if (!video.duration || Number.isNaN(video.duration)) {
+          return;
+        }
+
+        const loopStartTime = video.duration - 4; // Last 4 seconds
+        const loopTriggerTime = video.duration - 0.1; // Trigger loop 100ms before end
+        const currentTime = video.currentTime;
+
+        if (currentTime >= loopTriggerTime) {
+          video.currentTime = loopStartTime;
+        }
+      });
+
+      video.addEventListener('timeupdate', handleTimeUpdate);
 
       // Create ScrollTrigger timeline
       const timeline = gsap.timeline({
@@ -171,6 +193,42 @@ export default function PortfolioHero3D() {
         },
         0.6,
       );
+
+      // Fade in video at the end of scroll animation
+      timeline.to(
+        video,
+        {
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: 'power1.inOut',
+          onStart: () => {
+            // Play video when it starts appearing
+            if (video.paused) {
+              video.play().catch((err) => {
+                console.error('Video autoplay failed:', err);
+              });
+            }
+          },
+          onReverseComplete: () => {
+            // Pause and reset video when scrolling back
+            video.pause();
+            video.currentTime = 0;
+          },
+        },
+        '-=0.3', // Slight overlap for smooth transition
+      );
+
+      // Cleanup
+      return () => {
+        if (videoRef.current) {
+          try {
+            videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+          } catch {
+            // Silently ignore if video is already removed
+          }
+        }
+        timeline.kill();
+      };
     },
     { scope: containerRef, dependencies: [] },
   );
@@ -196,6 +254,21 @@ export default function PortfolioHero3D() {
 
   return (
     <section ref={containerRef} className={styles.section}>
+      {/* Video overlay - appears at the end of scroll animation */}
+      <video
+        ref={videoRef}
+        src="/assets/videos/Partendo_da_questo_202511072258_9snja.mp4"
+        className="fixed inset-0 w-screen h-screen object-cover pointer-events-none"
+        style={{
+          opacity: 0,
+          visibility: 'hidden',
+          zIndex: 100,
+        }}
+        muted
+        playsInline
+        preload="metadata"
+      />
+
       {/* Title - EXACT structure from GitHub */}
       <h1 ref={titleRef} className={styles.title}>
         <span className={styles.titleLeft}>{leftWords}</span>
