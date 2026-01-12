@@ -49,7 +49,7 @@
     "imagesloaded": "^5.0.0",
     "lottie-react": "^2.4.1",
     "meshline": "^3.3.1",
-    "next": "^16.0.3",
+    "next": "16.0.10",
     "next-intl": "4.5.3",
     "next-sanity": "^11.6.6",
     "react": "^19.2.0",
